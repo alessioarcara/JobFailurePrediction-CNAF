@@ -1,1 +1,4 @@
 data/
+
+# macos
+.DS_Store
