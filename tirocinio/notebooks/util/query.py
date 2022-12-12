@@ -118,35 +118,70 @@ jobname_of_jobs = """
         runtime > 3600
 """
 
-jobs_september = """WITH A AS (
+jobs_from_date_to_date = """WITH A AS (
     SELECT 
-       j.jobid||'.'||j.idx job,
+       j.jobid||'.'||j.idx||'_'||jd.fromhost job,
+       jd.queue,
+       (jd.jobstatus != 4 OR jd.exitstatus != 0)::int fail,
        MIN(j.ts) mint,
        MAX(j.ts) maxt,
        ARRAY_AGG(j.rt ORDER BY j.rt ASC) xt,
-       ARRAY_AGG(j.rss ORDER BY j.rt ASC) xram,
-       ARRAY_AGG(j.swp ORDER BY j.rt ASC) ximg,
-       ARRAY_AGG(j.disk ORDER BY j.rt ASC) xdisk
-    FROM hj j INNER JOIN htjob jd ON
-       j.queue = jd.queue AND
-       j.jobid = jd.jobid AND j.idx = jd.idx AND
-       j.ts BETWEEN jd.starttimeepoch AND jd.eventtimeepoch
+       ARRAY_AGG(j.rss ORDER BY j.rt ASC) x_j_ram,
+       ARRAY_AGG(j.swp ORDER BY j.rt ASC) x_j_swap,
+       ARRAY_AGG(j.disk ORDER BY j.rt ASC) x_j_disk,
+       ARRAY_AGG(j.cpu1_t ORDER BY j.rt ASC) x_m_cpu1_t,
+       ARRAY_AGG(j.cpu2_t ORDER BY j.rt ASC) x_m_cpu2_t,
+       ARRAY_AGG(j.ram_pct ORDER BY j.rt ASC) x_m_ram_pct,
+       ARRAY_AGG(j.swap_pct ORDER BY j.rt ASC) x_m_swap_pct,
+       ARRAY_AGG(j.totload_avg ORDER BY j.rt ASC) x_m_totload_avg,
+       ARRAY_AGG(j.selfage ORDER BY j.rt ASC) x_m_selfage
+    FROM (
+        SELECT *
+        FROM (
+            SELECT 
+                ts, jobid, idx, queue, hn, rt, rss, swp, disk
+            FROM hj
+            WHERE ts BETWEEN to_unixtime(%s) - %s AND to_unixtime(%s) - %s
+        ) j LEFT JOIN LATERAL (
+            SELECT 
+                cpu1_t,
+                cpu2_t,
+                ((memavail * 100.0) / memtot)::NUMERIC(15,2) as ram_pct,
+                ((memavail * 100.0) / memtot)::NUMERIC(15,2) as swap_pct,
+                totload_avg, 
+                selfage
+            FROM hm m
+            WHERE m.ts >= to_timestamp(j.ts) AND j.hn = m.hn
+            ORDER BY m.ts
+            LIMIT 1
+        ) m ON TRUE
+    ) j INNER JOIN htjob jd ON
+        j.queue = jd.queue AND
+        j.jobid = jd.jobid AND j.idx = jd.idx AND
+        j.ts BETWEEN jd.starttimeepoch AND jd.eventtimeepoch
     WHERE
-      j.ts BETWEEN to_unixtime(%s) - %s AND to_unixtime(%s) - %s AND
       jd.eventtimeepoch BETWEEN to_unixtime(%s) AND to_unixtime(%s) AND
       jd.runtime >= %s
-    GROUP BY j.jobid,j.idx ORDER BY mint
+    GROUP BY job, jd.queue, fail ORDER BY mint
 )
 SELECT 
     job,
+    queue,
+    fail,
     mint,
     maxt,
-    xt[:20] t,
-    xram[:20] ram, 
-    ximg[:20] img, 
-    xdisk[:20] disk 
+    xt[:40] t,
+    x_j_ram[:40] j_ram, 
+    x_j_swap[:40] j_swap, 
+    x_j_disk[:40] j_disk,
+    x_m_cpu1_t[:40] m_cpu1_t,
+    x_m_cpu2_t[:40] m_cpu2_t,
+    x_m_ram_pct[:40] m_ram_pct,
+    x_m_swap_pct[:40] m_swap_pct,
+    x_m_totload_avg[:40] m_totload_avg,
+    x_m_selfage[:40] m_selfage
 FROM A 
 WHERE 
     xt[1] <= 180 AND 
-    ARRAY_LENGTH(xt,1) >= 20
+    ARRAY_LENGTH(xt,1) >= 40
 """
