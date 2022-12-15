@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import cudf
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 import scipy.stats as st
@@ -76,17 +77,19 @@ def confidence_interval(N, acc, alpha=0.05, verbose=False):
     
     return p_min, p_max
 
-def eval_model(X, y, model, alpha=0.05, labels=[], verbose=False):
+def eval_model(X, y, model, thr=None, alpha=0.05, labels=[], verbose=False):
     y_pred = model.predict(X)
+    if thr is not None:
+        y_pred = (np.sum(np.square(y_pred - X), axis=1) > thr).astype(int)
     
     metrics = ["precision", "recall", "f1_measure"]
-    
+        
     accuracy = accuracy_score(y, y_pred)
     precision = precision_score(y, y_pred, average=None)
     recall = recall_score(y, y_pred, average=None)
     f1_measure = f1_score(y, y_pred, average=None)
     all_classes = pd.Series([precision.mean(), recall.mean(), f1_measure.mean()],  index=metrics)
-    
+        
     if verbose:
         print("\n*** Confusion matrix ***\n")
         cf_matrix = confusion_matrix(y, y_pred)
@@ -100,7 +103,6 @@ def eval_model(X, y, model, alpha=0.05, labels=[], verbose=False):
         model_stats = pd.concat(
             [pd.DataFrame([precision, recall, f1_measure], index=metrics), all_classes], axis=1)
         model_stats.columns = labels + ["all"]
-        print(model_stats)
 
         print(f"\n*** Calcolo intervallo di confidenza con Confidenza={1-alpha} con N={X.shape[0]} per accuracy e f1-measure ***\n")
         print(f"accuracy: ({accuracy}), intervallo confidenza: {confidence_interval(X.shape[0], accuracy, alpha)}")
