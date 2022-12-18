@@ -103,6 +103,7 @@ def eval_model(X, y, model, thr=None, alpha=0.05, labels=[], verbose=False):
         model_stats = pd.concat(
             [pd.DataFrame([precision, recall, f1_measure], index=metrics), all_classes], axis=1)
         model_stats.columns = labels + ["all"]
+        print(model_stats)
 
         print(f"\n*** Calcolo intervallo di confidenza con Confidenza={1-alpha} con N={X.shape[0]} per accuracy e f1-measure ***\n")
         print(f"accuracy: ({accuracy}), intervallo confidenza: {confidence_interval(X.shape[0], accuracy, alpha)}")
