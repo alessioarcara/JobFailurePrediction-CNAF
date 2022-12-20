@@ -120,7 +120,7 @@ jobname_of_jobs = """
 
 jobs_from_date_to_date = """WITH A AS (
     SELECT 
-       j.jobid||'.'||j.idx||'_'||j.hn job,
+       j.jobid||'.'||j.idx||'_'||jd.fromhost job,
        jd.queue,
        (jd.jobstatus != 4 OR jd.exitstatus != 0)::int fail,
        MIN(j.ts) mint,
@@ -151,8 +151,8 @@ jobs_from_date_to_date = """WITH A AS (
                 totload_avg, 
                 selfage
             FROM hm m
-            WHERE extract(epoch FROM m.ts) >= j.ts AND j.hn = m.hn
-            ORDER BY extract(epoch FROM m.ts)
+            WHERE m.ts >= to_timestamp(j.ts) AND j.hn = m.hn
+            ORDER BY m.ts
             LIMIT 1
         ) m ON TRUE
     ) j INNER JOIN htjob jd ON
@@ -170,16 +170,26 @@ SELECT
     fail,
     mint,
     maxt,
-    xt[:40] t,
-    x_j_ram[:40] j_ram, 
-    x_j_swap[:40] j_swap, 
-    x_j_disk[:40] j_disk,
-    x_m_cpu1_t[:40] m_cpu1_t,
-    x_m_cpu2_t[:40] m_cpu2_t,
-    x_m_ram_pct[:40] m_ram_pct,
-    x_m_swap_pct[:40] m_swap_pct,
-    x_m_totload_avg[:40] m_totload_avg,
-    x_m_selfage[:40] m_selfage
+    xt[:20] start_t,
+    x_j_ram[:20] start_j_ram, 
+    x_j_swap[:20] start_j_ram, 
+    x_j_disk[:20] start_j_disk,
+    x_m_cpu1_t[:20] start_m_cpu1_t,
+    x_m_cpu2_t[:20] start_m_cpu2_t,
+    x_m_ram_pct[:20] start_m_ram_pct,
+    x_m_swap_pct[:20] start_m_swap_pct,
+    x_m_totload_avg[:20] start_m_totload_avg,
+    x_m_selfage[:20] start_m_selfage,
+    xt[-20:] end_t,
+    x_j_ram[-20:] end_j_ram, 
+    x_j_swap[-20:] end_j_ram, 
+    x_j_disk[-20:] end_j_disk,
+    x_m_cpu1_t[-20:] end_m_cpu1_t,
+    x_m_cpu2_t[-20:] end_m_cpu2_t,
+    x_m_ram_pct[-20:] end_m_ram_pct,
+    x_m_swap_pct[-20:] end_m_swap_pct,
+    x_m_totload_avg[-20:] end_m_totload_avg,
+    x_m_selfage[-20:] end_m_selfage
 FROM A 
 WHERE 
     xt[1] <= 180 AND 
