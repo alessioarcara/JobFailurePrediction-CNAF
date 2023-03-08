@@ -125,16 +125,16 @@ jobs_from_date_to_date = """WITH A AS (
        (jd.jobstatus != 4 OR jd.exitstatus != 0)::int fail,
        MIN(j.ts) mint,
        MAX(j.ts) maxt,
-       ARRAY_AGG(j.rt ORDER BY j.rt ASC) xt,
-       ARRAY_AGG(j.rss ORDER BY j.rt ASC) x_j_ram,
-       ARRAY_AGG(j.swp ORDER BY j.rt ASC) x_j_swap,
-       ARRAY_AGG(j.disk ORDER BY j.rt ASC) x_j_disk,
-       ARRAY_AGG(j.cpu1_t ORDER BY j.rt ASC) x_m_cpu1_t,
-       ARRAY_AGG(j.cpu2_t ORDER BY j.rt ASC) x_m_cpu2_t,
-       ARRAY_AGG(j.ram_pct ORDER BY j.rt ASC) x_m_ram_pct,
-       ARRAY_AGG(j.swap_pct ORDER BY j.rt ASC) x_m_swap_pct,
-       ARRAY_AGG(j.totload_avg ORDER BY j.rt ASC) x_m_totload_avg,
-       ARRAY_AGG(j.selfage ORDER BY j.rt ASC) x_m_selfage
+       ARRAY_AGG(j.rt ORDER BY j.rt ASC) t,
+       ARRAY_AGG(j.rss ORDER BY j.rt ASC) j_ram,
+       ARRAY_AGG(j.swp ORDER BY j.rt ASC) j_swap,
+       ARRAY_AGG(j.disk ORDER BY j.rt ASC) j_disk,
+       ARRAY_AGG(j.cpu1_t ORDER BY j.rt ASC) m_cpu1_t,
+       ARRAY_AGG(j.cpu2_t ORDER BY j.rt ASC) m_cpu2_t,
+       ARRAY_AGG(j.ram_pct ORDER BY j.rt ASC) m_ram_pct,
+       ARRAY_AGG(j.swap_pct ORDER BY j.rt ASC) m_swap_pct,
+       ARRAY_AGG(j.totload_avg ORDER BY j.rt ASC) m_totload_avg,
+       ARRAY_AGG(j.selfage ORDER BY j.rt ASC) m_selfage
     FROM (
         SELECT *
         FROM (
@@ -170,28 +170,16 @@ SELECT
     fail,
     mint,
     maxt,
-    xt[:20] start_t,
-    x_j_ram[:20] start_j_ram, 
-    x_j_swap[:20] start_j_ram, 
-    x_j_disk[:20] start_j_disk,
-    x_m_cpu1_t[:20] start_m_cpu1_t,
-    x_m_cpu2_t[:20] start_m_cpu2_t,
-    x_m_ram_pct[:20] start_m_ram_pct,
-    x_m_swap_pct[:20] start_m_swap_pct,
-    x_m_totload_avg[:20] start_m_totload_avg,
-    x_m_selfage[:20] start_m_selfage,
-    xt[-20:] end_t,
-    x_j_ram[-20:] end_j_ram, 
-    x_j_swap[-20:] end_j_ram, 
-    x_j_disk[-20:] end_j_disk,
-    x_m_cpu1_t[-20:] end_m_cpu1_t,
-    x_m_cpu2_t[-20:] end_m_cpu2_t,
-    x_m_ram_pct[-20:] end_m_ram_pct,
-    x_m_swap_pct[-20:] end_m_swap_pct,
-    x_m_totload_avg[-20:] end_m_totload_avg,
-    x_m_selfage[-20:] end_m_selfage
+    t,
+    j_ram,
+    j_swap,
+    j_disk,
+    m_cpu1_t,
+    m_cpu2_t,
+    m_ram_pct,
+    m_swap_pct,
+    m_totload_avg,
+    m_selfage
 FROM A 
-WHERE 
-    xt[1] <= 180 AND 
-    ARRAY_LENGTH(xt,1) >= 40
+WHERE t[1] <= 180 
 """
