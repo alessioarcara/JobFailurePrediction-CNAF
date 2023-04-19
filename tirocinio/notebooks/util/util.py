@@ -1,6 +1,8 @@
+import os
 import pandas as pd
+import polars as pl
 import numpy as np
-import cudf
+#import cudf
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 import scipy.stats as st
 from sklearn.preprocessing import MultiLabelBinarizer, LabelEncoder
@@ -11,8 +13,19 @@ import seaborn as sns
 
 LABELS = ["short", "medium", "long"]
 
-import nltk
-STOPWORDS = nltk.corpus.stopwords.words('english')
+# import nltk
+# STOPWORDS = nltk.corpus.stopwords.words('english')
+
+def load_dataset(path, start_date, end_date, min_runtime):
+    if os.path.exists(path):
+        print("CACHE")
+        df = pd.read_parquet(path)
+    else:
+        print("DOWNLOAD")
+        df = pd.from_pandas(pd.read_sql(query.jobs_from_date_to_date, engine, params=([start_date, min_runtime, end_date, min_runtime, start_date, end_date, min_runtime])))
+        print("SAVING")
+        df.write_parquet(path, compression='snappy')
+    return df
 
 def plot_multiple_subplots(data, mainPlotCallback, nrows, ncols, figsize=None, plotTitle=None, remainingPlotsCallbacks=[]):
     """
@@ -41,27 +54,27 @@ def plot_multiple_subplots(data, mainPlotCallback, nrows, ncols, figsize=None, p
 def bin_df(df, lower_bound, upper_bound):
     return df.groupby(pd.cut(df.index, bins = [0, lower_bound, upper_bound, len(df)], right=False)).sum()
 
-def preprocess_text(raw_text , filters=None , stopwords=STOPWORDS):
-    """
-        * filter punctuation
-        * to_lower
-        * remove stop words (from nltk corpus)
-        * remove multiple spaces with one
-        * remove leading spaces    
-    """
-    # filter punctuation and case conversion
-    translation_table = {ord(char): ord(' ') for char in filters}
-    raw_text = raw_text.str.translate(translation_table)
-    raw_text = raw_text.str.lower()
-    # remove words whose word length is less than 2 characters
-    raw_text = raw_text.str.findall('\w{4,}').str.join(' ')
-    # remove stopwords
-    stopwords_gpu = cudf.Series(stopwords)
-    raw_text = raw_text.str.replace_tokens(stopwords_gpu, ' ')
-    # replace multiple spaces with single one and strip leading/trailing spaces
-    raw_text = raw_text.str.normalize_spaces( )
-    raw_text = raw_text.str.strip(' ')
-    return raw_text
+# def preprocess_text(raw_text , filters=None , stopwords=STOPWORDS):
+#     """
+#         * filter punctuation
+#         * to_lower
+#         * remove stop words (from nltk corpus)
+#         * remove multiple spaces with one
+#         * remove leading spaces    
+#     """
+#     # filter punctuation and case conversion
+#     translation_table = {ord(char): ord(' ') for char in filters}
+#     raw_text = raw_text.str.translate(translation_table)
+#     raw_text = raw_text.str.lower()
+#     # remove words whose word length is less than 2 characters
+#     raw_text = raw_text.str.findall('\w{4,}').str.join(' ')
+#     # remove stopwords
+#     stopwords_gpu = cudf.Series(stopwords)
+#     raw_text = raw_text.str.replace_tokens(stopwords_gpu, ' ')
+#     # replace multiple spaces with single one and strip leading/trailing spaces
+#     raw_text = raw_text.str.normalize_spaces( )
+#     raw_text = raw_text.str.strip(' ')
+#     return raw_text
 
 def bin_job_runtime(vect_runtime: pd.Series, lower_bound = 6, upper_bound = 30):
     return pd.cut(vect_runtime / 3600.0, bins = [-float("inf"), lower_bound, upper_bound, len(vect_runtime)], right=False, labels=LABELS)

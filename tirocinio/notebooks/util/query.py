@@ -118,51 +118,99 @@ jobname_of_jobs = """
         runtime > 3600
 """
 
+# jobs_from_date_to_date = """WITH A AS (
+#     SELECT 
+#        j.jobid||'.'||j.idx||'_'||jd.fromhost job,
+#        jd.queue,
+#        (jd.jobstatus != 4 OR jd.exitstatus != 0)::int fail,
+#        MIN(j.ts) mint,
+#        MAX(j.ts) maxt,
+#        ARRAY_AGG(j.rt ORDER BY j.rt ASC) t,
+#        ARRAY_AGG(j.rss ORDER BY j.rt ASC) j_ram,
+#        ARRAY_AGG(j.swp ORDER BY j.rt ASC) j_swap,
+#        ARRAY_AGG(j.disk ORDER BY j.rt ASC) j_disk,
+#        ARRAY_AGG(j.cpu1_t ORDER BY j.rt ASC) m_cpu1_t,
+#        ARRAY_AGG(j.cpu2_t ORDER BY j.rt ASC) m_cpu2_t,
+#        ARRAY_AGG(j.ram_pct ORDER BY j.rt ASC) m_ram_pct,
+#        ARRAY_AGG(j.swap_pct ORDER BY j.rt ASC) m_swap_pct,
+#        ARRAY_AGG(j.totload_avg ORDER BY j.rt ASC) m_totload_avg,
+#        ARRAY_AGG(j.selfage ORDER BY j.rt ASC) m_selfage
+#     FROM (
+#         SELECT *
+#         FROM (
+#             SELECT 
+#                 ts, jobid, idx, queue, hn, rt, rss, swp, disk
+#             FROM hj
+#             WHERE ts BETWEEN to_unixtime(%s) - %s AND to_unixtime(%s) - %s
+#         ) j LEFT JOIN LATERAL (
+#             SELECT 
+#                 cpu1_t,
+#                 cpu2_t,
+#                 ((memavail * 100.0) / memtot)::NUMERIC(15,2) as ram_pct,
+#                 ((memavail * 100.0) / memtot)::NUMERIC(15,2) as swap_pct,
+#                 totload_avg, 
+#                 selfage
+#             FROM hm m
+#             WHERE m.ts >= to_timestamp(j.ts) AND j.hn = m.hn
+#             ORDER BY m.ts
+#             LIMIT 1
+#         ) m ON TRUE
+#     ) j INNER JOIN htjob jd ON
+#         j.queue = jd.queue AND
+#         j.jobid = jd.jobid AND j.idx = jd.idx AND
+#         j.ts BETWEEN jd.starttimeepoch AND jd.eventtimeepoch
+#     WHERE
+#       jd.eventtimeepoch BETWEEN to_unixtime(%s) AND to_unixtime(%s) AND
+#       jd.runtime >= %s
+#     GROUP BY job, jd.queue, fail ORDER BY mint
+# )
+# SELECT 
+#     job,
+#     queue,
+#     fail,
+#     mint,
+#     maxt,
+#     t,
+#     j_ram,
+#     j_swap,
+#     j_disk,
+#     m_cpu1_t,
+#     m_cpu2_t,
+#     m_ram_pct,
+#     m_swap_pct,
+#     m_totload_avg,
+#     m_selfage
+# FROM A 
+# WHERE t[1] <= 180 
+# """
+
 jobs_from_date_to_date = """WITH A AS (
     SELECT 
-       j.jobid||'.'||j.idx||'_'||jd.fromhost job,
-       jd.queue,
-       (jd.jobstatus != 4 OR jd.exitstatus != 0)::int fail,
-       MIN(j.ts) mint,
-       MAX(j.ts) maxt,
-       ARRAY_AGG(j.rt ORDER BY j.rt ASC) t,
-       ARRAY_AGG(j.rss ORDER BY j.rt ASC) j_ram,
-       ARRAY_AGG(j.swp ORDER BY j.rt ASC) j_swap,
-       ARRAY_AGG(j.disk ORDER BY j.rt ASC) j_disk,
-       ARRAY_AGG(j.cpu1_t ORDER BY j.rt ASC) m_cpu1_t,
-       ARRAY_AGG(j.cpu2_t ORDER BY j.rt ASC) m_cpu2_t,
-       ARRAY_AGG(j.ram_pct ORDER BY j.rt ASC) m_ram_pct,
-       ARRAY_AGG(j.swap_pct ORDER BY j.rt ASC) m_swap_pct,
-       ARRAY_AGG(j.totload_avg ORDER BY j.rt ASC) m_totload_avg,
-       ARRAY_AGG(j.selfage ORDER BY j.rt ASC) m_selfage
+        CONCAT(j.jobid, '.', j.idx, '_', jd.fromhost) AS job,
+        jd.queue,
+        (jd.jobstatus != 4 OR jd.exitstatus != 0)::int AS fail,
+        MIN(j.ts) AS mint,
+        MAX(j.ts) AS maxt,
+        ARRAY_AGG(j.rt ORDER BY j.rt ASC) AS t,
+        ARRAY_AGG(j.rss ORDER BY j.rt ASC) AS ram,
+        ARRAY_AGG(j.swp ORDER BY j.rt ASC) AS swap,
+        ARRAY_AGG(j.disk ORDER BY j.rt ASC) AS disk
     FROM (
-        SELECT *
-        FROM (
-            SELECT 
-                ts, jobid, idx, queue, hn, rt, rss, swp, disk
-            FROM hj
-            WHERE ts BETWEEN to_unixtime(%s) - %s AND to_unixtime(%s) - %s
-        ) j LEFT JOIN LATERAL (
-            SELECT 
-                cpu1_t,
-                cpu2_t,
-                ((memavail * 100.0) / memtot)::NUMERIC(15,2) as ram_pct,
-                ((memavail * 100.0) / memtot)::NUMERIC(15,2) as swap_pct,
-                totload_avg, 
-                selfage
-            FROM hm m
-            WHERE m.ts >= to_timestamp(j.ts) AND j.hn = m.hn
-            ORDER BY m.ts
-            LIMIT 1
-        ) m ON TRUE
-    ) j INNER JOIN htjob jd ON
+        SELECT ts, jobid, idx, queue, rt, rss, swp, disk
+        FROM hj
+        WHERE ts BETWEEN to_unixtime(%s) - %s AND to_unixtime(%s) - %s
+    ) j 
+    INNER JOIN htjob_recent jd ON
         j.queue = jd.queue AND
-        j.jobid = jd.jobid AND j.idx = jd.idx AND
+        j.jobid = jd.jobid AND
+        j.idx = jd.idx AND
         j.ts BETWEEN jd.starttimeepoch AND jd.eventtimeepoch
     WHERE
-      jd.eventtimeepoch BETWEEN to_unixtime(%s) AND to_unixtime(%s) AND
-      jd.runtime >= %s
-    GROUP BY job, jd.queue, fail ORDER BY mint
+        jd.eventtimeepoch BETWEEN to_unixtime(%s) AND to_unixtime(%s) AND
+        jd.runtime >= %s
+    GROUP BY job, jd.queue, fail
+    HAVING min(ts) <= 180
+    ORDER BY mint
 )
 SELECT 
     job,
@@ -171,15 +219,8 @@ SELECT
     mint,
     maxt,
     t,
-    j_ram,
-    j_swap,
-    j_disk,
-    m_cpu1_t,
-    m_cpu2_t,
-    m_ram_pct,
-    m_swap_pct,
-    m_totload_avg,
-    m_selfage
+    ram,
+    swap,
+    disk
 FROM A 
-WHERE t[1] <= 180 
 """
