@@ -1,30 +1,78 @@
 import os
 import pandas as pd
-import polars as pl
+# import polars as pl
 import numpy as np
-#import cudf
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 import scipy.stats as st
 from sklearn.preprocessing import MultiLabelBinarizer, LabelEncoder
+from util import query
 
 from matplotlib import pyplot as plt
 # librerie grafiche
 import seaborn as sns
 
 LABELS = ["short", "medium", "long"]
+TIME_SERIES_COLUMNS = ['ram', 'swap', 'disk']
+TIME_STEP_COLUMN = 't'
+STRING_COLUMNS = ['job', 'queue']
+CAT_COLUMNS = ['job_work_type', 'job_type', 'too_much_time']
+
+connstring = 'postgresql://accguy:accguy@192.168.1.17/htmnew'
+# from sqlalchemy import create_engine
 
 # import nltk
 # STOPWORDS = nltk.corpus.stopwords.words('english')
 
-def load_dataset(path, start_date, end_date, min_runtime):
+# class Preprocessor:
+    # def __init__:
+    
+    
+def load_dataset(path, engine, start_date, end_date, min_runtime):
     if os.path.exists(path):
         print("CACHE")
         df = pd.read_parquet(path)
     else:
+        print(engine)
         print("DOWNLOAD")
-        df = pd.from_pandas(pd.read_sql(query.jobs_from_date_to_date, engine, params=([start_date, min_runtime, end_date, min_runtime, start_date, end_date, min_runtime])))
+        df = pd.read_sql(query.jobs_from_date_to_date, engine, params=([start_date, min_runtime, end_date, min_runtime, start_date, end_date, min_runtime]))
         print("SAVING")
         df.write_parquet(path, compression='snappy')
+    return df
+
+def downsample(x, w):
+    if len(x) % w != 0:
+        x = np.pad(x, (0, w - len(x) % w), mode='edge')
+    return np.mean(x.reshape(-1, w), axis=1)
+
+def set_too_much_time(row):
+    days_limit = 3 if row['job_type'] == 'grid' else 6 
+    return 1 if row['days'] > days_limit and row['fail'] == 1 else 0
+
+def transform_data(df: pd.DataFrame, window_size: int) -> pd.DataFrame:  
+    print("--- Downsampling dei dati delle serie temporali... ---")
+    for COL in TIME_SERIES_COLUMNS + [TIME_STEP_COLUMN]:
+        df[COL] = df[COL].apply(downsample, args=(window_size,))
+     
+    print("--- Definite le colonne 'job_work_type' e 'job_type'... ---")
+    df[STRING_COLUMNS] = df[STRING_COLUMNS].astype("string")
+    search_for_queue = ['alice', 'atlas', 'cms', 'lhcb']
+    df['job_work_type'] = df['queue'].str.contains("|".join(search_for_queue)).map({True: "lhc", False: "non-lhc"})
+    df['job_type'] = df['job'].str.contains('ce').map({True: "grid", False: "local"})
+    
+    labels = np.arange(1,8)
+    bins = np.append(labels - 1, [np.inf])
+    runtime_in_days = (df['maxt'] - df['mint']) / 86400.0
+    df['days'] = pd.cut(runtime_in_days, bins=bins, labels=labels)
+    
+    df['too_much_time'] = df[['job_type', 'days', 'fail']].apply(set_too_much_time, axis=1)
+    df[CAT_COLUMNS] = df[CAT_COLUMNS].astype("category")
+    
+    print("--- Rimossi i jobs con durata inferiore a un'ora ---")
+    df = df[~(df['maxt'] - df['mint'] <= 3600)]
+
+    if df.isna().sum().sum() > 0:
+        print("--- Sono presenti valori mancanti. Rimossi i record con valori mancanti... ---")
+        df.dropna(inplace=True)
     return df
 
 def plot_multiple_subplots(data, mainPlotCallback, nrows, ncols, figsize=None, plotTitle=None, remainingPlotsCallbacks=[]):
