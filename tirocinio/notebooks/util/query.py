@@ -209,7 +209,6 @@ jobs_from_date_to_date = """WITH A AS (
         jd.eventtimeepoch BETWEEN to_unixtime(%s) AND to_unixtime(%s) AND
         jd.runtime >= %s
     GROUP BY job, jd.queue, fail
-    HAVING min(ts) <= 180
     ORDER BY mint
 )
 SELECT 
@@ -222,5 +221,6 @@ SELECT
     ram,
     swap,
     disk
-FROM A 
+FROM A
+WHERE t[1] <= 180 
 """

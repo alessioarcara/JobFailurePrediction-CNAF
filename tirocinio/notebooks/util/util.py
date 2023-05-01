@@ -1,78 +1,30 @@
 import os
 import pandas as pd
-# import polars as pl
 import numpy as np
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 import scipy.stats as st
-from sklearn.preprocessing import MultiLabelBinarizer, LabelEncoder
+from sklearn.model_selection import cross_validate, KFold, RandomizedSearchCV
 from util import query
+random_state = 42
 
-from matplotlib import pyplot as plt
 # librerie grafiche
+from matplotlib import pyplot as plt
 import seaborn as sns
 
 LABELS = ["short", "medium", "long"]
-TIME_SERIES_COLUMNS = ['ram', 'swap', 'disk']
-TIME_STEP_COLUMN = 't'
-STRING_COLUMNS = ['job', 'queue']
-CAT_COLUMNS = ['job_work_type', 'job_type', 'too_much_time']
-
-connstring = 'postgresql://accguy:accguy@192.168.1.17/htmnew'
-# from sqlalchemy import create_engine
 
 # import nltk
 # STOPWORDS = nltk.corpus.stopwords.words('english')
 
-# class Preprocessor:
-    # def __init__:
-    
-    
-def load_dataset(path, engine, start_date, end_date, min_runtime):
+def load_data(path, start_date, end_date, min_runtime, conn_string="postgresql://accguy:accguy@192.168.1.17/htmnew"):
     if os.path.exists(path):
         print("CACHE")
         df = pd.read_parquet(path)
     else:
-        print(engine)
         print("DOWNLOAD")
-        df = pd.read_sql(query.jobs_from_date_to_date, engine, params=([start_date, min_runtime, end_date, min_runtime, start_date, end_date, min_runtime]))
+        df = pd.read_sql(query.jobs_from_date_to_date, conn_string, params=((start_date, min_runtime, end_date, min_runtime, start_date, end_date, min_runtime)))
         print("SAVING")
-        df.write_parquet(path, compression='snappy')
-    return df
-
-def downsample(x, w):
-    if len(x) % w != 0:
-        x = np.pad(x, (0, w - len(x) % w), mode='edge')
-    return np.mean(x.reshape(-1, w), axis=1)
-
-def set_too_much_time(row):
-    days_limit = 3 if row['job_type'] == 'grid' else 6 
-    return 1 if row['days'] > days_limit and row['fail'] == 1 else 0
-
-def transform_data(df: pd.DataFrame, window_size: int) -> pd.DataFrame:  
-    print("--- Downsampling dei dati delle serie temporali... ---")
-    for COL in TIME_SERIES_COLUMNS + [TIME_STEP_COLUMN]:
-        df[COL] = df[COL].apply(downsample, args=(window_size,))
-     
-    print("--- Definite le colonne 'job_work_type' e 'job_type'... ---")
-    df[STRING_COLUMNS] = df[STRING_COLUMNS].astype("string")
-    search_for_queue = ['alice', 'atlas', 'cms', 'lhcb']
-    df['job_work_type'] = df['queue'].str.contains("|".join(search_for_queue)).map({True: "lhc", False: "non-lhc"})
-    df['job_type'] = df['job'].str.contains('ce').map({True: "grid", False: "local"})
-    
-    labels = np.arange(1,8)
-    bins = np.append(labels - 1, [np.inf])
-    runtime_in_days = (df['maxt'] - df['mint']) / 86400.0
-    df['days'] = pd.cut(runtime_in_days, bins=bins, labels=labels)
-    
-    df['too_much_time'] = df[['job_type', 'days', 'fail']].apply(set_too_much_time, axis=1)
-    df[CAT_COLUMNS] = df[CAT_COLUMNS].astype("category")
-    
-    print("--- Rimossi i jobs con durata inferiore a un'ora ---")
-    df = df[~(df['maxt'] - df['mint'] <= 3600)]
-
-    if df.isna().sum().sum() > 0:
-        print("--- Sono presenti valori mancanti. Rimossi i record con valori mancanti... ---")
-        df.dropna(inplace=True)
+        df.to_parquet(path, compression='snappy')
     return df
 
 def plot_multiple_subplots(data, mainPlotCallback, nrows, ncols, figsize=None, plotTitle=None, remainingPlotsCallbacks=[]):
@@ -126,6 +78,23 @@ def bin_df(df, lower_bound, upper_bound):
 
 def bin_job_runtime(vect_runtime: pd.Series, lower_bound = 6, upper_bound = 30):
     return pd.cut(vect_runtime / 3600.0, bins = [-float("inf"), lower_bound, upper_bound, len(vect_runtime)], right=False, labels=LABELS)
+
+def nested_cross_validation(X, y, model_to_tune, space = dict()):
+    # configure the cross-validation procedure
+    inner_cv = KFold(n_splits=5, shuffle=True, random_state=random_state)
+    outer_cv = KFold(n_splits=5, shuffle=True, random_state=random_state)
+
+    # nested CV with parameter optimization
+    search = RandomizedSearchCV(estimator=model_to_tune, param_distributions=space, scoring=scorer, cv=inner_cv)
+    result = cross_validate(search, X, y, cv=outer_cv, scoring=scorer, return_estimator=True, n_jobs=-1, verbose=2)
+    
+    scores = result['test_score']  # Equivalent to output of cross_val_score()
+    best_models = result['estimator']
+    
+    for score, model in zip(scores, best_models):
+        print('>est=%.3f, cfg=%s' % (score, model.best_params_))
+    # stima delle performance del modello a regime sui
+    print('f1_score: %.3f (%.3f)' % (np.mean(scores), np.std(scores)))
 
 def confidence_interval(N, acc, alpha=0.05, verbose=False):
     if verbose:
