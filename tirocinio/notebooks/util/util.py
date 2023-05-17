@@ -107,10 +107,11 @@ def confidence_interval(N, acc, alpha=0.05, verbose=False):
     
     return p_min, p_max
 
-def eval_model(X, y, model, thr=None, alpha=0.05, labels=[], verbose=False):
+def eval_model(X, y, model, threshold=0.5, alpha=0.05, labels=[], verbose=False):
     y_pred = model.predict(X)
-    if thr is not None:
-        y_pred = (np.sum(np.square(y_pred - X), axis=1) > thr).astype(int)
+    if threshold is not None:
+        y_pred = (y_pred >= threshold).astype(int)
+        # y_pred = (np.sum(np.square(y_pred - X), axis=1) > thr).astype(int)
     
     metrics = ["precision", "recall", "f1_measure"]
         

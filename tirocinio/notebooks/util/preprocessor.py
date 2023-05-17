@@ -46,7 +46,7 @@ class Preprocessor:
     def __downsample(self, x, w):
         padded_x = np.pad(x, (0, w - len(x) % w), mode='edge') if len(x) % w != 0 else x
         return np.mean(padded_x.reshape(-1, w), axis=1)
-            
+             
     def __downsample_data(self, data, w):
         print(f"--- Downsampling time series from 3m to {w*3}m ---")
         for COL in TIME_SERIES_COLS + [TIME_STEP_COL]:
