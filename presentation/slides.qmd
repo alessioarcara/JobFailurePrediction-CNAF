@@ -1,0 +1,29 @@
+---
+title: "Machine Learning Approaches for Job Failure Prediction in HTC Systems"
+author: "Alessio Arcara"
+format: revealjs
+css: style.css
+---
+
+## Panoramica del centro di calcolo CNAF
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+- Circa 59k core distribuiti su O(10^3) host fisici
+- Jobs provenienti da vari esperimenti scientifici
+- O(50) gruppi di utenti
+
+:::
+
+::: {.column width="50%"}
+![](./image1.jpg){width="450" height="300"}
+:::
+
+::::
+
+## Perchè è importante un approccio di machine learning nel contesto del cnaf?
+
+## Zombie jobs tasks
+
