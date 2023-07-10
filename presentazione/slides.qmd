@@ -1,0 +1,248 @@
+---
+title: "Machine Learning Approaches for Job Failure Prediction in HTC Systems"
+author: "Alessio Arcara"
+format: 
+    revealjs:
+        css: style.css
+        slide-number: true
+---
+
+## CNAF  {.smaller}
+
+:::: {.columns .v-center-container}
+
+::: {.column width="50%"}
+
+**Grande centro di calcolo:**
+
+- Circa 59k core distribuiti su O($10^3$) host fisici
+- O(50) gruppi di utenti
+- Jobs provenienti da <u>vari esperimenti scientifici</u>
+
+**I sistemi HTC, come questo, seguono un paradigma di calcolo batch:**
+
+- Gli utenti inviano i loro jobs che vengono inseriti in una coda
+- HTCondor seleziona i jobs dalla coda per assegnarli ai nodi di calcolo per l'esecuzione
+
+:::
+
+::: {.column width="50%"}
+
+![](./image1.jpg){width="450" height="300"}
+
+:::
+
+::::
+
+## High-Throughput Computing {.smaller}  
+
+I sistemi HTC sono progettati per gestire un grande numero di job, <u>massimizzando</u> l'utilizzo delle risorse disponibili
+
+. . . 
+
+![](./njobs_runtime.png)
+
+. . .
+
+prevedere un job che fallisce → consente di ridurre lo spreco di risorse 
+
+. . . 
+
+<u>idea</u>: predire il fallimento di un job di `lunga durata` è sicuramente più importante rispetto a predire il fallimento di un job di `breve durata`
+
+## Job 'zombie' detection {.smaller}
+
+:::: {.columns .v-center-container}
+
+::: {.column width="50%"}
+
+![](./jobs_zombie.png)
+
+Solo a Marzo 2023: **1194 giorni** di calcolo persi.
+
+:::
+
+::: {.column width="50%"}
+
+- Jobs che terminano senza rilasciare l'host fisico, causando `leakage` delle risorse fino al timeout.
+    - Timeout grid: 3 giorni 
+    - Timeout local: 7 giorni
+
+- L'addestramento di modelli di ML per tali job è complicato → sono <u>rari</u>!
+
+:::
+
+::::
+
+::: {.notes} 
+
+<u>Attenzione</u>: non sappiamo che tipo di risorse sta occupando!
+Potrebbe essere anche solo il process ID, ma ciò che ci fornisce HTCondor è che occupa anche DISK, SWAP e RAM fino alla terminazione
+
+Per poter ottenere il massimo guadagno, bisognerebbe ucciderli prima possibile, ma allo stesso tempo bisogna essere sicuri di uccidere dei falsi positivi
+:::
+
+## Uno sguardo al Dataset {.smaller}
+
+- Stato (RAM, DISK, SWAP) dei jobs campionati ogni 3 minuti
+- Ma il batch system aggiorna lo stato <u>ogni 15 minuti</u>!
+- **Grandezze monotone non decrescenti**
+
+::: {.panel-tabset}
+
+### Stato dei jobs
+
+![](./jobs_state.png){}
+
+### Risorse utilizzate
+
+::: {.r-stack}
+
+![](./ram_utilization.png){}
+
+![](./disk_utilization.png){.fragment}
+
+![](./swap_utilization.png){.fragment}
+:::
+
+::: 
+
+## Uno sguardo al Dataset  {.smaller}
+
+Possiamo utilizzare una `heatmap` per visualizzare i jobs zombie in relazione a DISK, SWAP e RAM
+
+![](./heatmap.png){.r-stretch}
+
+- **Risorse**:  Bianco = media, rosso = sotto la media, blu = sopra la media 
+- **Jobs zombie in alto**: arancione
+
+
+## Spazio latente di un autoencoder
+
+::: {.r-stack}
+
+![](./autoencoder_1.png){width=800}
+
+![](./autoencoder_2.png){.fragment}
+
+:::
+
+::: {.notes}
+    t-test: test di ipotesi per valutare se la differenza tra 2 modelli è frutto del caso
+:::
+
+## Addestramento supervisionato modelli (un'ora) {.smaller}
+
+- <u>Prima ora</u> di vita di un job su logs **fine 2021**
+
+- **Input**: i valori di utilizzo di DISK, SWAP e RAM nella prima ora delle serie storiche sono state trasformati in *features* (ad esempio: DISK_0, DISK_1, DISK_2, DISK_3)
+
+- Sulla prima metà di settembre 2021, sono stati addestrati diversi modelli di ML e, tra essi, il 
+modello risultato vincente è stato XGBoost 
+
+
+::: {.notes}
+* XGBoost vincitore di molte gare Kaggle
+* Sulle basi di questi risultati, è stato creato uno script (fatto deploy) per controllare le performance del modello con logs freschi
+:::
+
+## Addestramento supervisionato modelli (un'ora) {.smaller}
+![](./xgboost_result.png)
+
+## Addestramento supervisionato modelli (un giorno) {.smaller}
+
+- <u>Prime 24 ore</u> di vita di un job su logs **inizio 2023** → *padding* e *truncate*
+
+- **Input**: tensore 3D (batch_size, time_steps, features)
+
+* Architetture di **reti neurali** utilizzate:
+    * CNN → *feature extraction*
+    * ResNet-like (3 Residual Blocks)
+    * LSTM → *long term dependence*
+    * CNN + LSTM
+    * Transformer (Encoder)
+
+- le reti neurali hanno mostrato performance inferiori alle aspettative
+
+- il precedente modello XGBoost, addestrato solo sulla prima ora, è <u>statisticamente</u> migliore 
+
+::: {.notes}
+* a causa della scarsa qualità dei dati e del notevole sbilanciamento delle classi
+* tendono ad overfittare
+* essendo grandezze monotone non decrescenti potrebbero confondere il modello
+:::
+
+## Addestramento non supervisionato
+
+![](./reconstruction_error.png)
+
+## Tecniche per trattamento sbilanciamento dei dati {.smaller}
+
+- **sottocampionamento** dei jobs `normali` → scelti casualmente 
+- **sovracampionamento** dei jobs `zombie` → generati da *variational autoencoder*
+- **cost sensitive learning** → via *class_weight*
+- **metriche** → F0.5 score
+
+![](./vae.png)
+
+::: {.notes}
+* undersampling miglioramento marginale per DL
+* *vae* ininfluente
+:::
+
+## Conclusioni {.smaller}
+
+**Problemi**:
+
+- *Data drift*: i dati cambiano nel tempo e il modello perde accuratezza
+```{python} 
+#| echo: false
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+np.random.seed(42)
+time = np.arange(100)
+accuracy = 0.95 - (time/100)**2 + np.random.normal(0, 0.02, size=100)
+accuracy_retrained = [0.95 - ((t % 20)/40)**2 + np.random.normal(0, 0.02) for t in time]
+
+fig, ax = plt.subplots(1, 2, figsize=(12, 2.5))
+
+ax[0].plot(time, accuracy, label='Modello non riaddestrato')
+ax[0].set_title('Perdita di accuratezza nel tempo senza riaddestramento')
+ax[0].set_xlabel('Tempo')
+ax[0].set_ylabel('Accuratezza')
+ax[0].set_ylim(0, 1)
+ax[0].legend()
+
+ax[1].plot(time, accuracy_retrained, label='Modello riaddestrato ogni 20 unità di tempo')
+ax[1].set_title('Mantenimento dell\'accuratezza con riaddestramento periodico')
+ax[1].set_xlabel('Tempo')
+ax[1].set_ylabel('Accuratezza')
+ax[1].set_ylim(0, 1)
+
+retrain_times = np.arange(20, 100, 20)
+for t in retrain_times:
+    ax[1].scatter(t, accuracy_retrained[t], color='orange')
+    ax[1].annotate('Retrain', (t, accuracy_retrained[t]-0.05), textcoords="offset points", xytext=(0,-10), ha='center', color='orange')
+
+ax[1].axhline(0.75, linestyle='--', color='gray', alpha=0.6)
+ax[1].text(0, 0.76, 'Threshold', color='gray', fontsize=8)
+
+ax[1].legend()
+
+plt.tight_layout()
+plt.show()
+```
+- *Data quality*: valori monotoni non decrescenti e poche istanze relative alla classe meno rappresentata
+
+**Possibili sviluppi**:
+
+- arricchire features incrociando lo stato dei jobs con lo stato dei nodi di calcolo
+
+::: {.notes}
+- **Soluzione**: *Drift detector* → riaddestrare regolarmente
+- features stato dei nodi già parzialmente percorsa -> tempo di training, dimensionalità
+:::
+
+## Grazie per l'attenzione! {.center}
