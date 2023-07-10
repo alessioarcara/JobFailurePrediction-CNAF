@@ -238,12 +238,12 @@ plt.show()
 
 **Possibili sviluppi**:
 
-- ottenere features più significative (es. uso ram, disk e swap puntuali) 
-- correlazione con stato worker node
+- ottenere features più significative (ad esempio: uso ram, disk e swap puntuali)
 
 ::: {.notes}
 - **Soluzione**: *Drift detector* → riaddestrare regolarmente
 - features stato dei nodi già parzialmente percorsa -> tempo di training, dimensionalità
+- arricchire features incrociando lo stato dei jobs con lo stato dei nodi di calcolo
 :::
 
 ## Grazie per l'attenzione! {.center}
