@@ -28,7 +28,7 @@ format:
 
 ::: {.column width="50%"}
 
-![](./image1.jpg){width="450" height="300"}
+![](./images/image1.jpg){width="450" height="300"}
 
 :::
 
@@ -40,7 +40,7 @@ I sistemi HTC sono progettati per gestire un grande numero di job, <u>massimizza
 
 . . . 
 
-![](./njobs_runtime.png)
+![](./images/njobs_runtime.png)
 
 . . .
 
@@ -56,7 +56,7 @@ prevedere un job che fallisce → consente di ridurre lo spreco di risorse
 
 ::: {.column width="50%"}
 
-![](./jobs_zombie.png)
+![](./images/jobs_zombie.png)
 
 Solo a Marzo 2023: **1194 giorni** di calcolo persi.
 
@@ -92,17 +92,17 @@ Per poter ottenere il massimo guadagno, bisognerebbe ucciderli prima possibile, 
 
 ### Stato dei jobs
 
-![](./jobs_state.png){}
+![](./images/jobs_state.png){}
 
 ### Risorse utilizzate
 
 ::: {.r-stack}
 
-![](./ram_utilization.png){}
+![](./images/ram_utilization.png){}
 
-![](./disk_utilization.png){.fragment}
+![](./images/disk_utilization.png){.fragment}
 
-![](./swap_utilization.png){.fragment}
+![](./images/swap_utilization.png){.fragment}
 :::
 
 ::: 
@@ -111,7 +111,7 @@ Per poter ottenere il massimo guadagno, bisognerebbe ucciderli prima possibile, 
 
 Possiamo utilizzare una `heatmap` per visualizzare i jobs zombie in relazione a DISK, SWAP e RAM
 
-![](./heatmap.png){.r-stretch}
+![](./images/heatmap.png){.r-stretch}
 
 - **Risorse**:  Bianco = media, rosso = sotto la media, blu = sopra la media 
 - **Jobs zombie in alto**: arancione
@@ -121,9 +121,9 @@ Possiamo utilizzare una `heatmap` per visualizzare i jobs zombie in relazione a 
 
 ::: {.r-stack}
 
-![](./autoencoder_1.png){width=800}
+![](./images/autoencoder_1.png){width=800}
 
-![](./autoencoder_2.png){.fragment}
+![](./images/autoencoder_2.png){.fragment}
 
 :::
 
@@ -147,7 +147,7 @@ modello risultato vincente è stato XGBoost
 :::
 
 ## Addestramento supervisionato modelli (un'ora) {.smaller}
-![](./xgboost_result.png)
+![](./images/xgboost_result.png)
 
 ## Addestramento supervisionato modelli (un giorno) {.smaller}
 
@@ -174,7 +174,7 @@ modello risultato vincente è stato XGBoost
 
 ## Addestramento non supervisionato
 
-![](./reconstruction_error.png)
+![](./images/reconstruction_error.png)
 
 ## Tecniche per trattamento sbilanciamento dei dati {.smaller}
 
@@ -183,7 +183,7 @@ modello risultato vincente è stato XGBoost
 - **cost sensitive learning** → via *class_weight*
 - **metriche** → F0.5 score
 
-![](./vae.png)
+![](./images/vae.png)
 
 ::: {.notes}
 * undersampling miglioramento marginale per DL

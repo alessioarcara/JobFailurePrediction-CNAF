@@ -353,7 +353,7 @@ Alessio Arcara
 <li>HTCondor seleziona i jobs dalla coda per assegnarli ai nodi di calcolo per l’esecuzione</li>
 </ul>
 </div><div class="column" style="width:50%;">
-<p><img data-src="./image1.jpg" width="450" height="300"></p>
+<p><img data-src="./images/image1.jpg" width="450" height="300"></p>
 </div>
 </div>
 </section>
@@ -361,7 +361,7 @@ Alessio Arcara
 <h2>High-Throughput Computing</h2>
 <p>I sistemi HTC sono progettati per gestire un grande numero di job, <u>massimizzando</u> l’utilizzo delle risorse disponibili</p>
 <div class="fragment">
-<p><img data-src="./njobs_runtime.png"></p>
+<p><img data-src="./images/njobs_runtime.png"></p>
 </div>
 <div class="fragment">
 <p>prevedere un job che fallisce → consente di ridurre lo spreco di risorse</p>
@@ -374,7 +374,7 @@ Alessio Arcara
 <h2>Job ‘zombie’ detection</h2>
 <div class="columns v-center-container">
 <div class="column" style="width:50%;">
-<p><img data-src="./jobs_zombie.png"></p>
+<p><img data-src="./images/jobs_zombie.png"></p>
 <p>Solo a Marzo 2023: <strong>1194 giorni</strong> di calcolo persi.</p>
 </div><div class="column" style="width:50%;">
 <ul>
@@ -413,13 +413,13 @@ Alessio Arcara
 <ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Stato dei jobs</a></li><li><a href="#tabset-1-2">Risorse utilizzate</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1">
-<p><img data-src="./jobs_state.png"></p>
+<p><img data-src="./images/jobs_state.png"></p>
 </div>
 <div id="tabset-1-2">
 <div class="r-stack">
-<p><img data-src="./ram_utilization.png"></p>
-<p><img data-src="./disk_utilization.png" class="fragment"></p>
-<p><img data-src="./swap_utilization.png" class="fragment"></p>
+<p><img data-src="./images/ram_utilization.png"></p>
+<p><img data-src="./images/disk_utilization.png" class="fragment"></p>
+<p><img data-src="./images/swap_utilization.png" class="fragment"></p>
 </div>
 </div>
 </div>
@@ -428,7 +428,7 @@ Alessio Arcara
 <section id="uno-sguardo-al-dataset-1" class="slide level2 smaller">
 <h2>Uno sguardo al Dataset</h2>
 <p>Possiamo utilizzare una <code>heatmap</code> per visualizzare i jobs zombie in relazione a DISK, SWAP e RAM</p>
-<img data-src="./heatmap.png" class="r-stretch">
+<img data-src="./images/heatmap.png" class="r-stretch">
 <ul>
 <li><strong>Risorse</strong>: Bianco = media, rosso = sotto la media, blu = sopra la media</li>
 <li><strong>Jobs zombie in alto</strong>: arancione</li>
@@ -437,8 +437,8 @@ Alessio Arcara
 <section id="spazio-latente-di-un-autoencoder" class="slide level2">
 <h2>Spazio latente di un autoencoder</h2>
 <div class="r-stack">
-<p><img data-src="./autoencoder_1.png" width="800"></p>
-<p><img data-src="./autoencoder_2.png" class="fragment"></p>
+<p><img data-src="./images/autoencoder_1.png" width="800"></p>
+<p><img data-src="./images/autoencoder_2.png" class="fragment"></p>
 </div>
 <aside class="notes">
 <pre><code>t-test: test di ipotesi per valutare se la differenza tra 2 modelli è frutto del caso</code></pre>
@@ -481,7 +481,7 @@ Alessio Arcara
 <section id="addestramento-supervisionato-modelli-unora-1" class="slide level2 smaller">
 <h2>Addestramento supervisionato modelli (un’ora)</h2>
 
-<img data-src="./xgboost_result.png" class="r-stretch"></section>
+<img data-src="./images/xgboost_result.png" class="r-stretch"></section>
 <section id="addestramento-supervisionato-modelli-un-giorno" class="slide level2 smaller">
 <h2>Addestramento supervisionato modelli (un giorno)</h2>
 <ul>
@@ -519,7 +519,7 @@ Alessio Arcara
 <section id="addestramento-non-supervisionato" class="slide level2">
 <h2>Addestramento non supervisionato</h2>
 
-<img data-src="./reconstruction_error.png" class="r-stretch"></section>
+<img data-src="./images/reconstruction_error.png" class="r-stretch"></section>
 <section id="tecniche-per-trattamento-sbilanciamento-dei-dati" class="slide level2 smaller">
 <h2>Tecniche per trattamento sbilanciamento dei dati</h2>
 <ul>
@@ -529,7 +529,7 @@ Alessio Arcara
 <li><strong>metriche</strong> → F0.5 score</li>
 </ul>
 
-<img data-src="./vae.png" class="r-stretch"><aside class="notes">
+<img data-src="./images/vae.png" class="r-stretch"><aside class="notes">
 <ul>
 <li>undersampling miglioramento marginale per DL</li>
 <li><em>vae</em> ininfluente</li>
