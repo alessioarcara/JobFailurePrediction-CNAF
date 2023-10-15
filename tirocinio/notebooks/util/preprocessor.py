@@ -21,7 +21,7 @@ class Preprocessor:
             ('cat', OneHotEncoder(handle_unknown="ignore"), CAT_COLS[:2]),
         ], remainder="drop") 
         
-    def preprocess(self, data, window_size=5, perc_undersample=1, split=False):
+    def preprocess(self, data, window_size=5, perc_undersample=1, split=False, format_type="rows"):
         self.__define_job_work_and_type(data)
         self.__calculate_days_and_labels(data)
         self.__remove_duplicated_jobs(data)
@@ -32,8 +32,8 @@ class Preprocessor:
         if split == True:
             print("--- Splitting data in train and val data ---")
             train, val = train_test_split(data, test_size=0.2, stratify=data[TARGET_COL], random_state=self.random_state)
-            return self.__transform_arrays_to_rows(train), self.__transform_arrays_to_rows(val)
-        return self.__transform_arrays_to_rows(data)
+            return self.__transform_arrays_to_format(train, format_type), self.__transform_arrays_to_format(val, format_type)
+        return self.__transform_arrays_to_format(data, format_type)
     
     def transform(self, data, fit: bool = False) -> (np.array, np.array):
         y = data.pop(TARGET_COL)[::96].reset_index(drop=True)
@@ -95,8 +95,14 @@ class Preprocessor:
     def __pad_columns(self, df, columns, max_length):
         for col in columns:
             df[col] = df[col].apply(self.__zero_pad_and_truncate, args=(max_length,))
+            
+    def __transform_arrays_to_format(self, df, format_type):
+        if format_type == "rows":
+            return self.__transform_arrays_to_rows(df)
+        else:
+            return self.__transform_time_series_to_cols(df)
     
-    def __transform_arrays_to_rows(self, df, max_length = 96):
+    def __transform_arrays_to_rows(self, df, max_length=96):
         print(f"--- Transforming arrays to rows ({len(df) * max_length}, features)")
         self.__pad_columns(df, [*TIME_SERIES_COLS, TIME_STEP_COL], max_length)
         df = df.explode([*TIME_SERIES_COLS, TIME_STEP_COL])
@@ -104,12 +110,12 @@ class Preprocessor:
         df[TIME_STEP_COL] = (np.arange(0, len(df)) % max_length)
         return df.sort_values(['job', TIME_STEP_COL]).reset_index(drop=True)
     
-    # def __transform_time_series_to_cols(self, data, max_length = 96):
-    #     padded_df = self.__pad_columns(df, [*TIME_SERIES_COLUMNS, TIME_STEP_COLUMN], max_length)
-    #     return pd.concat([
-    #         padded_df.drop([*TIME_SERIES_COLUMNS, TIME_STEP_COLUMN], axis=1).reset_index(drop=True), 
-    #         pd.concat([pd.DataFrame(padded_df[col].tolist()).astype('float64').add_prefix(f"{col}_") for col in TIME_SERIES_COLUMNS], axis=1)
-    #     ], axis=1)
+    def __transform_time_series_to_cols(self, df, max_length=96):
+        self.__pad_columns(df, [*TIME_SERIES_COLS, TIME_STEP_COL], max_length)
+        return pd.concat([
+            df.drop([*TIME_SERIES_COLS, TIME_STEP_COL], axis=1).reset_index(drop=True), 
+            pd.concat([pd.DataFrame(df[col].tolist()).astype('float64').add_prefix(f"{col}_") for col in TIME_SERIES_COLS], axis=1)
+        ], axis=1)
     
     def __random_undersample(self, data, percentage):
         class_counts = data[TARGET_COL].value_counts()

@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 import numpy as np
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, fbeta_score, make_scorer
 import scipy.stats as st
 from sklearn.model_selection import cross_validate, KFold, RandomizedSearchCV
 from util import query
@@ -79,7 +79,7 @@ def bin_df(df, lower_bound, upper_bound):
 def bin_job_runtime(vect_runtime: pd.Series, lower_bound = 6, upper_bound = 30):
     return pd.cut(vect_runtime / 3600.0, bins = [-float("inf"), lower_bound, upper_bound, len(vect_runtime)], right=False, labels=LABELS)
 
-def nested_cross_validation(X, y, model_to_tune, space = dict()):
+def nested_cross_validation(X, y, model_to_tune, space = dict(), scorer = make_scorer(fbeta_score, beta=0.5)):
     # configure the cross-validation procedure
     inner_cv = KFold(n_splits=5, shuffle=True, random_state=random_state)
     outer_cv = KFold(n_splits=5, shuffle=True, random_state=random_state)
@@ -107,8 +107,8 @@ def confidence_interval(N, acc, alpha=0.05, verbose=False):
     
     return p_min, p_max
 
-def eval_model(X, y, model, threshold=0.5, alpha=0.05, labels=[], verbose=False):
-    y_pred = model.predict(X)
+def eval_model(y_pred, y, model, threshold=0.5, alpha=0.05, labels=[], verbose=False):
+    # y_pred = model.predict(X)
     if threshold is not None:
         y_pred = (y_pred >= threshold).astype(int)
         # y_pred = (np.sum(np.square(y_pred - X), axis=1) > thr).astype(int)
@@ -136,9 +136,9 @@ def eval_model(X, y, model, threshold=0.5, alpha=0.05, labels=[], verbose=False)
         model_stats.columns = labels + ["all"]
         print(model_stats)
 
-        print(f"\n*** Calcolo intervallo di confidenza con Confidenza={1-alpha} con N={X.shape[0]} per accuracy e f1-measure ***\n")
-        print(f"accuracy: ({accuracy}), intervallo confidenza: {confidence_interval(X.shape[0], accuracy, alpha)}")
-        print(f"f1-measure: ({f1_measure.mean()}), intervallo confidenza: {confidence_interval(X.shape[0], f1_measure.mean(), alpha)}")
+        print(f"\n*** Calcolo intervallo di confidenza con Confidenza={1-alpha} con N={y.shape[0]} per accuracy e f1-measure ***\n")
+        print(f"accuracy: ({accuracy}), intervallo confidenza: {confidence_interval(y.shape[0], accuracy, alpha)}")
+        print(f"f1-measure: ({f1_measure.mean()}), intervallo confidenza: {confidence_interval(y.shape[0], f1_measure.mean(), alpha)}")
 
     return (accuracy, f1_measure.mean())
 
