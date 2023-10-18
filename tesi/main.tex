@@ -1,0 +1,51 @@
+\documentclass[12pt,a4paper,openright,twoside]{report}
+\input{settings.tex}
+
+\begin{document}
+% Frontespizio
+\input{chapters/frontespizio}
+\blankpage
+
+% Dedica
+\input{chapters/dedica}
+
+% Introduzione
+\pagenumbering{roman} % serve per mettere i numeri romani
+\chapter*{Introduzione}
+\input{chapters/introduzione}
+
+% Indice
+\blankpage
+\tableofcontents
+
+% imposta l'intestazione di pagina
+\rhead[\fancyplain{}{\bfseries\leftmark}]{\fancyplain{}{\bfseries\thepage}}
+\lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries INDICE}}
+\blankpage
+\listoffigures
+\blankpage
+\listoftables
+\blankpage
+
+\pagenumbering{arabic}
+% Capitoli
+\chapter{Primo Capitolo}
+\input{chapters/capitolo1}
+
+% Conclusioni
+\chapter*{Conclusioni}
+\input{chapters/conclusione}
+
+% Appendice
+\appendix
+\chapter{Prima Appendice}
+\input{chapters/appendice}
+
+% Bibliografia
+\printbibliography[heading=bibintoc]
+\blankpage
+
+% Ringraziamenti
+\chapter*{Ringraziamenti}
+\input{chapters/ringraziamenti}
+\end{document}

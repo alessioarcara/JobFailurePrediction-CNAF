@@ -1,0 +1,85 @@
+% -----------------------
+% Encoding and Language
+% -----------------------
+\usepackage[utf8]{inputenc} % libreria per accettare caratteri speciali
+\usepackage[T1]{fontenc}    % libreria per la corretta gestione del font
+\usepackage[italian]{babel} % libreria per scrivere in italiano
+\usepackage{csquotes}
+% \usepackage{showkeys}     % libreria per mostrare le etichette
+\hyphenation{ }             % lista parole da tagliare nel modo giusto andando a capo
+
+% -----------------------
+% Page Layout
+% -----------------------
+\usepackage{geometry}
+\usepackage{fancyhdr}       % libreria per impostare il documento
+\geometry{left=30mm, right=20mm}
+\pagestyle{fancy}\addtolength{\headwidth}{20pt}
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter.\ #1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection \ #1}{}}
+\rhead[\fancyplain{}{\bfseries\leftmark}]{\fancyplain{}{\bfseries\thepage}}
+\cfoot{}
+\linespread{1.3}
+
+% -----------------------
+% Bibliography
+% -----------------------
+\usepackage{biblatex}       % libreria per bibliografia
+\addbibresource{references.bib}
+
+% -----------------------
+% Graphics
+% -----------------------
+\usepackage{graphicx}       % libreria per inserire grafici
+\graphicspath{ {immagini/} }
+
+% -----------------------
+% Fonts and Text
+% -----------------------
+\usepackage{newlfont}       % libreria per utilizzare font particolari (\textsc{})
+\usepackage{indentfirst}    % libreria per avere l'indentazione all'inizio dei capitoli, ...
+\usepackage{xcolor}
+
+% -----------------------
+% Math
+% -----------------------
+\usepackage{amssymb, amsmath, amsthm} % librerie matematiche
+
+% -----------------------
+% Code Listings
+% -----------------------
+\usepackage{listings}       % libreria per snippets di codice
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,        
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+% -----------------------
+% New Commands
+% -----------------------
+\newcommand{\blankpage}{
+    \clearpage
+    \pagestyle{empty}
+    \cleardoublepage
+}
