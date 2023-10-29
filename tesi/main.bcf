@@ -2361,8 +2361,13 @@
     <bcf:datasource type="file" datatype="bibtex" glob="false">references.bib</bcf:datasource>
   </bcf:bibdata>
   <bcf:section number="0">
-    <bcf:citekey order="1" intorder="1">latexcompanion</bcf:citekey>
-    <bcf:citekey order="2" intorder="1">einstein</bcf:citekey>
+    <bcf:citekey order="1" intorder="1">dalpra2019</bcf:citekey>
+    <bcf:citekey order="2" intorder="1">WLCG2023</bcf:citekey>
+    <bcf:citekey order="3" intorder="1">Bortolotti2012</bcf:citekey>
+    <bcf:citekey order="4" intorder="1">dalpra2019</bcf:citekey>
+    <bcf:citekey order="5" intorder="1">hepix2022</bcf:citekey>
+    <bcf:citekey order="6" intorder="1">cnaf_calcolo</bcf:citekey>
+    <bcf:citekey order="7" intorder="1">Bortolotti_2012</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="nty">

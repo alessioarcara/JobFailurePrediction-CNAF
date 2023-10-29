@@ -19,73 +19,284 @@
 
 \refsection{0}
   \datalist[entry]{nty/global//global/global}
-    \entry{einstein}{article}{}
-      \name{author}{1}{}{%
-        {{hash=3ebf53e52a3ce84f0ffb8553200a6a63}{%
-           family={Einstein},
-           familyi={E\bibinitperiod},
-           given={Albert},
+    \entry{Bortolotti2012}{article}{}
+      \name{author}{21}{}{%
+        {{hash=7ed4edf4c1195c96c6bd185a51c66f33}{%
+           family={Bortolotti},
+           familyi={B\bibinitperiod},
+           given={G},
+           giveni={G\bibinitperiod}}}%
+        {{hash=ac50248d61ad62f833343a60ca1c4d23}{%
+           family={Cavalli},
+           familyi={C\bibinitperiod},
+           given={A},
            giveni={A\bibinitperiod}}}%
+        {{hash=67eb65059f05fec74f7a00272a446605}{%
+           family={Chiarelli},
+           familyi={C\bibinitperiod},
+           given={L},
+           giveni={L\bibinitperiod}}}%
+        {{hash=614e305a4c70ab3158466f4963b89f1c}{%
+           family={Chierici},
+           familyi={C\bibinitperiod},
+           given={A},
+           giveni={A\bibinitperiod}}}%
+        {{hash=ce49c969df2662e3dc0d40856787449a}{%
+           family={Pra},
+           familyi={P\bibinitperiod},
+           given={S\bibnamedelima Dal},
+           giveni={S\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=149811ac6e5255738f15186a435b0347}{%
+           family={dell'Agnello},
+           familyi={d\bibinitperiod},
+           given={L},
+           giveni={L\bibinitperiod}}}%
+        {{hash=f39a911be133cb2a2ad309385f12c498}{%
+           family={Girolamo},
+           familyi={G\bibinitperiod},
+           given={D\bibnamedelima De},
+           giveni={D\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=31b1d983291fee4d546360583f14b90c}{%
+           family={Donatelli},
+           familyi={D\bibinitperiod},
+           given={M},
+           giveni={M\bibinitperiod}}}%
+        {{hash=81864765eadd47340acb5e5a83ca9a9b}{%
+           family={Ferraro},
+           familyi={F\bibinitperiod},
+           given={A},
+           giveni={A\bibinitperiod}}}%
+        {{hash=593d13b0d85c1cf635c4c62ced045ddd}{%
+           family={Gregori},
+           familyi={G\bibinitperiod},
+           given={D},
+           giveni={D\bibinitperiod}}}%
+        {{hash=eb4729ed1c1febd94db333fca86f4dcc}{%
+           family={Italiano},
+           familyi={I\bibinitperiod},
+           given={A},
+           giveni={A\bibinitperiod}}}%
+        {{hash=8f854a23356f176de0352e5663582947}{%
+           family={Martelli},
+           familyi={M\bibinitperiod},
+           given={B},
+           giveni={B\bibinitperiod}}}%
+        {{hash=02bdef564c9831e495b45f4adaadacd7}{%
+           family={Mazza},
+           familyi={M\bibinitperiod},
+           given={A},
+           giveni={A\bibinitperiod}}}%
+        {{hash=4e0c20bb27d7bac923f7991afc3c3d52}{%
+           family={Onofri},
+           familyi={O\bibinitperiod},
+           given={M},
+           giveni={M\bibinitperiod}}}%
+        {{hash=bec38ea06d1020de629a21974c959e19}{%
+           family={Prosperini},
+           familyi={P\bibinitperiod},
+           given={A},
+           giveni={A\bibinitperiod}}}%
+        {{hash=e2deff90e6479f23979a6c55782f832b}{%
+           family={Ricci},
+           familyi={R\bibinitperiod},
+           given={P\bibnamedelima P},
+           giveni={P\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+        {{hash=f2f9aa1faa6242f3a57e22abd6a97f79}{%
+           family={Ronchieri},
+           familyi={R\bibinitperiod},
+           given={E},
+           giveni={E\bibinitperiod}}}%
+        {{hash=b5c3feb38282866d8033a1e966f76bb2}{%
+           family={Rosso},
+           familyi={R\bibinitperiod},
+           given={F},
+           giveni={F\bibinitperiod}}}%
+        {{hash=f09cfef3f66c653bae88bf7f166be0fe}{%
+           family={Sapunenko},
+           familyi={S\bibinitperiod},
+           given={V},
+           giveni={V\bibinitperiod}}}%
+        {{hash=b99ad827281b9708dc2fcb8fe164ed73}{%
+           family={Veraldi},
+           familyi={V\bibinitperiod},
+           given={R},
+           giveni={R\bibinitperiod}}}%
+        {{hash=0ff360d4cdd4677afd9cd0fbb61fe1b5}{%
+           family={Zani},
+           familyi={Z\bibinitperiod},
+           given={C\bibnamedelima Vistoli\bibnamedelima S},
+           giveni={C\bibinitperiod\bibinitdelim V\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
       }
-      \strng{namehash}{3ebf53e52a3ce84f0ffb8553200a6a63}
-      \strng{fullhash}{3ebf53e52a3ce84f0ffb8553200a6a63}
-      \strng{bibnamehash}{3ebf53e52a3ce84f0ffb8553200a6a63}
-      \strng{authorbibnamehash}{3ebf53e52a3ce84f0ffb8553200a6a63}
-      \strng{authornamehash}{3ebf53e52a3ce84f0ffb8553200a6a63}
-      \strng{authorfullhash}{3ebf53e52a3ce84f0ffb8553200a6a63}
-      \field{sortinit}{E}
-      \field{sortinithash}{8da8a182d344d5b9047633dfc0cc9131}
+      \strng{namehash}{b11c3761ae812352b9f82b74b0b7ff7a}
+      \strng{fullhash}{1f5aebd75476ddf0010a44fcb5e7d0a8}
+      \strng{bibnamehash}{b11c3761ae812352b9f82b74b0b7ff7a}
+      \strng{authorbibnamehash}{b11c3761ae812352b9f82b74b0b7ff7a}
+      \strng{authornamehash}{b11c3761ae812352b9f82b74b0b7ff7a}
+      \strng{authorfullhash}{1f5aebd75476ddf0010a44fcb5e7d0a8}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{journaltitle}{Annalen der Physik}
-      \field{number}{10}
-      \field{title}{Zur Elektrodynamik bewegter Körper. (German) [On the electrodynamics of moving bodies]}
-      \field{volume}{322}
-      \field{year}{1905}
-      \field{pages}{891\bibrangedash 921}
-      \range{pages}{31}
+      \field{abstract}{INFN-CNAF is the central computing facility of INFN: it is the Italian Tier-1 for the experiments at LHC, but also one of the main Italian computing facilities for several other experiments such as BABAR, CDF, SuperB, Virgo, Argo, AMS, Pamela, MAGIC, Auger etc. Currently there is an installed CPU capacity of 100,000 HS06, a net disk capacity of 9 PB and an equivalent amount of tape storage (these figures are going to be increased in the first half of 2012 respectively to 125,000 HS06, 12 PB and 18 PB). More than 80,000 computing jobs are executed daily on the farm, managed by LSF, accessing the storage, managed by GPFS, with an aggregate bandwidth up to several GB/s. The access to the storage system from the farm is direct through the file protocol. The interconnection of the computing resources and the data storage is based on 10 Gbps technology. The disk-servers and the storage systems are connected through a Storage Area Network allowing a complete flexibility and easiness of management; dedicated disk-servers are connected, also via the SAN, to the tape library. The INFN Tier-1 is connected to the other centers via 3×10 Gbps links (to be upgraded at the end of 2012), including the LHCOPN and to the LHCONE. In this paper we show the main results of our center after 2 full years of run of LHC.}
+      \field{journaltitle}{Journal of Physics: Conference Series}
+      \field{month}{12}
+      \field{number}{4}
+      \field{title}{The INFN Tier-1}
+      \field{volume}{396}
+      \field{year}{2012}
+      \field{pages}{042016}
+      \range{pages}{1}
       \verb{doi}
-      \verb http://dx.doi.org/10.1002/andp.19053221004
+      \verb 10.1088/1742-6596/396/4/042016
+      \endverb
+      \verb{urlraw}
+      \verb https://dx.doi.org/10.1088/1742-6596/396/4/042016
+      \endverb
+      \verb{url}
+      \verb https://dx.doi.org/10.1088/1742-6596/396/4/042016
       \endverb
     \endentry
-    \entry{latexcompanion}{book}{}
-      \name{author}{3}{}{%
-        {{hash=0743efb276e9219ee664a9b3dbd60619}{%
-           family={Goossens},
-           familyi={G\bibinitperiod},
-           given={Michel},
-           giveni={M\bibinitperiod}}}%
-        {{hash=9355edd511e3f6fdd880ee98722a53fb}{%
-           family={Mittelbach},
-           familyi={M\bibinitperiod},
-           given={Frank},
-           giveni={F\bibinitperiod}}}%
-        {{hash=e341c89f7bb5be4f5a050618c0b63942}{%
-           family={Samarin},
-           familyi={S\bibinitperiod},
-           given={Alexander},
-           giveni={A\bibinitperiod}}}%
+    \entry{WLCG2023}{online}{}
+      \name{author}{1}{}{%
+        {{hash=350ae988c85cf1a13c8cc0d38f28d0ee}{%
+           family={CERN},
+           familyi={C\bibinitperiod}}}%
       }
-      \list{location}{1}{%
-        {Reading, Massachusetts}%
-      }
-      \list{publisher}{1}{%
-        {Addison-Wesley}%
-      }
-      \strng{namehash}{369a4e878eb8157d94588ee72e0b486b}
-      \strng{fullhash}{369a4e878eb8157d94588ee72e0b486b}
-      \strng{bibnamehash}{369a4e878eb8157d94588ee72e0b486b}
-      \strng{authorbibnamehash}{369a4e878eb8157d94588ee72e0b486b}
-      \strng{authornamehash}{369a4e878eb8157d94588ee72e0b486b}
-      \strng{authorfullhash}{369a4e878eb8157d94588ee72e0b486b}
-      \field{sortinit}{G}
-      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \strng{namehash}{350ae988c85cf1a13c8cc0d38f28d0ee}
+      \strng{fullhash}{350ae988c85cf1a13c8cc0d38f28d0ee}
+      \strng{bibnamehash}{350ae988c85cf1a13c8cc0d38f28d0ee}
+      \strng{authorbibnamehash}{350ae988c85cf1a13c8cc0d38f28d0ee}
+      \strng{authornamehash}{350ae988c85cf1a13c8cc0d38f28d0ee}
+      \strng{authorfullhash}{350ae988c85cf1a13c8cc0d38f28d0ee}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{The \LaTeX{} Companion}
-      \field{year}{1993}
+      \field{title}{Worldwide LHC Computing Grid}
+      \field{urlday}{28}
+      \field{urlmonth}{10}
+      \field{urlyear}{2023}
+      \field{year}{2023}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://wlcg.web.cern.ch
+      \endverb
+      \verb{url}
+      \verb https://wlcg.web.cern.ch
+      \endverb
+    \endentry
+    \entry{cnaf_calcolo}{online}{}
+      \name{author}{1}{}{%
+        {{hash=0f74aaf3a0a1f3bbfff98ed779c88156}{%
+           family={CNAF},
+           familyi={C\bibinitperiod}}}%
+      }
+      \strng{namehash}{0f74aaf3a0a1f3bbfff98ed779c88156}
+      \strng{fullhash}{0f74aaf3a0a1f3bbfff98ed779c88156}
+      \strng{bibnamehash}{0f74aaf3a0a1f3bbfff98ed779c88156}
+      \strng{authorbibnamehash}{0f74aaf3a0a1f3bbfff98ed779c88156}
+      \strng{authornamehash}{0f74aaf3a0a1f3bbfff98ed779c88156}
+      \strng{authorfullhash}{0f74aaf3a0a1f3bbfff98ed779c88156}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{WLCG Tier-1 data center - Calcolo}
+      \field{urlday}{28}
+      \field{urlmonth}{10}
+      \field{urlyear}{2023}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.cnaf.infn.it/calcolo/
+      \endverb
+      \verb{url}
+      \verb https://www.cnaf.infn.it/calcolo/
+      \endverb
+    \endentry
+    \entry{dalpra2019}{article}{}
+      \name{author}{7}{}{%
+        {{hash=d160eea1e33c18dcef7d40385dd57f2c}{%
+           family={Dal\bibnamedelima Pra},
+           familyi={D\bibinitperiod\bibinitdelim P\bibinitperiod},
+           given={Stefano},
+           giveni={S\bibinitperiod}}}%
+        {{hash=593263e3579a095a4ca0b949243996ec}{%
+           family={Falabella},
+           familyi={F\bibinitperiod},
+           given={Antonio},
+           giveni={A\bibinitperiod}}}%
+        {{hash=0e5b6b375059ac85b5bf51fec325016f}{%
+           family={Fattibene},
+           familyi={F\bibinitperiod},
+           given={Enrico},
+           giveni={E\bibinitperiod}}}%
+        {{hash=ac849d4c076d367b467a4edbdb5918d3}{%
+           family={Cincinelli},
+           familyi={C\bibinitperiod},
+           given={Gianluca},
+           giveni={G\bibinitperiod}}}%
+        {{hash=515e2eb0c45d461898a35546269464c1}{%
+           family={Magnani},
+           familyi={M\bibinitperiod},
+           given={Matteo},
+           giveni={M\bibinitperiod}}}%
+        {{hash=226f83ca9459b4f9977f02be094d1ace}{%
+           family={Cristofaro},
+           familyi={C\bibinitperiod},
+           given={Tiziano},
+           giveni={T\bibinitperiod}}}%
+        {{hash=c78b3ff0d802f6f72e61db8fe0eeb910}{%
+           family={Ruini},
+           familyi={R\bibinitperiod},
+           given={Martin},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{833e9b7bab4ce943ab81a3da2b72d339}
+      \strng{fullhash}{6354d8a8c3e9aee8680106afcc49f8e9}
+      \strng{bibnamehash}{833e9b7bab4ce943ab81a3da2b72d339}
+      \strng{authorbibnamehash}{833e9b7bab4ce943ab81a3da2b72d339}
+      \strng{authornamehash}{833e9b7bab4ce943ab81a3da2b72d339}
+      \strng{authorfullhash}{6354d8a8c3e9aee8680106afcc49f8e9}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{EPJ Web of Conferences}
+      \field{month}{01}
+      \field{title}{Evolution of monitoring, accounting and alerting services at INFN-CNAF Tier-1}
+      \field{volume}{214}
+      \field{year}{2019}
+      \field{pages}{08033}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1051/epjconf/201921408033
+      \endverb
+    \endentry
+    \entry{hepix2022}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=ed063bdcf741903e9ee1df40d6b3016f}{%
+           family={Rendina},
+           familyi={R\bibinitperiod},
+           given={Andrea},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{ed063bdcf741903e9ee1df40d6b3016f}
+      \strng{fullhash}{ed063bdcf741903e9ee1df40d6b3016f}
+      \strng{bibnamehash}{ed063bdcf741903e9ee1df40d6b3016f}
+      \strng{authorbibnamehash}{ed063bdcf741903e9ee1df40d6b3016f}
+      \strng{authornamehash}{ed063bdcf741903e9ee1df40d6b3016f}
+      \strng{authorfullhash}{ed063bdcf741903e9ee1df40d6b3016f}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://indico.cern.ch/event/1200682/contributions/5087586/attachments/2538178/4368754/20221031_InfnT1_site_report.pdf}}
+      \field{note}{Accessed: {2023-10-28}}
+      \field{title}{INFN-T1 site report}
+      \field{year}{2022}
     \endentry
   \enddatalist
+  \missing{Bortolotti_2012}
 \endrefsection
 \endinput
 

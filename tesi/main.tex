@@ -2,50 +2,31 @@
 \input{settings.tex}
 
 \begin{document}
-% Frontespizio
+
 \input{chapters/frontespizio}
 \blankpage
-
-% Dedica
 \input{chapters/dedica}
+\blankpage
 
-% Introduzione
 \pagenumbering{roman} % serve per mettere i numeri romani
-\chapter*{Introduzione}
-\input{chapters/introduzione}
-
-% Indice
-\blankpage
-\tableofcontents
-
-% imposta l'intestazione di pagina
-\rhead[\fancyplain{}{\bfseries\leftmark}]{\fancyplain{}{\bfseries\thepage}}
-\lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries INDICE}}
-\blankpage
-\listoffigures
-\blankpage
-\listoftables
-\blankpage
+\pagestyle{special}
+\createSpecialChapter{Sommario}
+\createList{\tableofcontents}
+\createList{\listoffigures}
+\createList{\listoftables}
 
 \pagenumbering{arabic}
-% Capitoli
-\chapter{Primo Capitolo}
-\input{chapters/capitolo1}
+\pagestyle{fancy}
+\createChapter{Introduzione}{introduzione}
+\createChapter{Capitolo di contesto}{capitolo1}
+\createChapter{Estrapolazione dei dati}{capitolo2}
+\createChapter{Analisi dei risultati}{capitolo3}
+\createChapter{Conclusioni}{conclusioni}
 
-% Conclusioni
-\chapter*{Conclusioni}
-\input{chapters/conclusione}
-
-% Appendice
+\pagestyle{special}
 \appendix
-\chapter{Prima Appendice}
-\input{chapters/appendice}
-
-% Bibliografia
-\printbibliography[heading=bibintoc]
-\blankpage
-
-% Ringraziamenti
+\createChapter{Prima Appendice}{appendice}
+\createList{\printbibliography[heading=bibintoc]}
 \chapter*{Ringraziamenti}
 \input{chapters/ringraziamenti}
 \end{document}
