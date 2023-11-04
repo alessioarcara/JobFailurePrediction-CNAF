@@ -5,6 +5,7 @@ format:
     revealjs:
         css: style.css
         slide-number: true
+        embed-resources: true
 ---
 
 ## CNAF  {.smaller}
