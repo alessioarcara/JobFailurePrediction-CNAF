@@ -55,6 +55,26 @@
 \pgfplotsset{width=10cm,compat=1.9}
 
 % -----------------------
+% Tables 
+% -----------------------
+\usepackage{booktabs}
+\usepackage{tabularray}
+\usepackage{threeparttable}
+
+% -----------------------
+% Links 
+% -----------------------
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+}
+
+% -----------------------
 % Fonts and Text
 % -----------------------
 \usepackage{newlfont}       % libreria per utilizzare font particolari (\textsc{})
@@ -65,6 +85,8 @@
 % Math
 % -----------------------
 \usepackage{amssymb, amsmath, amsthm} % librerie matematiche
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
 
 % -----------------------
 % Code Listings

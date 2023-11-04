@@ -2367,7 +2367,11 @@
     <bcf:citekey order="4" intorder="1">dalpra2019</bcf:citekey>
     <bcf:citekey order="5" intorder="1">hepix2022</bcf:citekey>
     <bcf:citekey order="6" intorder="1">cnaf_calcolo</bcf:citekey>
-    <bcf:citekey order="7" intorder="1">Bortolotti_2012</bcf:citekey>
+    <bcf:citekey order="7" intorder="1">Moore1965</bcf:citekey>
+    <bcf:citekey order="8" intorder="1">Shalf2015</bcf:citekey>
+    <bcf:citekey order="8" intorder="2">Theis2017</bcf:citekey>
+    <bcf:citekey order="9" intorder="1">Villa2014</bcf:citekey>
+    <bcf:citekey order="10" intorder="1">Cappello2014</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="nty">

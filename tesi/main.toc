@@ -1,10 +1,30 @@
 \babel@toc {italian}{}\relax 
 \babel@toc {italian}{}\relax 
-\contentsline {chapter}{Sommario}{i}{}%
-\contentsline {chapter}{\numberline {1}Introduzione}{1}{}%
-\contentsline {chapter}{\numberline {2}Capitolo di contesto}{3}{}%
-\contentsline {chapter}{\numberline {3}Estrapolazione dei dati}{7}{}%
-\contentsline {chapter}{\numberline {4}Analisi dei risultati}{9}{}%
-\contentsline {chapter}{\numberline {5}Conclusioni}{11}{}%
-\contentsline {chapter}{\numberline {A}Prima Appendice}{13}{}%
-\contentsline {chapter}{Bibliografia}{15}{}%
+\contentsline {chapter}{Sommario}{i}{chapter*.1}%
+\contentsline {chapter}{\numberline {1}Introduzione}{1}{chapter.1}%
+\contentsline {chapter}{\numberline {2}Caso di studio}{3}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Il cluster di calcolo del CNAF}{3}{section.2.1}%
+\contentsline {section}{\numberline {2.2}La base di dati}{5}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Motivazione}{6}{section.2.3}%
+\contentsline {chapter}{\numberline {3}Analisi del database}{13}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Analisi esplorativa}{13}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Job Zombie Prediction}{14}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Preparazione dei dati per il task di ML}{14}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Trasformazione delle serie storiche multivariate multiple}{14}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Creazione delle feature}{14}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.3}Labeling dei dati}{14}{subsection.3.3.3}%
+\contentsline {subsection}{\numberline {3.3.4}Tecniche di bilanciamento dei dati}{14}{subsection.3.3.4}%
+\contentsline {chapter}{\numberline {4}Applicazioni delle tecniche di Machine Learning}{17}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Selezioni dei modelli}{17}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Modelli supervisionati}{17}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Modelli non supervisionati}{17}{subsection.4.1.2}%
+\contentsline {section}{\numberline {4.2}Valutazione delle performance}{17}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Metriche di valutazione}{17}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Convalida incrociata}{17}{subsection.4.2.2}%
+\contentsline {chapter}{\numberline {5}Analisi dei risultati}{19}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Confronto tra i modelli}{19}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Interpretazione dei risultati}{19}{section.5.2}%
+\contentsline {chapter}{\numberline {6}Conclusioni e sviluppi futuri}{21}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Sintesi dei risultati}{21}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Limitazioni dello studio e proposte per ricerche future}{21}{section.6.2}%
+\contentsline {chapter}{Bibliografia}{23}{appendix*.5}%

@@ -156,6 +156,68 @@
       \verb https://dx.doi.org/10.1088/1742-6596/396/4/042016
       \endverb
     \endentry
+    \entry{Cappello2014}{article}{}
+      \name{author}{6}{}{%
+        {{hash=e978f6f36e4e191a7db0b27476a82ef1}{%
+           family={Cappello},
+           familyi={C\bibinitperiod},
+           given={Franck},
+           giveni={F\bibinitperiod}}}%
+        {{hash=53d030e06f692bd5e9c6ddcaca2d5d10}{%
+           family={Geist},
+           familyi={G\bibinitperiod},
+           given={Al},
+           giveni={A\bibinitperiod}}}%
+        {{hash=232270861ce704a354417bfda0acdb1b}{%
+           family={Gropp},
+           familyi={G\bibinitperiod},
+           given={William},
+           giveni={W\bibinitperiod}}}%
+        {{hash=c036ec787c24b0186699adf6100006df}{%
+           family={Kale},
+           familyi={K\bibinitperiod},
+           given={Sanjay},
+           giveni={S\bibinitperiod}}}%
+        {{hash=92e3574504dd4d9e6da5f26a13c1dcad}{%
+           family={Kramer},
+           familyi={K\bibinitperiod},
+           given={Bill},
+           giveni={B\bibinitperiod}}}%
+        {{hash=136ed2f6da407027ebf1447180c5fba6}{%
+           family={Snir},
+           familyi={S\bibinitperiod},
+           given={Marc},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{c62a279bcce0aa3eaed45b7bbe584008}
+      \strng{fullhash}{fd7aaa40eb8dc95a769b9aaea140839b}
+      \strng{bibnamehash}{c62a279bcce0aa3eaed45b7bbe584008}
+      \strng{authorbibnamehash}{c62a279bcce0aa3eaed45b7bbe584008}
+      \strng{authornamehash}{c62a279bcce0aa3eaed45b7bbe584008}
+      \strng{authorfullhash}{fd7aaa40eb8dc95a769b9aaea140839b}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Resilience is a major roadblock for HPC executions on future exascale systems. These systems will typically gather millions of CPU cores running up to a billion threads. Projections from current large systems and technology evolution predict errors will happen in exascale systems many times per day. These errors will propagate and generate various kinds of malfunctions, from simple process crashes to result corruptions. The past five years have seen extraordinary technical progress in many domains related to exascale resilience. Several technical options, initially considered inapplicable or unrealistic in the HPC context, have demonstrated surprising successes. Despite this progress, the exascale resilience problem is not solved, and the community is still facing the difficult challenge of ensuring that exascale applications complete and generate correct results while running on unstable systems. Since 2009, many workshops, studies, and reports have improved the definition of the resilience problem and provided refined recommendations. Some projections made during the previous decades and some priorities established from these projections need to be revised. This paper surveys what the community has learned in the past five years and summarizes the research problems still considered critical by the HPC community.}
+      \field{journaltitle}{Supercomputing Frontiers and Innovations}
+      \field{month}{6}
+      \field{number}{1}
+      \field{title}{Toward Exascale Resilience: 2014 update}
+      \field{volume}{1}
+      \field{year}{2014}
+      \field{pages}{5\bibrangedash 28}
+      \range{pages}{24}
+      \verb{doi}
+      \verb 10.14529/jsfi140101
+      \endverb
+      \verb{urlraw}
+      \verb https://superfri.org/index.php/superfri/article/view/14
+      \endverb
+      \verb{url}
+      \verb https://superfri.org/index.php/superfri/article/view/14
+      \endverb
+    \endentry
     \entry{WLCG2023}{online}{}
       \name{author}{1}{}{%
         {{hash=350ae988c85cf1a13c8cc0d38f28d0ee}{%
@@ -272,6 +334,35 @@
       \verb 10.1051/epjconf/201921408033
       \endverb
     \endentry
+    \entry{Moore1965}{article}{}
+      \name{author}{1}{}{%
+        {{hash=a255a2fb9a29fa4fcefff49cef9b78bd}{%
+           family={Moore},
+           familyi={M\bibinitperiod},
+           given={Gordon\bibnamedelima E.},
+           giveni={G\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {McGraw-Hill}%
+      }
+      \strng{namehash}{a255a2fb9a29fa4fcefff49cef9b78bd}
+      \strng{fullhash}{a255a2fb9a29fa4fcefff49cef9b78bd}
+      \strng{bibnamehash}{a255a2fb9a29fa4fcefff49cef9b78bd}
+      \strng{authorbibnamehash}{a255a2fb9a29fa4fcefff49cef9b78bd}
+      \strng{authornamehash}{a255a2fb9a29fa4fcefff49cef9b78bd}
+      \strng{authorfullhash}{a255a2fb9a29fa4fcefff49cef9b78bd}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Electronics}
+      \field{number}{8}
+      \field{title}{Cramming more components onto integrated circuits}
+      \field{volume}{38}
+      \field{year}{1965}
+      \field{pages}{114\bibrangedash 117}
+      \range{pages}{4}
+    \endentry
     \entry{hepix2022}{misc}{}
       \name{author}{1}{}{%
         {{hash=ed063bdcf741903e9ee1df40d6b3016f}{%
@@ -291,12 +382,171 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{\url{https://indico.cern.ch/event/1200682/contributions/5087586/attachments/2538178/4368754/20221031_InfnT1_site_report.pdf}}
-      \field{note}{Accessed: {2023-10-28}}
+      \field{note}{Accessed: 2023-10-28}
       \field{title}{INFN-T1 site report}
       \field{year}{2022}
     \endentry
+    \entry{Shalf2015}{article}{}
+      \name{author}{2}{}{%
+        {{hash=3ef1aebc9b9f886bbf3b65285ee1ae0b}{%
+           family={Shalf},
+           familyi={S\bibinitperiod},
+           given={J.\bibnamedelimi M.},
+           giveni={J\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=54b6a826e84457324826afbd1bd66f5d}{%
+           family={Leland},
+           familyi={L\bibinitperiod},
+           given={R.},
+           giveni={R\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Los Alamitos, CA, USA}%
+      }
+      \list{publisher}{1}{%
+        {IEEE Computer Society}%
+      }
+      \strng{namehash}{e280b3c105b55621cb7128436081161c}
+      \strng{fullhash}{e280b3c105b55621cb7128436081161c}
+      \strng{bibnamehash}{e280b3c105b55621cb7128436081161c}
+      \strng{authorbibnamehash}{e280b3c105b55621cb7128436081161c}
+      \strng{authornamehash}{e280b3c105b55621cb7128436081161c}
+      \strng{authorfullhash}{e280b3c105b55621cb7128436081161c}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Photolithography systems are on pace to reach atomic scale by the mid-2020s, necessitating alternatives to continue realizing faster, more predictable, and cheaper computing performance. If the end of Moore's law is real, a research agenda is needed to assess the viability of novel semiconductor technologies and navigate the ensuing challenges.}
+      \field{issn}{1558-0814}
+      \field{journaltitle}{Computer}
+      \field{month}{12}
+      \field{number}{12}
+      \field{title}{Computing Beyond Moore's Law}
+      \field{volume}{48}
+      \field{year}{2015}
+      \field{pages}{14\bibrangedash 23}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.1109/MC.2015.374
+      \endverb
+      \keyw{CMOS integrated circuits; CMOS technology; Moore's law; consumer electronics; biological system modeling; computational modeling}
+    \endentry
+    \entry{Theis2017}{article}{}
+      \name{author}{2}{}{%
+        {{hash=b401633d5c082a1dba10bbd8835400ca}{%
+           family={Theis},
+           familyi={T\bibinitperiod},
+           given={Thomas\bibnamedelima N.},
+           giveni={T\bibinitperiod\bibinitdelim N\bibinitperiod}}}%
+        {{hash=60526d097df26e16f0535b4b1d5f7e5c}{%
+           family={Wong},
+           familyi={W\bibinitperiod},
+           given={H.-S.\bibnamedelimi Philip},
+           giveni={H\bibinithyphendelim S\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+      }
+      \strng{namehash}{2c1c49679c92ceefc12d12438cf28794}
+      \strng{fullhash}{2c1c49679c92ceefc12d12438cf28794}
+      \strng{bibnamehash}{2c1c49679c92ceefc12d12438cf28794}
+      \strng{authorbibnamehash}{2c1c49679c92ceefc12d12438cf28794}
+      \strng{authornamehash}{2c1c49679c92ceefc12d12438cf28794}
+      \strng{authorfullhash}{2c1c49679c92ceefc12d12438cf28794}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Computing in Science \& Engineering}
+      \field{number}{2}
+      \field{title}{The End of Moore's Law: A New Beginning for Information Technology}
+      \field{volume}{19}
+      \field{year}{2017}
+      \field{pages}{41\bibrangedash 50}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.1109/MCSE.2017.29
+      \endverb
+    \endentry
+    \entry{Villa2014}{inproceedings}{}
+      \name{author}{12}{}{%
+        {{hash=d0d9e98b7bdc480feae3cc10b6d80c19}{%
+           family={Villa},
+           familyi={V\bibinitperiod},
+           given={Oreste},
+           giveni={O\bibinitperiod}}}%
+        {{hash=96dc683511d2a88d7ae5ff4890275620}{%
+           family={Johnson},
+           familyi={J\bibinitperiod},
+           given={Daniel\bibnamedelima R.},
+           giveni={D\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+        {{hash=0fec0175cca273ac5401c697a95f3456}{%
+           family={Oconnor},
+           familyi={O\bibinitperiod},
+           given={Mike},
+           giveni={M\bibinitperiod}}}%
+        {{hash=d30eb33142955966a0a122efd0d7c536}{%
+           family={Bolotin},
+           familyi={B\bibinitperiod},
+           given={Evgeny},
+           giveni={E\bibinitperiod}}}%
+        {{hash=94019f7349af8e78e7f1fdc36fff0a60}{%
+           family={Nellans},
+           familyi={N\bibinitperiod},
+           given={David},
+           giveni={D\bibinitperiod}}}%
+        {{hash=c7c21b8f4a239c08bc1df7ccde889e77}{%
+           family={Luitjens},
+           familyi={L\bibinitperiod},
+           given={Justin},
+           giveni={J\bibinitperiod}}}%
+        {{hash=abc94e821718527c509702793bd6dbd4}{%
+           family={Sakharnykh},
+           familyi={S\bibinitperiod},
+           given={Nikolai},
+           giveni={N\bibinitperiod}}}%
+        {{hash=c26cc02bbb5db725a2c79cb200894d76}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Peng},
+           giveni={P\bibinitperiod}}}%
+        {{hash=d7c3b32c10d0f73ef681b6074aa1cdd4}{%
+           family={Micikevicius},
+           familyi={M\bibinitperiod},
+           given={Paulius},
+           giveni={P\bibinitperiod}}}%
+        {{hash=5b2efea0274e1ce5c82fad08345a7ff4}{%
+           family={Scudiero},
+           familyi={S\bibinitperiod},
+           given={Anthony},
+           giveni={A\bibinitperiod}}}%
+        {{hash=cacfbd2fac3b3c6c59a4f36eb0743326}{%
+           family={Keckler},
+           familyi={K\bibinitperiod},
+           given={Stephen\bibnamedelima W.},
+           giveni={S\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
+        {{hash=c4a8df92e1f8e22aa2062da8bcfd402d}{%
+           family={Dally},
+           familyi={D\bibinitperiod},
+           given={William\bibnamedelima J.},
+           giveni={W\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+      }
+      \strng{namehash}{94a324af591bd2cfcf86d0f26a119841}
+      \strng{fullhash}{1b322f43e008d67f222e55572090138c}
+      \strng{bibnamehash}{94a324af591bd2cfcf86d0f26a119841}
+      \strng{authorbibnamehash}{94a324af591bd2cfcf86d0f26a119841}
+      \strng{authornamehash}{94a324af591bd2cfcf86d0f26a119841}
+      \strng{authorfullhash}{1b322f43e008d67f222e55572090138c}
+      \field{sortinit}{V}
+      \field{sortinithash}{afb52128e5b4dc4b843768c0113d673b}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{SC '14: Proceedings of the International Conference for High Performance Computing, Networking, Storage and Analysis}
+      \field{title}{Scaling the Power Wall: A Path to Exascale}
+      \field{year}{2014}
+      \field{pages}{830\bibrangedash 841}
+      \range{pages}{12}
+      \verb{doi}
+      \verb 10.1109/SC.2014.73
+      \endverb
+    \endentry
   \enddatalist
-  \missing{Bortolotti_2012}
 \endrefsection
 \endinput
 
