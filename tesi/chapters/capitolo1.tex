@@ -20,7 +20,7 @@ li organizza in un sistema gerarchico di livelli, noti come Tier, ciascuno dei
 quali ha funzioni e responsabilità ben definite. In questo contesto si colloca
 il centro nazionale delle tecnologie informatiche e telematiche (CNAF), che
 ospita il Tier-1 per tutti e quattro gli esperimenti del LHC. Oltre a
-quest'ultimi, vengono supportati presso il CNAF anche gli esperimenti non-LHC
+questi ultimi, vengono supportati presso il CNAF anche gli esperimenti non-LHC
 di astrofisica delle particelle e fisica dei neutrini \cite{Bortolotti2012}.
 
 \begin{figure}[ht]
@@ -30,14 +30,15 @@ di astrofisica delle particelle e fisica dei neutrini \cite{Bortolotti2012}.
     \label{fig:WLCG_tier_hierarchy}
 \end{figure}
 
-Il CNAF offre più di 46000 core distribuiti su 960 host fisici per un totale di
-circa $630$ kHS06\footnote{metrica per misurare le prestazioni della CPU,
+Il CNAF offre più di 46000 core distribuiti su 960 host fisici per un totale
+di circa $630$ kHS06\footnote{metrica per misurare le prestazioni della CPU,
 sviluppata dal gruppo di lavoro HEPiX. È utilizzata per confrontare le risorse
 di calcolo in ambito scientifico.} di potenza di calcolo \cite{hepix2022}.
 L'allocazione di queste risorse segue il paradigma del \textbf{High-Throughput
 Computing} (HTC), dove a differenza dell'High-Performance Computing, che mira
-a eseguire calcoli ad alta velocità, l'obiettivo dell'HTC è massimizzare il
-numero di operazioni compiute su un periodo di tempo prolungato. 
+a ridurre il tempo di esecuzione dei programmi, l'obiettivo dell'HTC è
+massimizzare il throughput, intenso come il numero di job completati per unità
+di tempo.
 
 In questo sistema, gli utenti sono raggruppati in circa 50 gruppi distinti,
 ciascuno dei quali corrisponde a un esperimento scientifico specifico. A ogni
@@ -193,7 +194,7 @@ Le variabili si suddividono in base al tipo di dati che rappresentano e si
 suddividono in: 
 
 \begin{itemize}
-    \item \textit{categorico nominale}, se contiene valori a scelta in un
+    \item \textit{categorico nominale}, se contiene valori scelti tra un
         insieme finito;
     \item \textit{categorico ordinale}, è simile, ma si definisce una
         relazione d'ordine tra i valori possibili;

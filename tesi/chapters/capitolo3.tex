@@ -1,3 +1,54 @@
+\label{chap:machine_learning}
+\section{Preparazione dei dati per il task di ML}
+\subsection{Creazione del dataset}
+\subsection{Trasformazione delle serie storiche multivariate multiple}
+
+% dobbiamo convertire le serie storiche in un tipo di dati strutturato,
+% tabellare, utilizzabile dai modelli di Machine Learning
+
+% padding e truncate delle serie storiche 
+
+% avg pooling
+
+% tabular transformation
+
+% tensor transformation
+
+\subsection{Creazione delle feature}
+
+% jobid e idx
+
+% jobid e idx sono creati dal Submit Node al "concepimento" del job (es.
+% 'sn-01', 'ce03-htc', ...). I S.N. sono indipendenti tra loro per cui in linea
+% di principio possono esistere due job diversi con (jobid,idx) uguale (in tal
+% caso vengono da S.N. diversi)%
+
+% job work type
+
+% job type
+
+% one hot encoding 
+
+% non verranno considerati i jobs con runtime <
+% 1h, poichè non rilevanti per il sistema.
+
+\subsection{Etichettatura dei dati}
+
+% Una possibile strategia:
+% - usando htjob si trovano i job eliminati per "toomuchtime": sono quelli con
+%   jobstatus = 3 e runtime ~=7gg (non c'è valore esatto!)
+% - a questo punto possiamo possiamo impostare un supervised learning
+%   guardando su hj come hanno "vissuto" quei job.
+
+\subsection{Tecniche di bilanciamento dei dati}
+
+% undersample
+
+% oversample
+
+% class weighting in loss function
+
+% metriche
 \section{Selezioni dei modelli}
 \subsection{Modelli supervisionati}
 \subsection{Modelli non supervisionati}
