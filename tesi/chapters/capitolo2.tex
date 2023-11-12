@@ -96,8 +96,8 @@ durata, con un calo esponenziale del numero di job al crescere della durata.
    \label{fig:job_duration_days}
 \end{figure}
 
-Raggruppando i job in base alla loro durata in fasce orarie fino a un massimo
-di 48 ore e aggregando tutti quelli che superano tale soglia, è possibile
+Raggruppando i job in base alla loro durata in fasce orarie, fino a un massimo
+di 48 ore, e aggregando tutti quelli che superano tale soglia, è possibile
 esaminare il numero totale dei job, la frequenza dei loro fallimenti e il
 cumulativo della loro durata per ciascuna delle prime quarantotto ore, così
 come per quelli più lunghi. Come evidenziato nella
@@ -121,7 +121,7 @@ di cinque minuti, possiamo notare che molti di essi hanno una durata inferiore
 ai cinque minuti, come si può vedere nella figura~\ref{fig:jobs_firsthour}.
 Questo suggerisce che questi job potrebbero essere considerati come semplici
 tentativi; in altre parole, sono job che, per vari motivi, non trovano le
-condizioni necessarie per proseguire nella loro esecuzioni e quindi
+condizioni necessarie per proseguire nella loro esecuzione e quindi
 falliscono.
 
 \begin{figure}[p]
@@ -167,7 +167,7 @@ figura~\ref{fig:job_duration_perqueue}, conferma le osservazioni
 precedentemente fatte. La distribuzione della durata dei job per gruppo
 riflette l'andamento già notato nella figura~\ref{fig:job_duration_days}. In
 particolare, si nota che con l'aumentare dei giorni, il numero di job che
-rimangono in esecuzione per quella durata diminuisce linearmente.
+rimangono in esecuzione per quella durata diminuisce esponenzialmente.
 
 \begin{figure}[!p]
     \centering
@@ -177,7 +177,7 @@ rimangono in esecuzione per quella durata diminuisce linearmente.
 \end{figure}
 
 La figura~\ref{fig:njobs_perqueue} evidenzia come i gruppi associati agli
-esperimenti LHC sottomettono un numero significativamente maggiore di job
+esperimenti LHC sottomettano un numero significativamente maggiore di job
 rispetto ai gruppi non-LHC. Questo elevato numero di job, tuttavia, non si
 traduce in un tasso di fallimento proporzionalmente alto, come osservato in
 precedenza nella figura~\ref{fig:njobs_and_rt_perhour}. Questa differenza può
@@ -188,7 +188,7 @@ alto. Tuttavia, le ragioni specifiche di questi fallimenti rimangono a noi
 ignote, poiché HTCondor fornisce solo informazioni limitate e generiche sui
 motivi dei fallimenti.
 
-\begin{figure}[!h]
+\begin{figure}[!ht]
     \includegraphics[width=0.95\textwidth]{images/njobs_perqueue}
     \caption{Distribuzione del numero totale dei job e dei loro fallimenti per
     gruppo}
@@ -241,12 +241,13 @@ specifiche funzioni dei job.
 Dall'idea delineata nella sezione~\ref{sec:job_analysis}, siamo interessati a
 prevedere il fallimento di quei job che garantiscono il maggior payoff. Il
 payoff è il beneficio ottenuto, in termini di risparmio di risorse,
-interrompendo tempestivamente. Rappresentando il concetto di payoff associato
-ai job, la figura~\ref{fig:job_payoff} classifica i job in base alla durata, suddividendoli
-in tre categorie: corte, medi e lunghi. È chiaro , come già detto, che
-interrompere job lunghi sia più significativo. In questa sezione, introduciamo
-un sottotipo di job lunghi, la cui interruzione ci può garantire il
-\textsc{massimo} payoff.
+interrompendo tempestivamente un job che è destinato a fallire. Rappresentando
+il concetto di payoff associato ai job, la figura~\ref{fig:job_payoff}
+classifica i job in base alla durata, suddividendoli in tre categorie: corte,
+medi e lunghi. È chiaro , come già detto, che interrompere job lunghi sia più
+significativo. In questa sezione introduciamo un sottotipo di job lunghi, i
+\textbf{job zombie}, la cui interruzione ci può garantire il \textsc{massimo}
+payoff.
 
 \begin{figure}[!ht]
     \centering
@@ -256,10 +257,7 @@ un sottotipo di job lunghi, la cui interruzione ci può garantire il
 
         \draw[thick] (2,0.1) -- (2,-0.1);
         \node at (1,0.5) {CORTI};
-  
-        \draw[thick] (5,0.1) -- (5,-0.1);
         \node at (5,0.5) {MEDI};
-
         \draw[thick] (8,0.1) -- (8,-0.1);
         \node at (9,0.5) {LUNGHI};
 
@@ -269,11 +267,11 @@ un sottotipo di job lunghi, la cui interruzione ci può garantire il
     \label{fig:job_payoff}
 \end{figure}
 
-I ``job zombie'' sono job che, sebbene ancora in esecuzione, si sono
-``bloccati'' a un certo punto della loro attività, cessando di svolgere
-calcoli utili. Questi job entrano in uno stato di ``coma'', incapaci di
-terminare autonomamente la loro esecuzione e continuano a occupare inutilmente
-risorse di calcolo finché, una volta raggiunto il limite massimo di tempo di
+I job zombie sono job che, sebbene ancora in esecuzione, si sono ``bloccati''
+a un certo punto della loro attività, cessando di svolgere calcoli utili.
+Questi job entrano in uno stato di ``coma'', incapaci di terminare
+autonomamente la loro esecuzione e continuano a occupare inutilmente risorse
+di calcolo finché, una volta raggiunto il limite massimo di tempo di
 esecuzione impostato dal sistema batch, si attiva un evento di timeout che
 comporta la rimozione dei job dal sistema. In HTCondor, questo limite è
 attualmente fissato a 3 giorni per i job di tipo \texttt{grid} e a 7 giorni
@@ -303,11 +301,14 @@ utenti esterni all'organizzazione.
 \end{table}
 
 La tabella~\ref{table:job_zombie_timelost} mostra un totale di 1,194 giorni di
-calcolo persi a causa di job zombie, sottolineando l'entità del problema. Un
-classificatore progettato per identificare precocemente i job zombie potrebbe
-liberare risorse occupate inutilmente da tali job, consentendo a nuovi job,
-potenzialmente produttivi, di iniziare l'esecuzione. Ciò non solo ridurrebbe
-lo spreco di risorse, ma aumenterebbe il throughput del centro di calcolo.
+calcolo persi a causa di job zombie, sottolineando l'entità del problema.
+\begin{quote}
+    \emph{Un classificatore progettato per identificare precocemente i job zombie
+        potrebbe liberare risorse occupate inutilmente da tali job, consentendo a
+        nuovi job, potenzialmente produttivi, di iniziare l'esecuzione. Ciò non solo
+        ridurrebbe lo spreco di risorse, ma aumenterebbe il throughput del centro di
+    calcolo}.
+\end{quote}
 
 Purtroppo, poiché HTCondor registra solamente i nuovi massimi nel consumo di
 risorse e non tiene traccia dei decrementi, un job zombie potrebbe non
@@ -317,8 +318,8 @@ esecuzione e che stanno utilizzando le risorse, rendendo difficile la loro
 identificazione. Questa problematica è confermata nella
 figura~\ref{fig:resources_utilization_firstday}: sebbene si osservi il consumo
 di RAM, SWAP e disco, la mancata registrazione dei decrementi da parte di
-HTCondor non permette di distinguere effettivamente in esecuzione da quelli
-zombie.
+HTCondor non permette di distinguere i job effettivamente in esecuzione da
+quelli zombie.
 
 \begin{figure}[p]
     \centering
