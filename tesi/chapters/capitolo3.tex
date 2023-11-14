@@ -1,90 +1,93 @@
 \label{chap:machine_learning}
 
-%%% BOZZA %%% % ESTIMATE 1h
+In questa tesi considereremo il Machine Learning come il processo che consente
+la creazione di modelli in grado di apprendere autonomamente dai dati. Un
+modello è costituito da un insieme di parametri e una struttura che elabora i
+dati di input per produrre un output. I parametri vengono appresi durante la
+fase di addestramento, in cui il modello esamina vari esempi e regola i propri
+parametri di conseguenza. Gli iperparametri, d'altra parte, sono valori
+definiti dall'utente prima dell'inizio dell'addestramento che influenzano la
+struttura del modello e il suo comportamento durante l'addestramento.
 
-Il workflow del machine learning è produrre dei modelli di machine learning
-addestrati sui dati che possono. Prima di parlare di come si crea e che
-modelli di machine learning andremo a creare, parleremo di come automatizzare
-la creazione di questi modelli. 
-However, the real challenge isn't building an ML model, the
-challenge is building an integrated ML system and to continuously operate it
-in production.
+Prima di esplorare i modelli specifici, ci concentreremo sul processo di
+creazione dei modelli di Machine Learning, e vedremo come l'automatizzazione
+di questo processo, attraverso l'impiego di una \textbf{pipeline}, possa
+ottimizzarne l'efficienza e l'efficacia.
 
-create
+Il processo di creazione di un modello di Machine Learning si compone di vari
+passaggi: l'estrazione dei dati, la loro preparazione e l'addestramento del
+modello. Una pipeline collega questi passaggi in sequenza,
+incapsulandoli in un'entità che, dall'esterno, può essere utilizzata come se
+fosse il modello stesso. Questa pipeline può essere rappresentata come un
+Grafo Aciclico Diretto (DAG), dove i dati fluiscono in una sola direzione,
+evitando cicli, e dove ogni nodo in questo grafo rappresenta una fase distinta
+del processo (vedi figura~\ref{fig:ml_pipeline_dag}).
 
-In questo capitolo prima di parlare degli algoritmi di Machine Learning utilizzati,
-spiegheremo come arrivare a poter ottenere un modello, e ciò verrà affatto
-attraverso la creazione di una pipeline.
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[trim=0 12.5cm 0 12.5cm, clip, width=\linewidth]{pipeline}
+    \caption{Rappresentazione di una pipeline di Machine Learning come un
+    grafo orientato senza cicli}
+    \label{fig:ml_pipeline_dag}
+\end{figure}
 
-Una pipeline consiste in una sequenza di più step indipendenti che sono
-linkati tra di loro per risolvere un task. Le pipeline nel machine learning
-consistono in step multipli sequenziali che fanno tutto da estrarre i dati a
-preprocessarli per l'addestramento del modello, al deployment e la sua
-valutazione. Possiamo vedere una pipeline come un DAG (Directed Acyclic
-Graph), dove i dati fluiscono in un solo senso. Acyclic perché non sono
-permessi loop e dove ogni nodo corrisponde a uno step di Machine Learning
+L'uso di una pipeline nel Machine Learning ci permette di ottenere i seguenti
+vantaggi:
+\begin{itemize}
+    \item[\textit{Efficacia}] \textbf{Estensione della ricerca degli iperparametri ad altri
+        componenti}: Mentre l'individuazione dei parametri migliori per un
+        modello avviene in modo automatico durante l'addestramento, la ricerca
+        degli iperparametri migliori richiede sperimentazioni multiple,
+        testando diversi valori e valutando i risultati del modello secondo
+        metriche prestabilite. Dato che esternamente una pipeline funziona
+        esattamente come un modello, è possibile estendere la ricerca degli
+        iperparametri migliori a componenti non direttamente correlati al
+        modello stesso, come quelle legate all'estrazione e alla preparazione
+        dei dati. Poiché anche la ricerca degli iperparametri è
+        automatizzabile, è possibile testare automaticamente diverse tecniche
+        di preparazione dei dati, semplicemente integrando il componente alla
+        pipeline.
+    \item [\textit{Efficienza}]\textbf{Sperimentazione rapida}: L'organizzazione di tutti i
+        passaggi in una pipeline può accelerare notevolmente la
+        sperimentazione. Questo è particolarmente utile quando si prevede di
+        testare vari iperparametri o di utilizzare differenti sottoinsiemi di
+        dati. Infatti, incapsulando le operazioni delle diverse componenti in
+        un unico elemento che le esegue sequenzialmente, si evita di ripetere
+        le stesse operazioni più volte, risultando in un risparmio di tempo
+        significativo.
+\end{itemize}
 
-The four main steps in an ML pipeline are data preparation, model training, model deployment,
+Nelle sezioni seguenti, descriveremo come sono stati affrontati i vari
+passaggi nella creazione di un modello di Machine Learning per
+l'identificazione dei job zombie e come si è cercato di integrare ciascun
+componente alla pipeline.
 
-linkando insieme diversi step insieme noi possiamo automatizzare il workflow
-che serve per produrre un modello di Machine Learning. Ciò è importante,
-perché se pensiamo di avere tanti step di trasformazioni, e a ogni set di dati
-che utilizziamo bisogna applicare le stesse trasformazioni, avendo incapsulato
-in un'unica entità che utilizziamo possiamo salvare tempo e effort.
+\section{Estrazione dei dati}
 
-Rapid experiment: The steps of the ML experiment are orchestrated. The
-transition between steps is automated, which leads to rapid iteration of
-experiments and better readiness to move the whole pipeline to production.
-
-Modularized code for components and pipelines: To construct ML pipelines,
-components need to be reusable, composable, and potentially shareable across
-ML pipelines. Therefore, while the EDA code can still live in notebooks, the
-source code for components must be modularized. I
-
-Nelle prossime sezioni parleremo di tutti gli step legati all'estrazione dei
-dati, alla loro Preprocessing, al model building, e come in ogni step è stato
-osservato come poter integrare 
-
-Nelle prossime sezioni parleremo di tutti gli step legati a un workflow di
-machine learning e di come è stato osservato un occhio di riguardo rispetto
-alla produzione della pipeline.
-
-Ometteremo solo di trattare lo step iniziale del Data collection, ovvero
-raccogliere i dati grezzi da diverse fonti di dati e immagazzinarle, poiché
-è stato parte del lavoro iniziale del Dott. Stefano Dal Pra che tramite un cron e
-diversi script ha collezionato i dati grezzi dalle diverse fonti come dai file history 
-Stefano Dal Pra e del monitoraggio dei job da HtCondor e non  riguarda questa
-trattazione.
-
-% in più è possibile ottimizzare la pipeline tutta insieme e ricercare gli
-% iperaparametri migliori, breve spiegazione sui parametri e iperaparametri
-
-%%% FINE BOZZA %%%
-
-\section{Estrazione dei dati} % ESTIMATE 1h
-
-%%% BOZZA %%%
-
-
-
-%%% FINE BOZZA %%%
-
-Data extraction: You select and integrate the relevant data from various data sources for the ML task.
-We cannot directly input the collected data to train the model without pr-processing it, as it may generate an abrupt result.
-
-Procediamo con l'estrazione di un dataset tramite la query SQL che
-interroga le tabelle \texttt{hj} e \texttt{htjob}. Ricordando che:
+Procediamo con l'estrazione di un dataset tramite una query SQL che interroga
+le tabelle \texttt{hj} e \texttt{htjob}, selezionando i dati rilevanti.
+Ricordando che:
 \begin{itemize}
     \item La tabella \texttt{hj} contiene lo stato dei job, rappresentato da
         serie storiche di misurazioni (come \texttt{runtime}, \texttt{ram},
         \texttt{swap}, \texttt{disk}, ecc.),
         durante la loro esecuzione.
     \item La tabella \texttt{htjob} fornisce informazioni sull'esito dei job,
-        ovvero se sono falliti o meno.
+        indicando se sono falliti o meno.
 \end{itemize}
 
 % fail 
 % jobid.idx.submitnode
+%jobid e idx sono creati dal Submit Node al "concepimento" del job (es.
+%'sn-01', 'ce03-htc', ...). I S.N. sono indipendenti tra loro per cui in linea
+%di principio possono esistere due job diversi con (jobid,idx) uguale (in tal
+%caso vengono da S.N. diversi)
+
+%Ci sono due momenti diversi: il batch system puo' terminare LUI un job anche
+%se non ha alcun problema (per una serie di ragioni) e quella info e' in
+%jobstatus, Poi c'e' lo exitstatus dell'eseguibile vero e proprio: di questo
+%sappiamo che se e' 0 allora e' ok, se e' != 0 e' uscito con errore (quale sia
+%lo sa il suo owner).
 
 La query esegue le seguenti operazioni:
 \begin{itemize}
@@ -125,22 +128,6 @@ e le colonne includono:
         valori che rappresentano le serie storiche di misurazioni.
 \end{itemize}
 
-Il dataset ottenuto comunque non è sufficiente per poter applicare
-direttamente un algoritmo di Machine Learning, infatti le colonne che
-rappresentano le serie storiche univariate contengono un tipo di dato
-complesso, come delle liste. Questo ha bisogno di essere preprocessato e
-aggiungere ulteriori informazioni che si possono astrarre dai dati e rendere i
-dati utilizzabili da un algoritmo. Dobbiamo risolvere tutti i problemi
-spiegati nella sezione delle serie storiche \ref{}.
-
-% che cos'è un DataFrame
-
-\begin{figure}
-    \includegraphics[trim=0 13cm 0 13cm, clip, width=\linewidth]{pipeline}
-    \caption{}
-    \label{}
-\end{figure}
-
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.95\textwidth]{dataset}
@@ -148,66 +135,138 @@ spiegati nella sezione delle serie storiche \ref{}.
     \label{fig:dataset_from_join_hj_htjob}
 \end{figure}
 
-\section{Preparazione dei dati} % ESTIMATE 13h
+Tuttavia, il dataset estratto non è ancora pronto per l'addestramento del
+modello e necessita di ulteriori trasformazioni da parte del componente
+successivo. Questo passaggio non è stata integrato nella pipeline, in quanto,
+nell'ambiente operativo reale, si prevede che questa lavori direttamente con i
+dati forniti da HTCondor, eliminando così la necessità di estrarre dati da un
+database SQL.
 
+\section{Preparazione dei dati}
 
-%%% BOZZA 
-I dati vengono preparati per il task di machine learning
+La preparazione dei dati è essenziale nel Machine Learning. Prima di tutto, è
+necessario convertire i dati in numeri, dato che gli algoritmi di Machine
+Learning lavorano esclusivamente con dati in tale forma. Inoltre, la qualità e
+la quantità dei dati sono determinanti per l'efficacia del modello. Se i dati
+disponibili sono insufficienti o di bassa qualità, i risultati saranno
+scadenti a prescindere dalla complessità del modello utilizzato. Tipicamente,
+maggiore è la complessità di un modello, tanto più esso richiederà una grande
+quantità di dati di alta qualità.
 
-Gli algoritmi di Machine Learning richiedono che i dati siano dei numeri.
+Per realizzare ciò, è stata creata una classe denominata
+\texttt{Preprocessor}, che riceve in input un dataset e restituisce in output
+un dataset modificato, eseguendo una serie di operazioni intermedie. Queste
+operazioni possono essere ricondotte a tre categorie: l'aggiunta, la rimozione
+e la trasformazione di colonne. Le operazioni effettuate sono configurabili
+attraverso parametri definiti nel costruttore della classe al momento della
+sua istanziazione. Quando questo componente viene inserito all'interno di una
+pipeline, tali parametri fungono da iperparametri, permettendo di esplorare
+diverse configurazioni per identificare quale produca i risultati migliori.
 
-Inoltre,
-Se la qualità o la quantità dei dati sono insufficienti, noi andremo incontro
-a una situazione comunemente chiamata ``garbage in, garbage out'' e non
-importa quanto sia figo il nostro algoritmo di machine learning, perché non
-avremo risultati soddisfacenti. Infatti più è fancier l'algoritmo, più dati
-avremo bisogno.
+% immagine
 
-Data l'esistenza di dati di bassa qualità, per aumentare la qualità del
-modello che vogliamo utilizzare, i dati DEVONO ESSERE PREPARATI.
+In aggiunta, questa classe è stata implementata seguendo il design pattern
+Template Method, nel quale i passaggi di un algoritmo vengono divisi in metodi
+separati, e successivamente invocati da un metodo denominato template (vedi
+figura~\ref{fig:uml_preprocessor}). La superclasse definisce lo scheletro
+dell'algoritmo, consentendo alle sottoclassi di personalizzare alcuni passaggi
+sovrascrivendo alcuni metodi. In questo modo, è possibile codificare la parte
+invariante dell'algoritmo una sola volta nella superclasse, lasciando alle
+sottoclassi il compito di implementare i comportamenti che possono variare. In
+pratica, l'uso di questo pattern in questa classe ci consente di aggiungere,
+modificare e rimuovere passaggi dall'algoritmo in modo semplice ed immediato,
+senza la necessità di dover intervenire sul codice della classe principale.
 
-% rimozione rumore
-Rumore nei dati e errori possono essere corretti
-Complex nonlinear relationships may be teased out of the data.
- r how to best expose the underlying structure of the problem to the learning algorithms. This is the guiding light.
+\begin{figure}[!ht]
+   \centering
+   \includegraphics[width=0.5\linewidth]{preprocessor}
+   \caption{Diagramma UML della classe \texttt{Preprocessor}, illustrante
+   l'implementazione del design pattern Template Method}
+   \label{fig:uml_preprocessor}
+\end{figure}
 
-Le tecniche di pre-processing si riferiscono generalmente all'addition,
-deletion o la trasformazione dei dati iniziali 
+Dopo aver delineato la struttura generale della classe \texttt{Preprocessor},
+descriveremo ora le trasformazioni effettuate dal metodo
+\texttt{preprocess()}, che funge da metodo template, nella preparazione dei
+dati.
 
-%%% FINE BOZZA %%%
+\subsection{Preparazione delle serie storiche}
 
-%In questa tesi considereremo un Preprocessor come un algoritmo che prende un
-%DataFrame e restituisce un altro DataFrame, applicando una serie di passaggi
-%intermedi
+Nella sezione~\ref{sec:job_analysis}, abbiamo identificato alcuni problemi
+nelle misurazioni registrate da HTCondor relative allo stato dei job. Un
+problema è la presenza di valori ripetuti all'interno delle serie storiche.
+Queste serie sono attualmente rappresentate come liste di valori, che non
+corrispondono al formato numerico richiesto dai modelli di Machine Learning.
+Pertanto, è necessario non solo rimuovere le ripetizioni, ma anche convertire
+queste serie storiche in un formato di dati strutturato.
 
-% Transformer is an algorithm which can transform one DataFrame into another DataFrame
+\paragraph{Sottocampionamento.} Applicando un'operazione di
+convoluzione\footnote{Operazione matematica che consiste nell'applicare un
+    filtro di dimensione finita lungo la sequenza di valori. Il filtro, di
+    solito di piccole dimensioni, viene fatto scorrere su tutta la sequenza, e
+    in ogni posizione si calcola una somma pesata tra i valori della sequenza
+    e quelli del filtro. Questo processo trasforma la sequenza originale in
+    una nuova attraverso la formula: $$(S\ast
+    K)(i)=\displaystyle\sum_{m=-d}^{d}S(m)\cdot K(i-m)$$ dove $S$ è la
+sequenza originale, $K$ è il filtro e $d$ è l'intero inferiore della metà
+della lunghezza del filtro.} con un passo (\textit{stride}) di 5 e un filtro
+con elementi $\frac{1}{5}$, possiamo effettuare un sottocampionamento della
+sequenza originale. Ciò comporta di ottenere una nuova sequenza, la cui
+lunghezza è pari a un quinto della lunghezza della serie storica originale. In
+pratica, il filtro calcola la media di ogni gruppo di cinque valori
+consecutivi. Se questi cinque valori sono identici, il risultato sarà il
+valore stesso, che sostituisce la sequenza dei cinque valori, eliminando le
+ripetizioni nella nuova sequenza.
 
-%Data preparation: The data is prepared for the ML task. This preparation
-%involves data cleaning. You also apply data transformations and feature engineering to
-%the model that solves the target task. The output of this step are the data
+\paragraph{Trasformazione delle multiple serie storiche multivariate.} Sebbene
+durante il processo di estrazione dei dati le serie storiche multivariate
+siano state rappresentate come liste, il dataset rappresenta ancora le tre
+dimensioni delle multiple serie multivariate: job (righe), variabili (colonne)
+e time step (liste), come illustrato nella
+figura~\ref{fig:multiple_multivariate_time-series}. Una possibile soluzione
+potrebbe essere quella di trasformare le liste in una singola statistica, come
+la media o il massimo, ma ciò cancellerebbe qualsiasi indicazione
+sull'evoluzione temporale di ciascun job. Il nostro obiettivo è quello di
+introdurre nuove feature che possano riflettere la tridimensionalità originale
+dei dati. Tuttavia, prima di procedere, è necessario assicurarsi che tutte le
+serie storiche siano uniformate alla stessa lunghezza.
 
-% qua parleremo del preprocessor
+\begin{figure}[!ht]
+   \centering
+   \includegraphics[trim=0cm 1.5cm 0cm 1.5cm, clip, width=0.5\linewidth]{multiple_multivariate_time-series}
+   \caption{Rappresentazione tridimensionale delle multiple serie storiche
+   multivariate}
+   \label{fig:multiple_multivariate_time-series}
+\end{figure}
 
-% template method
+Per gestire serie di dati con lunghezze diverse, possiamo utilizzare due
+strategie: lo zero-padding e il troncamento. Lo zero-padding si applica alle
+sequenze più corte, aggiungendo zeri fino a raggiungere una lunghezza
+prefissata. Invece, il troncamento si usa per ridurre le sequenze più lunghe,
+tagliandole fino a che non raggiungono la stessa lunghezza prestabilita. La
+classe \texttt{Preprocessor} implementa entrambe le tecniche: stabilisce una
+lunghezza fissa per tutte le sequenze, troncando quelle che eccedono questa
+lunghezza e applicando lo zero-padding a quelle che non la raggiungono.
 
- % costruendo un componente così fatto per la pipeline possiamo ricercare gli
-% iperaparametri migliori di ciascuna trasformazione fatta
+Una volta ottenute serie storiche di uguale lunghezza, vengono applicate le
+seguenti trasformazioni, in base al modello utilizzato:
 
-\subsection{Trasformazione delle serie storiche multivariate multiple} %
-% ESTIMATE 5h
-
-% dobbiamo convertire le serie storiche in un tipo di dati strutturato,
-% tabellare, utilizzabile dai modelli di Machine Learning
-
-% padding e truncate delle serie storiche 
-
-% avg pooling
-
-% tabular transformation
-
-% tensor transformation
+\begin{itemize}
+    \item \textbf{Trasformazione in colonne}: Ogni elemento di ogni lista diventa una colonna
+        separata nel dataset. Ad esempio, con un sottocampionamento a 15
+        minuti per un giorno, avremo 96 time step, corrispondenti a 96 colonne
+        per ciascuna serie temporale.
+    \item \textbf{Trasformazione in righe}: 
+        Gli elementi nelle stesse posizioni nelle liste formano righe
+        distinte. Quindi, con un sottocampionamento a 15 minuti per un giorno,
+        otteniamo 96 righe per ogni job.
+\end{itemize}
 
 \subsection{Creazione delle feature} % ESTIMATE 2h
+
+% dopo la trasformazione abbiamo tutte le colonne delle serie storiche in
+% formato numerico, ma alcune colonne non sono ancora nel formato richiesto.
+
 \begin{figure}[!ht]
     \centering
     \begin{tikzpicture}[sibling distance=2cm]
@@ -223,9 +282,18 @@ deletion o la trasformazione dei dati iniziali
     \end{tikzpicture}
 \end{figure}
 
+%Complex nonlinear relationships may be teased out of the data.
+% r how to best expose the underlying structure of the problem to the learning algorithms. This is the guiding light.
 % non contiene dati duplicati e missing values
 
-% Data preparation: The data is prepared for the ML task. This preparation
+% your system will only be capable of learning if the training data enough
+% relevant and not too many irrilevant ones. A critical part of the success of
+% a machine learning project is coming up with a good set of features to train
+% on.
+% This process, called feature engineering
+
+% molte colonne presenti nel dataset sono colonne derivanti dalle tabelle hj e
+% htjob con colonne categoriche
 
 % jobid e idx
 
@@ -246,14 +314,10 @@ deletion o la trasformazione dei dati iniziali
 % variabili categoriche
 % queue
 % one hot encoding
-%
-% your system will only be capable of learning if the training data enough
-% relevant and not too many irrilevant ones. A critical part of the success of
-% a machine learning project is coming up with a good set of features to train
-% on.
-% This process, called feature engineering
 
 \subsection{Etichettatura dei dati} % ESTIMATE 1h
+
+% perché etichettare i dati
 
 % Una possibile strategia:
 % - usando htjob si trovano i job eliminati per "toomuchtime": sono quelli con
@@ -272,8 +336,23 @@ deletion o la trasformazione dei dati iniziali
 % Metriche
 
 \section{Selezioni dei modelli}
-\subsection{Modelli supervisionati}
+\subsection{Modelli supervisionati}        
+%L'input è rappresentato da un tensore 3D (batch size, time steps,
+%features)
+%To train the LSTM you use the typical Mini-batch training. Make sure
+%you don't propagate the state for batch sample 𝑖 to sample 𝑖+1 in
+%order to treat them individually (in Keras you set the stateful flag
+%to False)
+% Essentially, the author is describing a means for forecasting sales
+% with LSTM whereby the model is trained on a mini-batch (or subset) of
+% one series, and then a new series is selected.
+
+%This would have the advantage of essentially creating a unified series
+%that takes the characteristics of all weather stations into account -
+%which allows for maximum utilisation of the data, as well as allowing
+%the network to learn patterns from all stations - not just one or a
+%select few.
+%An RNN (or a Transformer) could use any of/all of the history that you
+%give it. But that's assuming that the history is useful for the
+%predictions you're making.
 \subsection{Modelli non supervisionati}
-\section{Valutazione delle performance}
-\subsection{Metriche di valutazione}
-\subsection{Convalida incrociata}
