@@ -64,8 +64,8 @@ componente alla pipeline.
 
 \section{Estrazione dei dati}
 
-Procediamo con l'estrazione di un dataset tramite una query SQL che interroga
-le tabelle \texttt{hj} e \texttt{htjob}, selezionando i dati rilevanti.
+L'estrazione di un dataset viene fatta tramite una query SQL che interroga le
+tabelle \texttt{hj} e \texttt{htjob}, selezionando i dati rilevanti.
 Ricordando che:
 \begin{itemize}
     \item La tabella \texttt{hj} contiene lo stato dei job, rappresentato da
@@ -76,12 +76,14 @@ Ricordando che:
         indicando se sono falliti o meno.
 \end{itemize}
 
-% fail 
-% jobid.idx.submitnode
+% job
+
 %jobid e idx sono creati dal Submit Node al "concepimento" del job (es.
 %'sn-01', 'ce03-htc', ...). I S.N. sono indipendenti tra loro per cui in linea
 %di principio possono esistere due job diversi con (jobid,idx) uguale (in tal
 %caso vengono da S.N. diversi)
+
+% fail
 
 %Ci sono due momenti diversi: il batch system puo' terminare LUI un job anche
 %se non ha alcun problema (per una serie di ragioni) e quella info e' in
@@ -163,8 +165,6 @@ sua istanziazione. Quando questo componente viene inserito all'interno di una
 pipeline, tali parametri fungono da iperparametri, permettendo di esplorare
 diverse configurazioni per identificare quale produca i risultati migliori.
 
-% immagine
-
 In aggiunta, questa classe è stata implementata seguendo il design pattern
 Template Method, nel quale i passaggi di un algoritmo vengono divisi in metodi
 separati, e successivamente invocati da un metodo denominato template (vedi
@@ -200,17 +200,17 @@ corrispondono al formato numerico richiesto dai modelli di Machine Learning.
 Pertanto, è necessario non solo rimuovere le ripetizioni, ma anche convertire
 queste serie storiche in un formato di dati strutturato.
 
-\paragraph{Sottocampionamento.} Applicando un'operazione di
-convoluzione\footnote{Operazione matematica che consiste nell'applicare un
-    filtro di dimensione finita lungo la sequenza di valori. Il filtro, di
-    solito di piccole dimensioni, viene fatto scorrere su tutta la sequenza, e
-    in ogni posizione si calcola una somma pesata tra i valori della sequenza
-    e quelli del filtro. Questo processo trasforma la sequenza originale in
-    una nuova attraverso la formula: $$(S\ast
-    K)(i)=\displaystyle\sum_{m=-d}^{d}S(m)\cdot K(i-m)$$ dove $S$ è la
-sequenza originale, $K$ è il filtro e $d$ è l'intero inferiore della metà
-della lunghezza del filtro.} con un passo (\textit{stride}) di 5 e un filtro
-con elementi $\frac{1}{5}$, possiamo effettuare un sottocampionamento della
+\paragraph{Riduzione della frequenza di campionamento.} Applicando
+un'operazione di convoluzione\footnote{Operazione matematica che consiste
+    nell'applicare un filtro di dimensione finita lungo la sequenza di valori.
+    Il filtro, di solito di piccole dimensioni, viene fatto scorrere su tutta
+    la sequenza, e in ogni posizione si calcola una somma pesata tra i valori
+    della sequenza e quelli del filtro. Questo processo trasforma la sequenza
+    originale in una nuova attraverso la formula: $$(S\ast
+K)(i)=\displaystyle\sum_{m=-d}^{d}S(m)\cdot K(i-m)$$ dove $S$ è la sequenza
+originale, $K$ è il filtro e $d$ è l'intero inferiore della metà della
+lunghezza del filtro.} con un passo (\textit{stride}) di 5 e un filtro di 5
+elementi con valore $\frac{1}{5}$, possiamo effettuare una decimazione della
 sequenza originale. Ciò comporta di ottenere una nuova sequenza, la cui
 lunghezza è pari a un quinto della lunghezza della serie storica originale. In
 pratica, il filtro calcola la media di ogni gruppo di cinque valori
@@ -262,17 +262,56 @@ seguenti trasformazioni, in base al modello utilizzato:
         otteniamo 96 righe per ogni job.
 \end{itemize}
 
-\subsection{Creazione delle feature} % ESTIMATE 2h
+\subsection{Creazione delle feature}
 
-% dopo la trasformazione abbiamo tutte le colonne delle serie storiche in
-% formato numerico, ma alcune colonne non sono ancora nel formato richiesto.
+Dopo aver convertito le serie storiche in formato numerico, rimangono alcune
+colonne, come \texttt{job} e \texttt{queue}, che sono di tipo categorico
+nominale e che necessitano anch'esse di essere convertite in formato numerico.
+Inoltre, è importante assicurarsi che le colonne numeriche siano sulla stessa
+scala, poiché le differenze di scala possono portare a prestazioni subottimali
+nei modelli. Quindi, un passo importante nella preparazione dei dati è il
+ridimensionamento di queste colonne.
+
+\paragraph{One-hot encoding.} 
+
+Una possibile soluzione per gestire le colonne di tipo categorico potrebbe
+essere quella di assegnare un valore intero a ciascun valore categorico.
+Tuttavia, questa strategia può indurre il modello a interpretare i valori
+numerici vicini come simili e quelli distanti come dissimili, il che non è
+appropriato per le colonne di tipo categorico nominale.
+
+Per risolvere questo problema, si può utilizzare la tecnica dell'one-hot
+encoding, che crea una colonna binaria per ogni valore categorico: la colonna
+sarà impostata a 1 per la categoria corrispondente e a 0 per tutte le altre.
+Sfortunatamente, il one-hot encoding può generare un eccessivo numero di
+colonne in presenza di colonne con alta cardinalità, come \texttt{job}
+($\mathcal{O}(\text{numero righe})$) o \texttt{queue} ($\mathcal{O}(50)$). In
+questi casi, si rischia di avere troppe feature irrilevanti, compromettendo
+l'efficacia del modello di Machine Learning. 
+
+Per garantire che il modello impari efficacemente dai dati, è fondamentale
+selezionare feature rilevanti ed eliminare quelle irrilevanti. È altresì
+importante che il modello interpreti i dati in modo simile a come li
+percepiamo noi, evidenziando le caratteristiche salienti dei dati e la
+struttura del problema. 
+
+Per far ciò, sono state create due nuove colonne, \texttt{job type} e
+\texttt{job work type} (vedi figura ~\ref{fig:job_type_and_job_work_type}),
+seguite dall'applicazione dell'one-hot encoding. La prima colonna raggruppa i
+gruppi di utenti, in LHC e non-LHC, che, come osservato nell'analisi
+preliminare, hanno meccanismi interni diversi e potrebbero comportarsi in
+maniera differente. Allo stesso modo, viene estratto il \verb|submit_node|
+dalla colonna \texttt{job}, dove ogni ID è composto da
+\verb|jobid.idx_submitnode|, e classificato i job in base al fatto che il
+\verb|submit_node| sia ``sn0x'' o ``ce0x'', distinguendo così i job sottomessi
+dagli utenti interni del CNAF da quelli degli utenti esterni.
 
 \begin{figure}[!ht]
     \centering
     \begin{tikzpicture}[sibling distance=2cm]
         \node {JOB TYPE}
-            child {node {GRID}}
-            child {node {LOCAL}};
+        child {node {GRID}}
+        child {node {LOCAL}};
     \end{tikzpicture}
     \hspace{2cm}
     \begin{tikzpicture}[sibling distance=2cm]
@@ -280,63 +319,189 @@ seguenti trasformazioni, in base al modello utilizzato:
         child {node {LHC}}
         child {node {NON-LHC}};
     \end{tikzpicture}
+    \caption{Visualizzazione delle nuove colonne \texttt{job type} e \texttt{job work type}}
+    \label{fig:job_type_and_job_work_type}
 \end{figure}
 
-%Complex nonlinear relationships may be teased out of the data.
-% r how to best expose the underlying structure of the problem to the learning algorithms. This is the guiding light.
-% non contiene dati duplicati e missing values
+\paragraph{Ridimensionamento delle feature.}
 
-% your system will only be capable of learning if the training data enough
-% relevant and not too many irrilevant ones. A critical part of the success of
-% a machine learning project is coming up with a good set of features to train
-% on.
-% This process, called feature engineering
+La normalizzazione è il processo che ridimensiona i dati in un range tra 0 e
+1. La formula è $X'=\frac{(X-X_{min})}{X_{max}-X_{min}}$, dove $X_{min}$ e
+$X_{max}$ sono rispettivamente i valori minimi e massimi della feature. La
+standardizzazione trasforma i dati in modo che abbiano media 0 e varianza di
+1. La formula è $X'=\frac{X-\mu}{\sigma}$.
 
-% molte colonne presenti nel dataset sono colonne derivanti dalle tabelle hj e
-% htjob con colonne categoriche
+Ridimensionare i dati è 
 
-% jobid e idx
+Ridimensionare i dati è importante perché aiuta i modelli a convergere meglio
+ai parametri migliori
 
-% jobid e idx sono creati dal Submit Node al "concepimento" del job (es.
-% 'sn-01', 'ce03-htc', ...). I S.N. sono indipendenti tra loro per cui in linea
-% di principio possono esistere due job diversi con (jobid,idx) uguale (in tal
-% caso vengono da S.N. diversi)%
+%Scaling is important because it preconditions the data to facilitate
+%optimization. Putting the features on the same scale stretches the
+%optimization surface to ameliorate narrow valleys, because these valleys make
+%optimization very challenging, especially optimization using gradient descent
+% . The reason we scale data is to improve gradient descent dynamics,
 
-% job work type
+%Which scaling method works best depends on the problem,because different
+%problems have different optimization surfaces.
+% A very general strategy is to carry out an experiment: test how well the
+% model works with alternative methods 
+%
+%Lecun
+% the network training converges faster if its inputs are whitened – i.e.,
+% linearly transformed to have zero means and unit variances
 
-% job type
+%For instance many elements used in the objective function of a learning
+%algorithm (such as the RBF kernel of Support Vector Machines or the L1 and L2
+%regularizers of linear models) assume that all features are centered around 0
+%and have variance in the same order.
 
-% one hot encoding 
+%http://yann.lecun.com/exdb/publis/pdf/lecun-98b.pdf
+%sklearn
 
-% non verranno considerati i jobs con runtime <
-% 1h, poichè non rilevanti per il sistema.
+%d the algorithm, ad esempio gli alberi decisionali, does not make assumptions
+%about the distribution. It is a good technique when we did not know about the
+%distribution of data or when we know the distribution is not gaussian.
 
-% variabili categoriche
-% queue
-% one hot encoding
+%doesn't reduce the effect of outliers, ma li scala them down into a fixed
+%range, where the largest occuring data point corresponds to the maximum value
+%and the smallest one corresponds to the minimun value.
+%
+%Normalization is a good technique to use when you do not know the distribution
+%of your data or when you know the distribution is not Gaussian (a bell curve).
+%
+%Standardization presupposes that the distribution of your data is Gaussian
+%
+%La normalizzazione è cruciale per modelli come le reti neurali.
 
-\subsection{Etichettatura dei dati} % ESTIMATE 1h
+\subsection{Etichettatura dei dati}
 
-% perché etichettare i dati
+In base alla presenza di etichette nei dati, possiamo distinguere tra
+apprendimento supervisionato e non supervisionato. Nell'apprendimento
+supervisionato, i modelli vengono addestrati con un dataset, dove ogni esempio
+è associato a un'etichetta, rappresentante un valore categorico o numerico.
+Durante l'addestramento, il modello tenta di prevedere le etichette per esempi
+che non ha mai visto prima. Le predizioni sono poi confrontate con le
+etichette per calcolare l'errore, che indica quanto le predizioni del modello
+si discostano dai valori reali. L'obiettivo è migliorare la precisione del
+modello minimizzando l'errore, tipicamente attraverso la discesa del
+gradiente.
 
-% Una possibile strategia:
-% - usando htjob si trovano i job eliminati per "toomuchtime": sono quelli con
-%   jobstatus = 3 e runtime ~=7gg (non c'è valore esatto!)
-% - a questo punto possiamo possiamo impostare un supervised learning
-%   guardando su hj come hanno "vissuto" quei job.
+Attualmente, il dataset non include etichette che identifichino quali job
+siano zombie, il che ci impedisce di impostare un apprendimento
+supervisionato. Per generare le etichette, calcoliamo il tempo di esecuzione
+di ogni job come \verb|int((maxt - mint) / 86400)| per ottenere il numero
+di giorni di esecuzione. Poi, con la colonna \texttt{job\_type}, etichettiamo
+come job zombie quelli che soddisfano la condizione:
 
-\subsection{Tecniche di bilanciamento dei dati} % ESTIMATE 5h
+\begin{verbatim}
+    se giorni > (3 se job_type == `grid', altrimenti 7) e fail == 1 
+\end{verbatim}
 
-% undersample
+\subsection{Tecniche di bilanciamento dei dati}
 
-% oversample
+Nella sezione~\ref{sec:job_analysis}, abbiamo osservato che i job zombie sono
+estremamente più rari dei job normali, con un rapporto di 1 a 10,000. A causa
+di questo forte sbilanciamento, il classificatore potrebbe semplicemente
+apprendere a identificare tutti gli esempi come job normali (etichettati come
+0), ottenendo così un errore apparentemente molto basso, ma in realtà
+ignorando completamente i job zombie, che sono esattamente quelli che
+desideriamo identificare. 
 
-% class weighting in loss function
+Per tentare di ridurre il bias del modello verso la classe maggioritaria sono
+state adottate tre tecniche in combinazione: sottocampionamento,
+sovracampionamento e Cost-sensitive learning. Queste tecniche mirano a
+bilanciare la distribuzione delle classi nel dataset e a migliorare la
+capacità del modello di distinguere tra job normali e job zombie. 
 
-% Metriche
+\paragraph{Sottocampionamento casuale.} Il sottocampionamento casuale è una
+strategia molto semplice in cui vengono cancellati casualmente degli esempi di
+job normali dal dataset. Tuttavia, ciò può comportare la perdita di
+informazioni preziose per il modello, causando una perdita della sua
+precisione \cite{he2013}.
+
+\paragraph{Sovracampionamento.}
+\label{par:vae}
+
+Un'alternativa è il sovracampionamento dei job zombie. Il metodo più semplice
+consiste nell'aggiungere duplicati di esempi già presenti nel dataset;
+tuttavia, ciò non fornisce nuove informazioni utili al modello. Un approccio
+più efficace è la generazioni di nuovi esempi artificiali, che sono varianti
+dei job zombie \cite{brownlee2021}. 
+
+Pertanto, si è scelto di usare una variante dell'autoencoder, nota come
+\textbf{variational autoencoder} \cite{kingma2022}, per generare varianti di
+job zombie a partire dai job zombie dell'intero 2021. Gli autoencoder
+tradizionali apprendono funzioni per mappare esempi in punti nello spazio
+latente e viceversa, per mappare le loro rappresentazioni compresse dallo
+spazio latente allo spazio originale. Tuttavia, se si prende una variante di
+un esempio nello spazio latente, il decoder $g(h)$ genererà un output privo di
+senso, in quanto non è in grado di gestire regioni dello spazio mai esplorate.
+Il variational autoencoder risolve questo problema facendo sì che l'encoder
+anziché restituire una rappresentazione compressa $h$, fornisca una media
+$\mu$ e una deviazione standard $\sigma$. Intuitivamente, la rappresentazione
+compressa viene campionata da una distribuzione gaussiana caratterizzata dalla
+media $\mu$ e dalla deviazione standard $\sigma$. In questo modo, il decoder
+impara a mappare non solo un singolo punto nello spazio latente, ma anche
+tutti i punti nelle sue vicinanze (vedi figura~\ref{fig:vae_comparison})
+\cite{shafkat2018}.
+
+Tuttavia, il sovracampionamento aumenta il rischio di overfitting, cioè la
+possibilità che il modello si adatti eccessivamente ai dati di addestramento,
+perdendo così la capacità di generalizzare su dati nuovi\cite{fernandez2018}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.95\linewidth]{vae_comparison}
+    \caption{Rappresentazioni compresse in un autoencoder tradizionale e un
+    variational autoencoder \cite{shafkat2018}}
+    \label{fig:vae_comparison}
+\end{figure}
+
+\paragraph{Cost-sensitive learning.}
+
+Possiamo distinguere gli errori commessi dal modello in falsi positivi e falsi
+negativi in base a due criteri: un errore è falso positivo quando il modello
+identifica erroneamente un job come zombie nonostante non lo sia; è invece un
+falso negativo quando il modello etichetta come normale un job che in realtà è
+zombie.
+
+Assegnando un valore diverso, che definiamo ``costo'', ai falsi positivi e ai
+falsi negativi, e minimizzando il costo totale\footnote{$\text{Costo totale} =
+    C_{FN} \cdot
+FN + C_{FP} \cdot FP$} derivante dalle predizioni
+errate, il modello imparerà durante l'addestramento ad attribuire diversa
+importanza ai vari tipi di errori.
+
 
 \section{Selezioni dei modelli}
-\subsection{Modelli supervisionati}        
+
+% anomaly detection vs classification
+
+Anomaly detection is not binary classification because our models do not
+explicitly model an anomaly. Instead, they learn to recognize only what it is
+to be normal. In fact, we could use binary classification if we had a lot of
+anomalies of all kinds to work with… But then, they wouldn’t be anomalies
+after all!
+
+\subsection{Classificazione}
+
+\subsubsection{XGBoost}
+
+\subsubsection{Deep learning}
+
+% Representation of instances must be appropriate
+%Most ML models requires item as a real-valued vector (x1, x2, ...)
+%Each value of a vector encodes a specific feature
+%Features must be carefully chosen in order to obtain effective models
+%Feature engineering can be a cumbersome task
+
+% at each iteration, equation requires a complete pass through the intere
+% dataset in orde to compute the gradient. 
+
+% batch learning an entire batch of data must be considered before weight are
+% updated
+
 %L'input è rappresentato da un tensore 3D (batch size, time steps,
 %features)
 %To train the LSTM you use the typical Mini-batch training. Make sure
@@ -355,4 +520,49 @@ seguenti trasformazioni, in base al modello utilizzato:
 %An RNN (or a Transformer) could use any of/all of the history that you
 %give it. But that's assuming that the history is useful for the
 %predictions you're making.
-\subsection{Modelli non supervisionati}
+
+\subsection{Novelty detection}
+
+%un altro modo di poter appocciare lo stesso problema di individuare i job
+%zombie dai job normali è affrontando un task di novelty detection.
+%
+%In questo il task è 
+%
+%ricordiamo che un autoencoder è addestrato per ridurre al minimo l'errore di
+%ricostruzione
+%
+%“new and not resembling something formerly known or
+%used”.
+%
+%in più permette explainability
+%
+%is assumed to be trained on a clean dataset, uncontaminated by outliers
+%
+%come abbiamo parlato nel paragrafo ~\ref{par:vae} gli input che durante
+%l'addestramento dell'autoencoder non sono mai stati visti il decoder non saprà
+%ricostruirlo correttamente e in questo caso darà un errore di ricostruzione
+%molto alto $\epsilon=\lVert x-g(f(x))\rVert_2$. 
+%
+%In questo caso per determinare se un dato esempio è normale o zombie, ci
+%basiamo sull'errore di ricostruzione e guardiamo nuovamente le etichette.
+%
+%effettuiamo l'addestramento su un dataset clean e poi su un altro dataset in
+%un periodo successivo andiamo a settare un threshold sull'errore di
+%ricostruzione in base al quale, quelli che sono sopra al threshold sono job
+%zombie (1) e quelli che sono sotto job normali (0). Come al solito andiamo a
+%minimizzare su questo nuovo dataset l'errore o il costo cercando di.
+%
+%The test sample x is more likely to be novel as the error ε(x) becomes larger,
+%because it means that x is farther from the manifold that the autoencoder
+%describes.
+
+% ovviamente l'encoder e il decoder che abbiamo descritto come delle funzioni,
+% nella realtà sono architetture di reti neurali, e possono essere realizzate
+% per poter definire un funzione non lineare
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.95\linewidth]{reconstruction_error}
+    \caption{}
+    \label{fig:reconstruction_error}
+\end{figure}
