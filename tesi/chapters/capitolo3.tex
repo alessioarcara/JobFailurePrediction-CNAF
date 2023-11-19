@@ -273,6 +273,7 @@ nei modelli. Quindi, un passo importante nella preparazione dei dati è il
 ridimensionamento di queste colonne.
 
 \paragraph{One-hot encoding.} 
+\label{par:features}
 
 Una possibile soluzione per gestire le colonne di tipo categorico potrebbe
 essere quella di assegnare un valore intero a ciascun valore categorico.
@@ -448,7 +449,7 @@ tutti i punti nelle sue vicinanze (vedi figura~\ref{fig:vae_comparison})
 
 Tuttavia, il sovracampionamento aumenta il rischio di overfitting, cioè la
 possibilità che il modello si adatti eccessivamente ai dati di addestramento,
-perdendo così la capacità di generalizzare su dati nuovi\cite{fernandez2018}.
+perdendo così la capacità di generalizzare su dati nuovi \cite{fernandez2018}.
 
 \begin{figure}
     \centering
@@ -476,93 +477,328 @@ importanza ai vari tipi di errori.
 
 \section{Selezioni dei modelli}
 
-% anomaly detection vs classification
+Nel Machine Learning, il problema di identificare i job zombie può essere
+risolto modellando il problema in diversi modi e creando modelli specifici per
+risolverlo. In questa tesi, si è scelto di approcciare il problema
+modellandolo in due modi: la classificazione e la novelty detection.
 
-Anomaly detection is not binary classification because our models do not
-explicitly model an anomaly. Instead, they learn to recognize only what it is
-to be normal. In fact, we could use binary classification if we had a lot of
-anomalies of all kinds to work with… But then, they wouldn’t be anomalies
-after all!
+Nel primo caso, al modello viene richiesto di specificare, come output, a
+quale dei $k$ valori categorici un esempio appartiene. Per risolvere questo
+problema, il modello deve produrre una funzione del tipo
+$f:\mathbb{R}^n\to\{1,\ldots,k\}$ basandosi sulle feature degli esempi in
+input \cite{Goodfellow2016}.
 
-\subsection{Classificazione}
+Nel caso della novelty detection, invece, si chiede al modello di modellare i
+dati e di riconoscere le ``novità'', ovvero ciò che non ha mai visto dai dati.
+Consideriamo una novità come un punto dei dati che non appare consistente con
+ciò che è stato osservato nei dati di addestramento. A differenza della
+classificazione, i  modelli non modellano esplicitamente un'anomalia. Essi
+imparano solo a riconoscere ciò che è normale. Per funzionare efficacemente,
+l'addestramento richiede un dataset ``pulito'', cioè privo di job zombie
+\cite{geron2019, pimentel2014}.
 
-\subsubsection{XGBoost}
+L'ipotesi è che, modellando sufficienti dati, possiamo ottenere un modello che
+ha già visto abbastanza per riconoscere i job zombie come novità rispetto a
+ciò che ha appreso come normale (vedi figura~\ref{fig:anomaly_detection}).
 
-\subsubsection{Deep learning}
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.95\linewidth]{anomaly_time_series}
+    \caption{Rappresentazione ideale di una serie storica anomala in contrasto
+    con un cluster di serie storiche normali}
+    \label{fig:anomaly_detection}
+\end{figure}
 
-% Representation of instances must be appropriate
-%Most ML models requires item as a real-valued vector (x1, x2, ...)
-%Each value of a vector encodes a specific feature
-%Features must be carefully chosen in order to obtain effective models
-%Feature engineering can be a cumbersome task
+Procederemo con la presentazione dei modelli impiegati e illustreremo le
+ragioni della loro scelta.
 
-% at each iteration, equation requires a complete pass through the intere
-% dataset in orde to compute the gradient. 
+\subsection{XGBoost (Classificatore)}
 
-% batch learning an entire batch of data must be considered before weight are
-% updated
+XGBoost (eXtreme Gradient Boosting) è un modello basato su un insieme, o
+``ensemble'', di alberi decisionali (vedi figura~\ref{fig:xgboost}). Ogni
+albero in questo ensemble è sua volta un modello, con nodi intermedi
+dell'albero che pongono domande binarie sulle feature dei dati, dividendoli in
+sottoinsiemi. Questo processo si ripete ricorsivamente in ciascun nodo fino a
+raggiungere i nodi foglia, che rappresentano le classificazioni finali per le
+istanze.
 
-%L'input è rappresentato da un tensore 3D (batch size, time steps,
-%features)
-%To train the LSTM you use the typical Mini-batch training. Make sure
-%you don't propagate the state for batch sample 𝑖 to sample 𝑖+1 in
-%order to treat them individually (in Keras you set the stateful flag
-%to False)
-% Essentially, the author is describing a means for forecasting sales
-% with LSTM whereby the model is trained on a mini-batch (or subset) of
-% one series, and then a new series is selected.
+XGBoost utilizza il metodo del Gradient Boosting per costruire l'ensemble di
+alberi decisionali, mirando a combinare modelli ``deboli'' per formare un
+modello ``forte''. In questo metodo, nuovi alberi decisionali vengono aggiunti
+iterativamente, ciascuno addestrato per correggere gli errori residui del
+precedente. Idealmente, aggiungendo sufficienti alberi, i residui si
+distribuiranno casualmente attorno allo zero, rendendo impossibile ulteriori
+distinzioni \cite{breiman1997, friedman2001}.
 
-%This would have the advantage of essentially creating a unified series
-%that takes the characteristics of all weather stations into account -
-%which allows for maximum utilisation of the data, as well as allowing
-%the network to learn patterns from all stations - not just one or a
-%select few.
-%An RNN (or a Transformer) could use any of/all of the history that you
-%give it. But that's assuming that the history is useful for the
-%predictions you're making.
+In pratica, il processo inizia con un modello che fa previsioni costanti (per
+esempio, predice sempre 0) e, ad ogni iterazione $k$, viene aggiunto un nuovo
+modello $\hat{y}_i^{(k)}=f_k(x_i)$ al precedente fino al raggiungimento del
+numero massimo di alberi definito da un iperparametro. La struttura di questo
+processo può essere descritto dalle seguenti equazioni:
 
-\subsection{Novelty detection}
+\begin{center}
+    \begin{math}
+        \begin{aligned}
+            \hat{y}^{(0)} &=0 \\ 
+            \hat{y}^{(1)}&=f_1(x_i)=\hat{y}_i^{(0)}+f_1(x_i)\\ 
+            \vdots \\ 
+            \hat{y}_i^{(t)}&=\sum_{k=1}^{t}f_k=\hat{y}_i^{(t-1)}+f_t(x_i)
+        \end{aligned}
+    \end{math}
+\end{center}
 
-%un altro modo di poter appocciare lo stesso problema di individuare i job
-%zombie dai job normali è affrontando un task di novelty detection.
-%
-%In questo il task è 
-%
-%ricordiamo che un autoencoder è addestrato per ridurre al minimo l'errore di
-%ricostruzione
-%
-%“new and not resembling something formerly known or
-%used”.
-%
-%in più permette explainability
-%
-%is assumed to be trained on a clean dataset, uncontaminated by outliers
-%
-%come abbiamo parlato nel paragrafo ~\ref{par:vae} gli input che durante
-%l'addestramento dell'autoencoder non sono mai stati visti il decoder non saprà
-%ricostruirlo correttamente e in questo caso darà un errore di ricostruzione
-%molto alto $\epsilon=\lVert x-g(f(x))\rVert_2$. 
-%
-%In questo caso per determinare se un dato esempio è normale o zombie, ci
-%basiamo sull'errore di ricostruzione e guardiamo nuovamente le etichette.
-%
-%effettuiamo l'addestramento su un dataset clean e poi su un altro dataset in
-%un periodo successivo andiamo a settare un threshold sull'errore di
-%ricostruzione in base al quale, quelli che sono sopra al threshold sono job
-%zombie (1) e quelli che sono sotto job normali (0). Come al solito andiamo a
-%minimizzare su questo nuovo dataset l'errore o il costo cercando di.
-%
-%The test sample x is more likely to be novel as the error ε(x) becomes larger,
-%because it means that x is farther from the manifold that the autoencoder
-%describes.
+L'ensemble può essere rappresentato come la somma di $t$ funzioni,
+($\sum_{k=1}^{t}f_k(x_i)$), dove ogni funziona corrisponde a un albero.
+Durante l'addestramento, XGBoost ottimizza queste $t$ funzioni con la seguente
+funzione obiettivo\footnote{La funzione che andremo a minimizzare durante
+l'addestramento.}:
 
-% ovviamente l'encoder e il decoder che abbiamo descritto come delle funzioni,
-% nella realtà sono architetture di reti neurali, e possono essere realizzate
-% per poter definire un funzione non lineare
+$$\text{obj}^{(t)}=\displaystyle\sum_{i=1}^{n}\ell(y_i,\hat{y}_i^{(t)})+\displaystyle\sum_{k=1}^{t}\Omega(f_k)$$
+
+che è la somma delle funzioni di perdita\footnote{La funzione di perdita
+misura la discrepanza tra i valori predetti dal modello e i valori reali dei
+dati.} e dei termini di regolarizzazione per i $t$ alberi. Il termine di
+regolarizzazione, introdotto da XGBoost come ottimizzazione al Gradient
+Boosting insieme ad altre ottimizzazioni, contribuisce a ridurre il rischio di
+overfitting \cite{chen2016}. 
+
+Una volta che il modello è addestrato, le predizioni vengono effettuate
+calcolando le predizione di ogni albero e sommando insieme i risultati di
+tutti gli alberi per ottenere la previsione finale.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[page=6,trim=4.5cm 16.5cm 4.5cm 5.5cm, clip, width=0.9\linewidth]{xgboost}
+    \caption{Struttura semplificata di XGBoost \protect\cite{guo2020}}
+    \label{fig:xgboost}
+\end{figure}
+
+Nonostante il teorema ``no free lunch'' affermi che non esista un modello che
+a priori sia superiore ad altri e che la scelta del modello possa essere
+determinata solo attraverso test comparativi, XGBoost si tratta di un'ottima
+prima scelta nella trattazione di problemi reali, grazie alla sua efficacia
+nel trattare dati strutturati \cite{shwartz2021, chen2016}.
+
+\subsection{Reti neurali (Classificatore)}
+
+Come discusso nel paragrafo~\ref{par:features}, la creazione di un modello che
+apprenda efficacemente dai dati richiede un'attenta selezione di feature
+rilevanti, un processo che non è semplice. Un'alternativa è l'uso di reti
+neurale profonde per la classificazione. Le reti neurali convoluzionali (CNN),
+ad esempio, offrono il vantaggio di estrarre automaticamente le feature più
+rilevanti durante l'addestramento. Altre tipi di reti, come le reti neurali
+ricorrenti (RNN) e i Transformer, sono in grado di utilizzare l'intera storia
+di una serie temporale e catturare le dipendenze temporali per fare delle
+previsioni.
+
+Una rete neurale è composta da unità chiamate neuroni, organizzati in strati:
+uno strato di input, che riceve i dati iniziali; uno o più strati nascosti che
+elaborano i dati; e infine uno strato di output, che produce il risultato
+finale. I neuroni di ogni strato sono connessi a quelli degli strati adiacenti
+tramite connessioni pesate (vedi figura~\ref{fig:neural_network}).
+
+\begin{figure}[!ht]
+    \centering
+    \begin{neuralnetwork}[height=4]
+        \newcommand{\nodetextclear}[2]{}
+        \newcommand{\nodetextx}[2]{$x_#2$}
+        \newcommand{\nodetexty}[2]{$y_#2$}
+        \inputlayer[count=3, bias=false, title=Input\\layer, text=\nodetextx]
+        \hiddenlayer[count=4, bias=false, title=Hidden\\layer, text=\nodetextclear] \linklayers
+        \outputlayer[count=2, title=Output\\layer, text=\nodetexty] \linklayers
+    \end{neuralnetwork}
+    \caption{Struttura di una rete neurale con uno strato nascosto} 
+    \label{fig:neural_network}
+\end{figure}
+
+In ogni strato, ciascun neurone riceve input da altri neuroni o dall'esterno,
+elabora questi input per produrre un output, che viene restituito ad altri
+neuroni o all'esterno. Come mostrato nella figura~\ref{fig:neuron}, il neurone
+calcola l'output come la somma pesata dei suoi input, a cui si aggiunge un
+bias e successivamente applica una funzione di attivazione, indicata con
+$\sigma$. Matematicamente, per il $j$-esimo neurone, l'output $y_j$ può essere
+espresso come:
+
+$$y_j=\sigma(\displaystyle\sum_{i}w_{j,i}\cdot x_i+b_j)$$
+
+\begin{figure}[!ht]
+    \centering
+    \begin{neuralnetwork}[height=4]
+        \newcommand{\nodetextclear}[2]{$\Sigma | \sigma$}
+        \newcommand{\nodetextx}[2]{$x_#2$}
+        \newcommand{\nodetexty}[2]{$y$}
+        \newcommand{\linktextw}[4]{$w_#2$}
+        \inputlayer[count=3, top=true, bias=true, title=Inputs, text=\nodetextx] 
+        \hiddenlayer[count=1, top=true, bias=false, text=\nodetextclear]
+        \outputlayer[count=1, top=true, title=Output, text=\nodetexty] 
+        \link[from layer=0, to layer=1, from node=0, to node=1]
+        \link[from layer=0, to layer=1, from node=1, to node=1, label=\linktextw]
+        \link[from layer=0, to layer=1, from node=2, to node=1, label=\linktextw]
+        \link[from layer=0, to layer=1, from node=3, to node=1, label=\linktextw]
+        \link[from layer=1, to layer=2, from node=1, to node=1]
+    \end{neuralnetwork}
+    \caption{Struttura di un neurone}
+    \label{fig:neuron}
+\end{figure}
+
+I parametri $w_{j,i}$ per ciascun input $x_i$ e il bias $b_j$ sono i parametri
+del neurone; i parametri di tutti i neuroni sono i parametri della rete.
+L'output di una rete è determinata dai parametri di ciascun neurone e dalle loro
+connessioni. I pesi vengono inizializzati semi-casuale. Durante l'addestramento della rete
+con esempi, si procede a regolare i parametri della rete per ottenere il
+comportamento desiderato.
+
+\subsubsection{Reti neurali convoluzionali}
+
+Nelle reti neurali, il modo in cui i neuroni sono connessi permette di
+eseguire diverse operazioni. Quando ogni neurone di uno strato è collegato a
+tutti quelli degli strati adiacenti, si parla di strati densi. Nelle reti
+convoluzionali, invece, i neuroni di uno strato sono connessi solamente a un
+sottoinsieme di quelli dello strato precedente, generalmente vicini (vedi
+figura~\ref{fig:convnet}).
+
+\begin{figure}[!ht]
+    \centering
+    \begin{neuralnetwork}[height=4]
+        \newcommand{\nodetextclear}[2]{}
+        \hiddenlayer[count=4, bias=false,  text=\nodetextclear]        
+        \hiddenlayer[count=4, bias=false,  text=\nodetextclear] 
+        \link[from layer=0, to layer=1, from node=1, to node=1]
+        \link[from layer=0, to layer=1, from node=2, to node=2]
+        \link[from layer=0, to layer=1, from node=3, to node=3]
+        \link[from layer=0, to layer=1, from node=4, to node=4]
+
+        \link[from layer=0, to layer=1, from node=1, to node=2]
+        \link[from layer=0, to layer=1, from node=2, to node=3]
+        \link[from layer=0, to layer=1, from node=3, to node=4]
+
+        \link[from layer=0, to layer=1, from node=4, to node=3]
+        \link[from layer=0, to layer=1, from node=3, to node=2]
+        \link[from layer=0, to layer=1, from node=2, to node=1]
+    \end{neuralnetwork}
+    \caption{Visualizzazione delle connessioni tra i neuroni in uno strato
+    convoluzionale} 
+    \label{fig:convnet}
+\end{figure}
+
+Quest'operazione è equivalente a una convoluzione, dove un filtro (o feature
+detector) scorre attraverso l'input, con i pesi del filtro che vengono appresi
+durante l'addestramento. Ciò significa che, se i neuroni in uno strato
+convoluzionale condividono lo stesso insieme di pesi, ciò equivale ad
+applicare lo stesso filtro su tutti gli input. Gli output dei neuroni che
+condividono gli stessi pesi forma una ``feature map''. Il filtro utilizzato
+nella convoluzione corrisponde all'insieme dei pesi condivisi dai neuroni
+all'interno di una feature map. Uno strato convoluzionale è composto da
+molteplici feature map, ciascuna con un proprio insieme di pesi, in modo che
+diverse feature possono essere estratte \cite{lecun1998}.
+
+Questa struttura permette ai neuroni degli strati convoluzionali inferiori di
+estrarre feature elementari, mentre gli strati successivi combinano queste
+feature per ottenere rappresentazioni più complesse (vedi
+figura~\ref{fig:feature_extractor}). 
+
+\begin{figure}[!ht]
+    \includegraphics[page=7, trim=3.5cm 3.5cm 3.5cm 22.5cm, clip, ,
+    width=\linewidth]{feature_extractor}
+    \caption{Estrazione delle feature da parte di una rete neurale convoluzionale \protect\cite{he2020}}
+    \label{fig:feature_extractor}
+\end{figure}
+
+\subsubsection{Reti neurali ricorrenti}
+
+pensiamo alla rete neurale ricorrente più semplice 
+un neurone che produce un output e lo rimanda anche a se stesso.
+
+The core reason that recurrent nets are more exciting is that they allow us to operate over sequences of vectors
+
+ So how do these things work? At the core, RNNs have a deceptively simple API:
+ They accept an input vector x and give you an output vector y. However,
+ crucially this output vector’s contents are influenced not only by the input
+ you just fed in, but also on the entire history of inputs you’ve fed in in
+ the past. 
+
+The RNN class has some internal state that it gets to update every time step
+is called. In the simplest case this state consists of a single hidden vector
+h.
+
+At each time step t, the recurrent neuron receives the inputs x(t) as well  as
+it owns output from the previosu timestep y(t-1), se è il primo input,
+ovviamente prende 0.
+
+In questo caso i neuroni ricorrenti 
+
+Finora abbiamo visto reti neurali in cui i neuroni formano grafi aciclici, una
+rete neurale ricorrente contiene anche connessioni cicliche per mantenere uno
+stato attraverso le sequenze di dati di input. Se passiamo una sequenza in
+input $(x_0, x_1, \ldots)$ di input insieme a, uno per ogni time step $t$
+
+% RNN (long-time dependencies)
+% Transformer
+
+%The second property is a bit more subtle, but not hard to grasp conceptually.
+%Information in RNN and LSTM are retained thanks to previously computed hidden
+%states. The point is that the encoding of a specific word is retained only for
+%the next time step, which means that the encoding of a word strongly affects
+%only the representation of the next word, so its influence is quickly lost
+
+
+% by processing sentences as a whole and by learning relationships between
+% words thanks to multi-head attention mechanisms and positional embeddings.
+
+%The first point is the main reason why transformer do not suffer from long
+%dependency issues. The original transformers do not rely on past hidden states
+%to capture dependencies with previous words. They instead process a sentence
+%as a whole. That is why there is no risk to lose (or "forget") past
+%information.
+
+\subsection{Autoencoder (Novelty detection)}
+
+Un'autoencoder è anch'esso un modello che viene addestrato per minimizzare
+l'errore di ricostruzione di un input dopo averlo compresso in uno spazio
+latente. Durante l'addestramento con un dataset ``pulito'', l'encoder impara a
+comprimere gli esempi nello spazio latente, mentre il decoder impara a
+ricostruirli nella loro forma originale. Come visto nel
+paragrafo~\ref{par:vae}, quando si fornisce al autoencoder esempi non visti in
+fase di addestramento, se questi vengono compressi in qualcosa di simile a ciò
+che ha già compresso nello spazio latente, allora riesce a ricostruire l'input
+con buona fedeltà. Altrimenti, non riuscirà a costruire correttamente l'input
+e l'errore di ricostruzione, definito come $\epsilon=\lVert x-g(f(x))\rVert$,
+sarà alto \cite{borghesi2019}.
+
+Per stabilire se un esempio è una novità, viene considerato l'errore di
+ricostruzione insieme alle etichette. Utilizzando un secondo dataset che
+comprende i job zombie, si imposta un valore soglia in base all'errore di
+ricostruzione: quelli che sono sopra la soglia sono job zombie (1) e quelli
+che sono al di sotto sono job normali (0) (vedi
+figura~\ref{fig:reconstruction_error}). Minimizziamo il valore soglia per
+avere un valore il più corretto possibile.
 
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.95\linewidth]{reconstruction_error}
-    \caption{}
+    \caption{Visualizzazione dell'errore di ricostruzione e della soglia per
+    stabilire se gli esempi sono novità}
     \label{fig:reconstruction_error}
 \end{figure}
+
+L'autoencoder essendo una rete neurale, composta da un encoder e un decoder,
+queste due parti descritte fino ad ora come funzioni, sono a loro volta delle
+strutture composte da strati e neuroni, che possono essere profondi quanto si
+vuole e con le architetture precedentemente citate in modo da imparare la
+rappresentazione ideale dei dati, questo è importante, poiché siamo
+interessati a m
+
+
+autoencoder are not limited to dense networks; you can build also
+convolutaional , recurrent
+
+ma cosa ben più importante è che siamo interessati a vedere dei dati nello
+spazio latente non nello spazio dei dati, ciò vuol dire che è importante per
+un autoencoder imparare in una rappresentazione h che impara le feature
+importanti.
+
+\begin{itemize}
+    \item {Undercomplete}
+    \item \textbf{Denoise}
+    \item \textbf{Sparse}
+\end{itemize}

@@ -15,6 +15,37 @@
 
 \subsection{Convalida incrociata}
 \section{Confronto tra i modelli}
+
+
+% at each iteration, equation requires a complete pass through the intere
+% dataset in orde to compute the gradient. 
+
+% batch learning an entire batch of data must be considered before weight are
+% updated
+
+%L'input è rappresentato da un tensore 3D (batch size, time steps,
+%features)
+%To train the LSTM you use the typical Mini-batch training. Make sure
+%you don't propagate the state for batch sample 𝑖 to sample 𝑖+1 in
+%order to treat them individually (in Keras you set the stateful flag
+%to False)
+% Essentially, the author is describing a means for forecasting sales
+% with LSTM whereby the model is trained on a mini-batch (or subset) of
+% one series, and then a new series is selected.
+
+%This would have the advantage of essentially creating a unified series
+%that takes the characteristics of all weather stations into account -
+%which allows for maximum utilisation of the data, as well as allowing
+%the network to learn patterns from all stations - not just one or a
+%select few.
+
+
+
+%Una rete neurale composta solo da strati di convoluzione è considerata una
+%``fully convolution networks'', per la classificazione, la feature map
+%ddell'ultimo strato convoluzionale viene vettorizzato in uno strato denso
+%seguito da uno strato logistic.
+
 \section{Interpretazione dei risultati}
 %Most machine learning systems operate in batch mode. They analyze a set of
 %historical data and then develop a model that reflects the world as it was
