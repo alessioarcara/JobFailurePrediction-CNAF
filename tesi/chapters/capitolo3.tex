@@ -324,56 +324,24 @@ dagli utenti interni del CNAF da quelli degli utenti esterni.
     \label{fig:job_type_and_job_work_type}
 \end{figure}
 
-\paragraph{Ridimensionamento delle feature.}
+\paragraph{Ridimensionamento delle feature.} Ridimensionare i dati è un passo
+cruciale per migliorare la convergenza durante l'addestramento dei modelli
+\cite{LeCun2012}. Questo passaggio è essenziale per alcuni di questi, come le
+reti neurali, dove il ridimensionamento dei dati è una precondizione. Al
+contrario, altri modelli, quali gli alberi decisionali, non richiedono
+specifiche assunzioni sui dati.
 
-La normalizzazione è il processo che ridimensiona i dati in un range tra 0 e
-1. La formula è $X'=\frac{(X-X_{min})}{X_{max}-X_{min}}$, dove $X_{min}$ e
-$X_{max}$ sono rispettivamente i valori minimi e massimi della feature. La
-standardizzazione trasforma i dati in modo che abbiano media 0 e varianza di
-1. La formula è $X'=\frac{X-\mu}{\sigma}$.
+Sono state utilizzate due tecniche di ridimensionamento: la normalizzazione e
+la standardizzazione. La normalizzazione è il processo che ridimensiona i dati
+in un range tra 0 e 1. La formula è $X'=\frac{(X-X_{min})}{X_{max}-X_{min}}$,
+dove $X_{min}$ e $X_{max}$ sono rispettivamente i valori minimi e massimi
+della feature. La standardizzazione trasforma i dati in modo che abbiano media
+0 e varianza di 1. La formula è $X'=\frac{X-\mu}{\sigma}$.
 
-Ridimensionare i dati è 
-
-Ridimensionare i dati è importante perché aiuta i modelli a convergere meglio
-ai parametri migliori
-
-%Scaling is important because it preconditions the data to facilitate
-%optimization. Putting the features on the same scale stretches the
-%optimization surface to ameliorate narrow valleys, because these valleys make
-%optimization very challenging, especially optimization using gradient descent
-% . The reason we scale data is to improve gradient descent dynamics,
-
-%Which scaling method works best depends on the problem,because different
-%problems have different optimization surfaces.
-% A very general strategy is to carry out an experiment: test how well the
-% model works with alternative methods 
-%
-%Lecun
-% the network training converges faster if its inputs are whitened – i.e.,
-% linearly transformed to have zero means and unit variances
-
-%For instance many elements used in the objective function of a learning
-%algorithm (such as the RBF kernel of Support Vector Machines or the L1 and L2
-%regularizers of linear models) assume that all features are centered around 0
-%and have variance in the same order.
-
-%http://yann.lecun.com/exdb/publis/pdf/lecun-98b.pdf
-%sklearn
-
-%d the algorithm, ad esempio gli alberi decisionali, does not make assumptions
-%about the distribution. It is a good technique when we did not know about the
-%distribution of data or when we know the distribution is not gaussian.
-
-%doesn't reduce the effect of outliers, ma li scala them down into a fixed
-%range, where the largest occuring data point corresponds to the maximum value
-%and the smallest one corresponds to the minimun value.
-%
-%Normalization is a good technique to use when you do not know the distribution
-%of your data or when you know the distribution is not Gaussian (a bell curve).
-%
-%Standardization presupposes that the distribution of your data is Gaussian
-%
-%La normalizzazione è cruciale per modelli come le reti neurali.
+La decisione di quale tecnica utilizzare dipende dalla specifica natura del
+problema affrontato, in quanto diversi problemi possono beneficiare di diverse
+tecniche di ridimensionamento. In pratica, andremo a testare entrambe le
+tecniche per determinare quale funziona meglio con il modello in uso.
 
 \subsection{Etichettatura dei dati}
 
@@ -474,7 +442,6 @@ FN + C_{FP} \cdot FP$} derivante dalle predizioni
 errate, il modello imparerà durante l'addestramento ad attribuire diversa
 importanza ai vari tipi di errori.
 
-
 \section{Selezioni dei modelli}
 
 Nel Machine Learning, il problema di identificare i job zombie può essere
@@ -548,7 +515,7 @@ processo può essere descritto dalle seguenti equazioni:
 \end{center}
 
 L'ensemble può essere rappresentato come la somma di $t$ funzioni,
-($\sum_{k=1}^{t}f_k(x_i)$), dove ogni funziona corrisponde a un albero.
+($\sum_{k=1}^{t}f_k(x_i)$), dove ogni funzione corrisponde a un albero.
 Durante l'addestramento, XGBoost ottimizza queste $t$ funzioni con la seguente
 funzione obiettivo\footnote{La funzione che andremo a minimizzare durante
 l'addestramento.}:
@@ -625,7 +592,7 @@ $$y_j=\sigma(\displaystyle\sum_{i}w_{j,i}\cdot x_i+b_j)$$
     \centering
     \begin{neuralnetwork}[height=4]
         \newcommand{\nodetextclear}[2]{$\Sigma | \sigma$}
-        \newcommand{\nodetextx}[2]{$x_#2$}
+        \newcommand{\nodetextx}[2]{\ifthenelse{\equal{#2}{0}}{$b$}{$x_{#2}$}}
         \newcommand{\nodetexty}[2]{$y$}
         \newcommand{\linktextw}[4]{$w_#2$}
         \inputlayer[count=3, top=true, bias=true, title=Inputs, text=\nodetextx] 
@@ -641,12 +608,11 @@ $$y_j=\sigma(\displaystyle\sum_{i}w_{j,i}\cdot x_i+b_j)$$
     \label{fig:neuron}
 \end{figure}
 
-I parametri $w_{j,i}$ per ciascun input $x_i$ e il bias $b_j$ sono i parametri
-del neurone; i parametri di tutti i neuroni sono i parametri della rete.
-L'output di una rete è determinata dai parametri di ciascun neurone e dalle loro
-connessioni. I pesi vengono inizializzati semi-casuale. Durante l'addestramento della rete
-con esempi, si procede a regolare i parametri della rete per ottenere il
-comportamento desiderato.
+Dove i pesi $w_{j,i}$ per ciascun input $x_i$ e il bias $b_j$ sono i parametri
+del neurone. Considerando tutti i neuroni, questi sono i parametri complessivi
+della rete. I pesi vengono inizializzati in modo semi-casuale e, durante
+l'addestramento, si procede a regolare i parametri della rete per ottenere
+l'output desiderato.
 
 \subsubsection{Reti neurali convoluzionali}
 
@@ -704,56 +670,55 @@ figura~\ref{fig:feature_extractor}).
     \label{fig:feature_extractor}
 \end{figure}
 
-\subsubsection{Reti neurali ricorrenti}
+\subsubsection{Reti neurali ricorrenti e Transformers}
 
-pensiamo alla rete neurale ricorrente più semplice 
-un neurone che produce un output e lo rimanda anche a se stesso.
+Le RNN hanno la capacità di ``ricordare'' tutta la storia degli input
+processati in uno stato, utilizzandola per elaborare nuovi input e produrre
+output. Questo le rende particolarmente adatte per le serie temporali, dove
+eventi passati potrebbero essere importanti per prevedere eventi futuri.
 
-The core reason that recurrent nets are more exciting is that they allow us to operate over sequences of vectors
+Come illustrato dalla figura~\ref{fig:rnn}, Una RNN può essere rappresentata
+come un neurone che riceve un input, genera un output e poi riutilizza questo
+output come input per il passo successivo. Le RNN lavorano con sequenze di
+input (per esempio, $(x_{(0)}, x_{(1)},\ldots)$), dove ciascun elemento
+corrisponde a un time step. Ad ogni time step $t$, il neurone riceve l'input
+$x_{(t)}$ e l'output del time step precedente $y_{(t-1)}$ (se è il primo
+input, riceve 0). Ogni neurone delle RNN ha due vettori di pesi: $W_x$ per gli
+input $x_{(t)}$ e $W_y$ per gli output del time step precedente $y_{(t-1)}$.
+L'output di ogni time step $y_{(t)}$ si calcola come
+$y_{(t)}=\sigma_h(W_x\cdot x_{(t)}+W_y\cdot y_{(t-1)}+b)$ \cite{geron2019}.
 
- So how do these things work? At the core, RNNs have a deceptively simple API:
- They accept an input vector x and give you an output vector y. However,
- crucially this output vector’s contents are influenced not only by the input
- you just fed in, but also on the entire history of inputs you’ve fed in in
- the past. 
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.75\linewidth]{rnn}
+    \caption{Struttura di una semplice rete neurale ricorrente \protect\cite{geron2019}}
+    \label{fig:rnn}
+\end{figure}
 
-The RNN class has some internal state that it gets to update every time step
-is called. In the simplest case this state consists of a single hidden vector
-h.
+Elaborata l'intera sequenza di input, lo stato della rete viene resettato.
 
-At each time step t, the recurrent neuron receives the inputs x(t) as well  as
-it owns output from the previosu timestep y(t-1), se è il primo input,
-ovviamente prende 0.
+Tuttavia, le RNN presentano un problema significativo: la loro capacità di
+trattenere informazioni negli stati è limitata principalmente al time step
+successivo. Ciò implica che l'influenza di un valore specifico nella sequenza
+tende a svanire rapidamente, rendendo difficile catturare dipendenze a lungo
+termine nelle serie temporali. Per ovviare a questo problema, sono stati
+sviluppate varianti di RNN, come le Long Short-Term Memory (LSTM)
+\cite{hochreiter1997} o altri tipi di reti neurali, quali i Transformer
+\cite{vaswani2023}.
 
-In questo caso i neuroni ricorrenti 
-
-Finora abbiamo visto reti neurali in cui i neuroni formano grafi aciclici, una
-rete neurale ricorrente contiene anche connessioni cicliche per mantenere uno
-stato attraverso le sequenze di dati di input. Se passiamo una sequenza in
-input $(x_0, x_1, \ldots)$ di input insieme a, uno per ogni time step $t$
-
-% RNN (long-time dependencies)
-% Transformer
-
-%The second property is a bit more subtle, but not hard to grasp conceptually.
-%Information in RNN and LSTM are retained thanks to previously computed hidden
-%states. The point is that the encoding of a specific word is retained only for
-%the next time step, which means that the encoding of a word strongly affects
-%only the representation of the next word, so its influence is quickly lost
-
-
-% by processing sentences as a whole and by learning relationships between
-% words thanks to multi-head attention mechanisms and positional embeddings.
-
-%The first point is the main reason why transformer do not suffer from long
-%dependency issues. The original transformers do not rely on past hidden states
-%to capture dependencies with previous words. They instead process a sentence
-%as a whole. That is why there is no risk to lose (or "forget") past
-%information.
+Il Transformer, diversamente delle RNN, processa l'intera sequenza in un unico
+passaggio, apprendendo le relazioni tra i vari elementi della sequenza
+attraverso i meccanismi del multi-head attention e il positional encoding. A
+differenza delle RNN, che elaborano la sequenza un passo alla volta, il
+Transformer non conosce l'ordine dei valori all'interno di essa. Di
+conseguenza, è necessario incorporare tale ordine attraverso il positional
+encoding. Il meccanismo di self attention, d'altra parte, estrae le relazioni
+tra i valori nella sequenza, indipendentemente dalla loro distanza nella
+sequenza, dando importanza ai valori più importanti nella sequenza.
 
 \subsection{Autoencoder (Novelty detection)}
 
-Un'autoencoder è anch'esso un modello che viene addestrato per minimizzare
+Un autoencoder è anch'esso un modello che viene addestrato per minimizzare
 l'errore di ricostruzione di un input dopo averlo compresso in uno spazio
 latente. Durante l'addestramento con un dataset ``pulito'', l'encoder impara a
 comprimere gli esempi nello spazio latente, mentre il decoder impara a
@@ -775,30 +740,30 @@ avere un valore il più corretto possibile.
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.95\linewidth]{reconstruction_error}
+    \includegraphics[width=0.85\linewidth]{reconstruction_error}
     \caption{Visualizzazione dell'errore di ricostruzione e della soglia per
     stabilire se gli esempi sono novità}
     \label{fig:reconstruction_error}
 \end{figure}
 
-L'autoencoder essendo una rete neurale, composta da un encoder e un decoder,
-queste due parti descritte fino ad ora come funzioni, sono a loro volta delle
-strutture composte da strati e neuroni, che possono essere profondi quanto si
-vuole e con le architetture precedentemente citate in modo da imparare la
-rappresentazione ideale dei dati, questo è importante, poiché siamo
-interessati a m
+Gli autoencoder, descritti finora in termini di funzioni encoder $f$ e decoder
+$g$, sono costituiti da strati e neuroni. L'output dello strato intermedio
+rappresenta la rappresentazione nello spazio latente. L'obiettivo è quello di
+formare cluster efficaci in questo spazio latente, al fine di poter associare
+nuovi job, mai incontrati prima, a gruppi di job esistenti. Tipicamente, per
+questo scopo, gli autoencoder sono strutturati con una forma a clessidra (vedi
+figura~\ref{fig:autoencoder}), o possono introdurre del rumore negli input,
+oppure ancora aggiungere un termine di regolarizzazione alla funzione di
+perdita per ``spegnere'' alcuni neuroni nello strato intermedio.
 
-
-autoencoder are not limited to dense networks; you can build also
-convolutaional , recurrent
-
-ma cosa ben più importante è che siamo interessati a vedere dei dati nello
-spazio latente non nello spazio dei dati, ciò vuol dire che è importante per
-un autoencoder imparare in una rappresentazione h che impara le feature
-importanti.
-
-\begin{itemize}
-    \item {Undercomplete}
-    \item \textbf{Denoise}
-    \item \textbf{Sparse}
-\end{itemize}
+\begin{figure}[!hb]
+    \centering 
+    \begin{neuralnetwork}[height=4]
+        \newcommand{\nodetextclear}[2]{}
+        \inputlayer[count=4, bias=false, title=Input\\layer, text=\nodetextclear]
+        \hiddenlayer[count=2, bias=false, title=Coding,  text=\nodetextclear] \linklayers 
+        \outputlayer[count=4, bias=false,  title=Output\\layer, text=\nodetextclear] \linklayers       
+    \end{neuralnetwork}
+    \caption{Struttura di un autoencoder a clessidra}
+    \label{fig:autoencoder}
+\end{figure}
