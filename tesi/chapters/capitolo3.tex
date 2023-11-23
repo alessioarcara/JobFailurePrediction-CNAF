@@ -12,7 +12,7 @@ struttura del modello e il suo comportamento durante l'addestramento.
 Prima di esplorare i modelli specifici, ci concentreremo sul processo di
 creazione dei modelli di Machine Learning, e vedremo come l'automatizzazione
 di questo processo, attraverso l'impiego di una \textbf{pipeline}, possa
-ottimizzarne l'efficienza e l'efficacia.
+migliorarne l'efficienza e l'efficacia.
 
 Il processo di creazione di un modello di Machine Learning si compone di vari
 passaggi: l'estrazione dei dati, la loro preparazione e l'addestramento del
@@ -201,22 +201,22 @@ Pertanto, è necessario non solo rimuovere le ripetizioni, ma anche convertire
 queste serie storiche in un formato di dati strutturato.
 
 \paragraph{Riduzione della frequenza di campionamento.} Applicando
-un'operazione di convoluzione\footnote{Operazione matematica che consiste
-    nell'applicare un filtro di dimensione finita lungo la sequenza di valori.
-    Il filtro, di solito di piccole dimensioni, viene fatto scorrere su tutta
-    la sequenza, e in ogni posizione si calcola una somma pesata tra i valori
-    della sequenza e quelli del filtro. Questo processo trasforma la sequenza
-    originale in una nuova attraverso la formula: $$(S\ast
-K)(i)=\displaystyle\sum_{m=-d}^{d}S(m)\cdot K(i-m)$$ dove $S$ è la sequenza
-originale, $K$ è il filtro e $d$ è l'intero inferiore della metà della
-lunghezza del filtro.} con un passo (\textit{stride}) di 5 e un filtro di 5
-elementi con valore $\frac{1}{5}$, possiamo effettuare una decimazione della
-sequenza originale. Ciò comporta di ottenere una nuova sequenza, la cui
-lunghezza è pari a un quinto della lunghezza della serie storica originale. In
-pratica, il filtro calcola la media di ogni gruppo di cinque valori
-consecutivi. Se questi cinque valori sono identici, il risultato sarà il
-valore stesso, che sostituisce la sequenza dei cinque valori, eliminando le
-ripetizioni nella nuova sequenza.
+un'operazione di convoluzione\footnote{La convoluzione è una operazione
+    matematica che consiste nell'applicare un filtro di dimensione finita
+    lungo una sequenza di valori. Il filtro, di solito di piccole dimensioni,
+    viene fatto scorrere su tutta la sequenza, e in ogni posizione si calcola
+    una somma pesata tra i valori della sequenza e quelli del filtro. Questo
+    processo trasforma la sequenza originale in una nuova attraverso la
+formula: $$(S\ast K)(i)=\displaystyle\sum_{m=-d}^{d}S(m)\cdot K(i-m)$$ dove
+$S$ è la sequenza originale, $K$ è il filtro e $d$ è l'intero inferiore della
+metà della lunghezza del filtro.} con un passo (\textit{stride}) di 5 e un
+filtro di 5 elementi con valore $\frac{1}{5}$, possiamo effettuare una
+decimazione della sequenza originale. Ciò comporta di ottenere una nuova
+sequenza, la cui lunghezza è pari a un quinto della lunghezza della serie
+storica originale. In pratica, il filtro calcola la media di ogni gruppo di
+cinque valori consecutivi. Se questi cinque valori sono identici, il risultato
+sarà il valore stesso, che sostituisce la sequenza dei cinque valori,
+eliminando le ripetizioni nella nuova sequenza.
 
 \paragraph{Trasformazione delle multiple serie storiche multivariate.} Sebbene
 durante il processo di estrazione dei dati le serie storiche multivariate
@@ -242,7 +242,7 @@ serie storiche siano uniformate alla stessa lunghezza.
 Per gestire serie di dati con lunghezze diverse, possiamo utilizzare due
 strategie: lo zero-padding e il troncamento. Lo zero-padding si applica alle
 sequenze più corte, aggiungendo zeri fino a raggiungere una lunghezza
-prefissata. Invece, il troncamento si usa per ridurre le sequenze più lunghe,
+prefissata. Il troncamento, invece, si usa per ridurre le sequenze più lunghe,
 tagliandole fino a che non raggiungono la stessa lunghezza prestabilita. La
 classe \texttt{Preprocessor} implementa entrambe le tecniche: stabilisce una
 lunghezza fissa per tutte le sequenze, troncando quelle che eccedono questa
@@ -333,10 +333,12 @@ specifiche assunzioni sui dati.
 
 Sono state utilizzate due tecniche di ridimensionamento: la normalizzazione e
 la standardizzazione. La normalizzazione è il processo che ridimensiona i dati
-in un range tra 0 e 1. La formula è $X'=\frac{(X-X_{min})}{X_{max}-X_{min}}$,
-dove $X_{min}$ e $X_{max}$ sono rispettivamente i valori minimi e massimi
-della feature. La standardizzazione trasforma i dati in modo che abbiano media
-0 e varianza di 1. La formula è $X'=\frac{X-\mu}{\sigma}$.
+in un intervallo tra 0 e 1. La formula è
+$X'=\frac{(X-X_{\min})}{X_{\max}-X_{\min}}$, dove $X_{\min}$ e $X_{\max}$ sono
+rispettivamente i valori minimi e massimi della feature. La standardizzazione
+trasforma i dati in modo che abbiano media 0 e varianza di 1. La formula è
+$X'=\frac{X-\mu}{\sigma}$ dove $\mu$ è la media e $\sigma$ la deviazione
+standard.
 
 La decisione di quale tecnica utilizzare dipende dalla specifica natura del
 problema affrontato, in quanto diversi problemi possono beneficiare di diverse
@@ -368,6 +370,7 @@ come job zombie quelli che soddisfano la condizione:
 \end{verbatim}
 
 \subsection{Tecniche di bilanciamento dei dati}
+\label{sec:imbalanced_data}
 
 Nella sezione~\ref{sec:job_analysis}, abbiamo osservato che i job zombie sono
 estremamente più rari dei job normali, con un rapporto di 1 a 10,000. A causa
@@ -459,7 +462,7 @@ Nel caso della novelty detection, invece, si chiede al modello di modellare i
 dati e di riconoscere le ``novità'', ovvero ciò che non ha mai visto dai dati.
 Consideriamo una novità come un punto dei dati che non appare consistente con
 ciò che è stato osservato nei dati di addestramento. A differenza della
-classificazione, i  modelli non modellano esplicitamente un'anomalia. Essi
+classificazione, i  modelli non modellano esplicitamente un'anomalia; essi
 imparano solo a riconoscere ciò che è normale. Per funzionare efficacemente,
 l'addestramento richiede un dataset ``pulito'', cioè privo di job zombie
 \cite{geron2019, pimentel2014}.
@@ -672,10 +675,10 @@ figura~\ref{fig:feature_extractor}).
 
 \subsubsection{Reti neurali ricorrenti e Transformers}
 
-Le RNN hanno la capacità di ``ricordare'' tutta la storia degli input
-processati in uno stato, utilizzandola per elaborare nuovi input e produrre
-output. Questo le rende particolarmente adatte per le serie temporali, dove
-eventi passati potrebbero essere importanti per prevedere eventi futuri.
+Le RNN hanno la capacità di ``ricordare'' la storia degli input processati in
+uno stato, utilizzandola per elaborare nuovi input e produrre output. Questo
+le rende particolarmente adatte per le serie temporali, dove eventi passati
+potrebbero essere importanti per prevedere eventi futuri.
 
 Come illustrato dalla figura~\ref{fig:rnn}, Una RNN può essere rappresentata
 come un neurone che riceve un input, genera un output e poi riutilizza questo
@@ -726,9 +729,9 @@ ricostruirli nella loro forma originale. Come visto nel
 paragrafo~\ref{par:vae}, quando si fornisce al autoencoder esempi non visti in
 fase di addestramento, se questi vengono compressi in qualcosa di simile a ciò
 che ha già compresso nello spazio latente, allora riesce a ricostruire l'input
-con buona fedeltà. Altrimenti, non riuscirà a costruire correttamente l'input
-e l'errore di ricostruzione, definito come $\epsilon=\lVert x-g(f(x))\rVert$,
-sarà alto \cite{borghesi2019}.
+con buona fedeltà. In caso contrario, non riuscirà a costruire correttamente
+l'input e l'errore di ricostruzione, definito come $\epsilon=\lVert
+x-g(f(x))\rVert$, sarà alto \cite{borghesi2019}.
 
 Per stabilire se un esempio è una novità, viene considerato l'errore di
 ricostruzione insieme alle etichette. Utilizzando un secondo dataset che

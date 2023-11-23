@@ -142,3 +142,24 @@
     \input{chapters/#1}
     \blankpage
 }
+\newcommand{\confusionmatrix}[4]{%
+    \begin{tabular}{lll}
+        \toprule
+        & Normale (previsto) & Zombie (previsto) \\
+        \midrule
+        Normale (reale) & #1 & #2 \\
+        Zombie (reale) & #3 & #4 \\
+        \bottomrule
+    \end{tabular}
+}
+\newcommand{\scores}[7]{%
+    \begin{tabular}{llll}
+        \toprule
+        & Normale & Zombie & All \\
+        \midrule
+        Precision & #1 & #2 & #3 \\
+        Recall & #4 & #5 & #6 \\
+        $F_1$ & & & #7 \\
+        \bottomrule
+    \end{tabular}
+}
