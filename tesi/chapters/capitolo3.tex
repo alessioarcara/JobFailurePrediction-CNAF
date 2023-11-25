@@ -145,6 +145,7 @@ dati forniti da HTCondor, eliminando così la necessità di estrarre dati da un
 database SQL.
 
 \section{Preparazione dei dati}
+\label{sec:preprocessing}
 
 La preparazione dei dati è essenziale nel Machine Learning. Prima di tutto, è
 necessario convertire i dati in numeri, dato che gli algoritmi di Machine
@@ -297,7 +298,7 @@ percepiamo noi, evidenziando le caratteristiche salienti dei dati e la
 struttura del problema. 
 
 Per far ciò, sono state create due nuove colonne, \texttt{job type} e
-\texttt{job work type} (vedi figura ~\ref{fig:job_type_and_job_work_type}),
+\texttt{job work type} (vedi figura~\ref{fig:job_type_and_job_work_type}),
 seguite dall'applicazione dell'one-hot encoding. La prima colonna raggruppa i
 gruppi di utenti, in LHC e non-LHC, che, come osservato nell'analisi
 preliminare, hanno meccanismi interni diversi e potrebbero comportarsi in

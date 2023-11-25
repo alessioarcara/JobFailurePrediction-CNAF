@@ -13,9 +13,9 @@ In particolare, ci si è concentrati sui cosiddetti ``job zombie'', ossia quei
 job che, pur terminando, non rilasciano l'host fisico, causando una perdita di
 risorse fino al loro timeout.
 Un approccio iniziale, che prendeva in considerazione solo la prima ora di
-vita del job, ha permesso di identificare con un'accuratezza del 72\% la
+vita del job, ha permesso di identificare con una precisione del 72\% la
 classe meno rappresentata (i job zombie).
-Per migliorare l'accuratezza, si è preso in considerazione l'intero primo
+Per migliorare la precisione, si è preso in considerazione l'intero primo
 giorno, applicando tecniche di Deep Learning sia supervisionate (CNN,
 CNN+LSTM, LSTM e Transformer) che non supervisionate (autoencoder e
 variational autoencoder). 

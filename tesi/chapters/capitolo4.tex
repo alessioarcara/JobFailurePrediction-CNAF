@@ -1,21 +1,364 @@
 \label{chap:valutazioni}
 
-%You can automate the ML production pipelines to retrain the models with new data, depending on your use case:
+%%% Valutazione delle performance %%%
+
+% ricerca iperparametri
+% nested cross-validation
+% random search
+
+%%% Risultati ottenuti %%%
+
+%%% Addestramento supervisionato 24h
+% FCN and RESNET
+% LSTM
+% CNN+LSTM
+% TRANSFORMER ENCODER
+% XGBoost
+%%% Addestramento non supervisionato
+% Autoencoder 
+
+Ricordando quanto detto nel capitolo 2, questa tesi vuole verificare se i job
+zombie possano essere identificati utilizzando modelli di Machine Learning.
+
+Come descritto nella sezione~\ref{sec:imbalanced_data}, un classificatore
+potrebbe avere un errore apparentemente basso semplicemente prevedendo
+l'etichetta più frequente. Infatti, considerando la proporzione di un job
+zombie ogni 10,000 job normali, un classificatore che etichetta tutti i job
+come normali raggiungerebbe
+un'accuratezza\footnote{$\text{accuratezza}=\frac{\text{Veri
+Positivi}+\text{Veri Negativi}}{\text{tutte le predizioni}}$} del 99.99\%.
+
+Un simile modello, che assume tutti i job come normali, equivarrebbe a non
+avere un modello di Machine Learning. Pertanto, per valutare la fattibilità
+nell'identificazione dei job zombie, useremo come baseline questo
+classificatore, che chiameremo ``dummy''. Dovremo quindi provare che le
+prestazioni del nostro modello sono statisticamente migliori rispetto ad esso.
+
+...nella prossima sezione presenteremo...
+
+\section{Valutare le prestazioni del modello}
+
+Ora, l'accuratezza nel valutare le prestazioni di un classificatore ha il
+problema del trattare tutte le previsioni allo stesso modo e nasconde le vere
+prestazioni del modello. Pertanto, è necessario individuare una metrica che
+misuri le vere prestazioni del modello permettendo di confrontare diversi
+modelli nonostante lo sbilanciamento dei dati.
+
+Per valutare le prestazioni del modello, si può utilizzare la matrice di
+confusione, ovvero una tabella che riassume le predizioni fatte dal modello,
+dove ogni riga rappresenta l'etichetta reale, mentre ogni colonna l'etichetta
+predetta dal modello. La matrice distingue gli esempi in quattro categorie:
+Veri Positivi (VP), Falsi Positivi (FP), Veri Negativi (VN) e Falsi Negativi
+(FN). Questa suddivisione aiuta a identificare gli eventuali errori del
+modello, permettendoci di comprendere in che modo esso viene ``confuso''.
+
+Dai valori ottenuti dalla matrice possiamo definire le metriche precision e
+recall. La precision indica quanti esempi classificati positivi (negativi)
+sono realmente positivi (negativi). La recall indica quanti esempi sono
+classificati positivi (negativi) tra tutti quelli positivi (negativi). Le
+formule per calcolare queste metriche sono le seguenti:
+
+$$\begin{aligned}
+    \text{precision}(A) &= \frac{VP}{VP + FP} & \quad \text{recall}(A) &= \frac{VP}{VP + FN} \\
+    \\
+    \text{precision}(B) &= \frac{VN}{VN + FN} & \quad \text{recall}(B) &= \frac{VN}{VN + FP} \\
+    \\
+    \text{precision} &= \frac{\text{precision}(A) + \text{precision}(B)}{2} & \quad \text{recall} &= \frac{\text{recall}(A) + \text{recall}(B)}{2}
+\end{aligned}$$
+
+È utile avere un'unica metrica che combini precision e recall per confrontare
+due classificatori. Questa metrica, denominata $F_\beta$, è la media
+armonica\footnote{La media armonica, rispetto alla media aritmetica, penalizza
+i valori bassi, risultando in un risultato più basso in tali casi.} tra
+precision e recall. La formula è la seguente:
+
+$$F_\beta=\frac{(1+\beta^2)\cdot\text{precision}\cdot\text{recall}}{\beta^2\cdot\text{precision}+\text{recall}}$$
+
+Il parametro $\beta$ determina il peso relativo tra recall e precision:
+$\beta>1$ favorisce la recall, mentre $\beta<1$ favorisce la precision.
+
+Le tabelle~\ref{table:confusion_matrix_dummy} e \ref{table:scores_dummy}, ci
+forniscono una valutazione più realistica delle prestazioni del classificatore
+``dummy''.
+
+\begin{table}[!ht]
+    \centering
+    \confusionmatrix%
+    {9999 (VP)}{0 (FN)}%
+    {1 (FP)}{0 (TN)}
+    \caption{Matrice di confusione del classificatore ``Dummy''}
+    \label{table:confusion_matrix_dummy}
+\end{table}
+
+\begin{table}[!ht]
+    \centering
+    \scores%
+    {0.99}{N.D}{0.5}%
+    {1}{0}{0.5}%
+    {0.5}
+    \caption{Precisione, Recall e $F_1$ del classificatore ``Dummy''}
+    \label{table:scores_dummy}
+\end{table}
+
+%\paragraph{Convalida incrociata}
 %
-%On demand: Ad-hoc manual execution of the pipeline.
-%On a schedule: New, labelled data is systematically available for the ML system on a daily, weekly, or monthly basis. The retraining frequency also depends on how frequently the data patterns change, and how expensive it is to retrain your models.
-%On availability of new training data: New data isn't systematically available for the ML system and instead is available on an ad-hoc basis when new data is collected and made available in the source databases.
-%On model performance degradation: The model is retrained when there is noticeable performance degradation.
-%On significant changes in the data distributions (concept drift). It's hard to assess the complete performance of the online model, but you notice significant changes on the data distributions of the features that are used to perform the prediction. These changes suggest that your model has gone stale, and that needs to be retrained on fresh data.
+%Nell'apprendimento supervisionato, valutare le prestazioni di un modello sui
+%dati utilizzati per l'addestramento può essere ingannevole, dato che il
+%modello si è adattato a tali esempi. Il vero indicatore delle prestazioni di
+%un modello è la sua capacità di generalizzare su dati nuovi, che non ha mai
+%visto prima.
+%
+%Se procediamo dividendo un dataset in un set di addestramento e un set di
+%test, 
+%
+%We want to increase the predictive performance by tweaking the learning
+%algorithm and selecting the best-performing model from a given hypothesis
+%space.
+%
+%We want to identify the machine learning algorithm that is best-suited for the
+%problem at hand; thus, we want to compare different algorithms, selecting the
+%best-performing one as well as the best-performing model from the algorithm’s
+%hypothesis space.
+%
+%Allora procediamo dividendo il dataset in un set di addestramento e un set di
+%test. Tuttavia, le prestazioni che osserviamo nel set di testo potrebbero
+%essere influenzate
+%
+%Nell'apprendimento supervisionato, le prestazioni di un modello sui dati
+%utilizzati per l'addestramento sono ottimistiche, dato che il modello è stato
+%adattato specificamente a tali esempi. Il vero indicatore delle prestazioni di
+%un modello sta nella sua capacità di generalizzare su dati nuovi che
+%provengono da una distribuzione sconosciuta. Quando selezioniamo un
+%sottoinsieme di questi dati per testare il modello, come possiamo essere
+%sicuri delle prestazioni di un modello e che non sia frutto della natura
+%stocastica intrinseca dei dati? 
+%
+%In altre parole, nel nostro caso se noi prendiamo un dataset,
+%lo splittiamo in un training e test set, e valutiamo il modello secondo una
+%metrica come l'f1 score, come possiamo essere sicuri del risultato e che non
+%sia solo frutto del caso? Bisogna testare il modello multiple volte in modo da
+%essere confidenti rispetto al design del modello e calcoliamo la media delle
+%prestazioni.
+%
+%facendo così otteniamo un stima meno biased e meno ottimistica delle vere
+%prestazioni del modello una volta che viene messo in deploy. 
+%facendo così scopriamo anche quanta varianza ha il modello
+%
+%The method of nested cross-validation is relatively straight-forward as it
+%merely is a nesting of two k-fold cross-validation loops: the inner loop is
+%responsible for the model selection, and the outer loop is responsible for
+%estimating the generalization accuracy
+%
+%Similarly, we do not expect this evaluation score to be very different from
+%that we obtained from cross validation in the previous step, if we did the
+%model training correctly. This can serve as a confirmation for our model
+%selection.
+%
+%\paragraph{t-test}
+%
+%ma la differenza delle prestazioni di due modelli di machine learning è reale
+%o frutto del caso?
+%
+%DIFFERENZA STATISTICA TRA I DUE MODELLI
+%
+%una volta ottenuta 
+%differenza tra le due medie
+%
+%probabilità del 99%%
+%
+%\paragraph{Convalida incrociata}
+%
+%inoltre se ricerchiamo gli iperparametri sul secondo
+%sottoinsieme, introdurremmo un bias
+%
+%Inoltre, il terzo utilizziamo un altro sottinsieme perché vogliamo cercare gli
+%iperparametri migliori, e cercando gli iperparametri migliori su tutta la
+%prova introdurrebbe un bias e vogliamo provare il modello prima di consegnarlo
+%al cliente e vedere come generalizza.
+%
+%optimistic generalization error 
+%
+%Well, not quite. There’s a methodological mistake here.
+%
+%We’re brute-forcing our way into finding the best model. This paper
+%demonstrated that it’s possible to end up with an overly optimistic
+%generalization error (due to overfitting) when we use the (vanilla)
+%cross-validation method to optimize hyperparameters and model selection.
+%
+%NESTED CROSS VALIDATION vedere le prestazioni a regime del modello
+%
+%We have a way of estimating the generalization error with cross-validation, but we haven’t finished yet.
+%
+%So this basic train/test approach is better than the first approach. Still, it
+%has an issue: it’s sensible to the selection of the test set.
+%
+%una strategia comune è la tecnica dell'holdout, dove il dataset viene s
+%suddiviso in 3 sottoinsieme trainng, validation, e quelli di prova
+%
+%I think the main advantage is that you will have more confidence in the score.
+%Like with any other statistic, if you measure it many times, and average it,
+%you reduce the variance of the estimation
+%
+%How would the holdout result in overoptimism compared to nested cv 
+%
+%In the inner loop, you select best hyper-parameters by subsequently using
+%different hyper-params to train model on the inner training folds and test on
+%the inner testing fold. Then use the best models selected in the inner loop to
+%test on the outer loop. The average results of the outer loop is the estimated
+%performance of your model.
+%
+%A downside of nested cross-validation is the dramatic increase in the number of model evaluations performed.
+%
+%If n * k models are fit and evaluated as part of a traditional cross-validation hyperparameter search for a given model, then this is increased to k * n * k as the procedure is then performed k more times for each fold in the outer loop of nested cross-validation.
+%
+%To make this concrete, you might use k=5 for the hyperparameter search and
+%test 100 combinations of model hyperparameters. A traditional hyperparameter
+%search would, therefore, fit and evaluate 5 * 100 or 500 models. Nested
+%cross-validation with k=10 folds in the outer loop would fit and evaluate
+%5,000 models. A 10x increase in this case.
+%
+%Under this procedure, hyperparameter search does not have an opportunity to
+%overfit the dataset as it is only exposed to a subset of the dataset provided
+%by the outer cross-validation procedure. This reduces, if not eliminates, the
+%risk of the search procedure overfitting the original dataset and should
+%provide a less biased estimate of a tuned model’s performance on the dataset.
+%
+%the confusion matrix will reflect the results of k models
 
-\section{Valutazione delle performance}
-\subsection{Metriche di valutazione}
+\section{Risultati ottenuti}
 
-% f2 score 
+Come menzionato nella sezione~\ref{sec:job_zombie}, rimuovere i job zombie può
+garantire il massimo payoff, a patto però che questi vengano identificati e
+rimossi subito dopo la loro esecuzione nel sistema. Se, per esempio, un job
+zombie viene individuato solo quando è vicino al suo timeout, avrà già
+occupato risorse per un lungo periodo. Di conseguenza, il payoff ottenuto alla
+sua rimozione è notevolmente ridotto.
 
-\subsection{Convalida incrociata}
-\section{Confronto tra i modelli}
+D'altra parte, se da un lato desideriamo rimuovere dei job zombie il prima
+possibile, dall'altro non vogliamo eliminare erroneamente quei job che stanno
+effettuando calcoli utili. All'inizio dell'esecuzione, disponiamo solo di
+pochi campionamenti da parte di HTCondor, il che limita la quantità di
+informazioni disponibili per il modello per fare delle predizioni. Idealmente,
+concedendo più tempo ai job prima di classificarli come zombie e accumulando
+un maggior numero di campionamenti, potremmo aumentare potenzialmente la
+precisione di un modello.
 
+Le prossime due sezioni esploreranno queste due idee: la prima che mira a
+massimizzare il payoff, mentre la seconda estende il periodo di osservazione
+per incrementare la precisione del classificatore.
+
+\subsection{Prima ora}
+
+Nel primo approccio, si è optato per focalizzare l'applicazione di un modello
+di Machine Learning ai job monitorati nel mese di settembre 2021 appartenenti
+al gruppo di utenti ATLAS. Questa decisione è stata guidata sia dall'elevata
+presenza di job zombie in ATLAS rispetto ad altri gruppi (vedi
+figura~\ref{fig:tsne_zombiejobs}), sia dai risultati dell'analisi visuale
+rappresentata nella figura~\ref{fig:tsne_sep2021}, in cui erano stati distinti
+alcuni cluster di job zombie ben distinti. 
+
+Verrano considerati i dati relativi allo stato dei job nella loro prima ora di
+esecuzione, in modo da creare un modello che, dopo la prima ora, sia capace di
+classificare i job come zombie o normali. 
+
+La preparazione dei dati, con alcune specifiche modifiche rispetto alla
+procedura descritta nella sezione~\ref{sec:preprocessing}, è stata condotta
+come segue:
+
+\begin{itemize}
+    \item Si è ridotta la frequenza di campionamento da 5 a 15 minuti per
+        eliminare i valori ripetuti, portando così a liste che contengono 4
+        valori anziché 20.
+    \item I valori contenuti nelle liste sono stati trasformati in colonne.
+        Questo passaggio elimina la cognizione temporale associata ai valori
+        delle serie storiche.
+    \item È stata introdotta una trasformazione polinomiale per le quattro
+        colonne create da ogni serie storica. Per esempio, elevando al
+        quadrato due colonne, si ottiene $(a,b)^2=a^2+2ab+b^2$. Questo serve
+        per generare nuove feature che esplicitano le interazioni tra le
+        feature esistenti.
+    \item Sono state aggiunte le feature \verb|job work type| e \verb|job type| 
+        nonostante non fossero necessarie nell'approccio in questione.
+    \item Non è stato effettuato alcun bilanciamento dei dati.
+\end{itemize}
+
+Nella prima metà di settembre, è stata eseguita una nested cross-validation
+per ricercare i migliori iperparametri, dettagliati nella
+tabella~\ref{table:xgb_hyperparams}, della pipeline composta dal
+\texttt{Preprocessor} e dal modello XGBoost. Successivamente, il modello
+ottimizzato è stato testato sul dataset del 16-30 settembre, con i risultati
+riportati nella tabella~\ref{table:confusion_matrix_xgboost_sep} e nella
+tabella~\ref{table:scores_xgboost_sep}.
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{ll}
+        \toprule
+        \textbf{Iperparametro} & \textbf{Valore} \\
+        \midrule
+        \texttt{preprocessor\_\_num\_\_scaler}         & \texttt{StandardScaler()} \\
+        \texttt{preprocessor\_\_num\_\_poly\_\_degree} & 2 \\
+        \texttt{xgb\_\_min\_child\_weight}             & 6 \\
+        \texttt{xgb\_\_subsample}                      & 0.65 \\
+        \texttt{xgb\_\_colsample\_bytree}              & 0.8 \\
+        \texttt{xgb\_\_gamma}                          & 0.2 \\
+        \texttt{xgb\_\_n\_estimators}                  & 300 \\
+        \texttt{xgb\_\_max\_depth}                     & 4 \\
+        \texttt{xgb\_\_learning\_rate}                 & 0.02 \\
+        \texttt{xgb\_\_reg\_alpha}                     & 0.4 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Iperparametri migliori del modello XGBoost sul dataset del periodo 01-15 settembre}
+    \label{table:xgb_hyperparams}
+\end{table}
+
+\begin{table}[!ht]
+   \centering
+   \confusionmatrix%
+   {86719}{272}%
+   {612}{704}
+   \caption{Matrice di confusione del modello XGBoost sul dataset del periodo 16-30
+   settembre}
+   \label{table:confusion_matrix_xgboost_sep}
+\end{table}
+
+\begin{table}[!ht]
+   \centering
+   \scores%
+   {0.99}{0.72}{0.85}%
+   {0.99}{0.53}{0.76}%
+   {0.80}
+   \caption{Precisione, Recall e $F_1$ del modello XGBoost sul dataset del
+   periodo 16-30 settembre}
+   \label{table:scores_xgboost_sep}
+\end{table}
+
+I risultati mostrano una buona capacità del modello nel distinguere tra job
+zombie e job normali, raggiungendo un $F_1$ score di 0.80 e una precisione del
+72\% per la classe meno rappresentata. 
+
+Inoltre, è possibile visualizzare la conoscenza appresa da XGBoost, ovvero
+l'importanza per ciascuna feature che indica quanto è valutabile ogni
+feature nella costruzione di un boosted tree, the more the attribute is used
+to make the decision with decisions tree, the higher its relative importance
+
+the featur eimportances are the e averaged across of the decision trees within
+the model
+
+Il modello si mostra capace di distinguere i job zombie dai job normali con
+una buona precisione, esattamente come l'analisi visuale, mentre effettua
+ancora errori
+Otteniamo un F1 score di 0.8, e una precisione sulla classe meno rappresentata
+del 72\%, quindi il modello si dimostra capace di distinguere i job zombie dai
+job normali, sbagliando una percentuale rilevante di job
+
+%Possiamo anche visualizzare la conoscenza appresa da XGBoost per vedere come
+%l'ensemble effettua le predizioni
+%XGBoost sebbene sia un ensemble di alberi, e non è altrettanto interpretabile
+%come un albero decisionale, ci permette di capire quali sono state le feature
+%più influenti nelle suddivisioni dei tot alberi
+
+\subsection{Prime 24 ore}
 
 % at each iteration, equation requires a complete pass through the intere
 % dataset in orde to compute the gradient. 
