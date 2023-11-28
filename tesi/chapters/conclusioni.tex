@@ -1,5 +1,89 @@
-\section{Sintesi dei risultati}
+\label{chap:explanation}
+
+Dai risultati ottenuti nel capitolo~\ref{chap:valutazioni}, è possibile
+affermare che i job zombie sono identificabili. Abbiamo due modelli che, su
+tutti i gruppi di utenti e con dati recenti, riescono ad identificare i job
+zombie. Nonostante i modelli non siano precisi come sperato, e pertanto non
+permettano la rimozione automatica dei job, questi consentono di identificare
+i job, che con buona probabilità, saranno zombie (1 su 2). Attraverso questo è
+possibile impostare un filtro o un avviso che potrebbe 
+
+% ensemble di modelli 
+ma quale modello scegliere tra i due modelli? entrambi, combinando le
+previsioni di diversi classificatori in un unico ``classificatore''
+
+ combinare insieme le previsioni di singoli classificatori. Sorprendentemente
+ unendo spesso si raggiungono prestazioni migliori, si possono compensare
+ reciprocamente le rispettive debolezze, portando a delle prestazioni
+ migliori.
+
+e creare un ensemble
+
+con una regola di voto
+
+Quindi il prossimo passo successivo per una potenziale ricerca è provare altri
+classificatori e integrarli nell'ensemble per ottenere delle prestazioni
+complessive migliori e raggiungere precisioni migliori.
+
+Un altro passo potrebbe essere quello di valutare
+
+% l'aumento del campionamento non ha portato benefisci
+% array di classifiers uno per gruppo
+Il numero di campionamenti non ha portato un incremento di precisione, questo
+però potrebbe essere semplicemente perché
+Inoltre, l'incremento di campionamenti non ha prodotto un aumento di
+precisione, ma questo come già detto potrebbe essere motivato dall'aver
+considerato più gruppi di utenti insieme,
+
+per poter stabilire e scegliere se preferire un approccio con massimo payoff o
+rinunciare a del payoff per incrementarne la precisione, si potrebbe invece
+che considerare tutte le code insieme, addestrare l'ensemble di classifier su
+ciascuna coda e valutare
+
+% i risultati droppano dopo un po'
+Inoltre, come osservato in precedenza se guardiamo come il modello addestrato
+funziona su
+
+% data drift
+
+\begin{table}[!ht]
+    \centering
+    \confusionmatrix%
+    {}{}%
+    {}{}
+    \caption{}
+    \label{}
+\end{table}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\linewidth]{periodical_retrain}
+    \caption{}
+    \label{}
+\end{figure}
+% se i dati cambiano anche i modelli devono cambiare
+
 \section{Limitazioni dello studio e proposte per ricerche future}
+
+
+
+
+%Infine, possiamo vedere come il numero di campionamenti
+%L'aumento del numero di campionamenti non ha portato a una maggior precisione,
+%ma questo 
+
+
+%Most machine learning systems operate in batch mode. They analyze a set of
+%historical data and then develop a model that reflects the world as it was
+%when the model was formed. But the world is dynamic, and the complex
+%distributions that a model models are likely to be non-stationary and thus to
+%change over time, leading to deteriorating model performance.
+
+%Data trumps all. It's true that updating your learning algorithm or model
+%architecture will let you learn different types of patterns, but if your data
+%is bad, you will end up building functions that fit the wrong thing. The
+%quality and size of the data set matters much more than which shiny algorithm
+%you use.
 
 % scarsa qualità dei dati -> migliorare la qualità delle misurazioni
 
