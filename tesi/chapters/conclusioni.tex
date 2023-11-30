@@ -1,108 +1,78 @@
-\label{chap:explanation}
+\label{chap:conclusione}
 
-Dai risultati ottenuti nel capitolo~\ref{chap:valutazioni}, è possibile
-affermare che i job zombie sono identificabili. Abbiamo due modelli che, su
-tutti i gruppi di utenti e con dati recenti, riescono ad identificare i job
-zombie. Nonostante i modelli non siano precisi come sperato, e pertanto non
+%Conviene aggiungere un paragrafo all'inizio in cui si ribadisce lo scopo della
+%tesi e l'ambito applicativo (identificare i job zombie il prima possibile in
+%una farm di calcolo)
+
+Dalle analisi effettuate nel capitolo~\ref{chap:analisi}, sui dati relativi
+allo stato dei job in esecuzione e ai dati di accounting, è stato possibile
+identificare un sottoinsieme di job che falliscono, denominati ``job zombie''.
+La loro prematura identificazione risulta essere particolarmente vantaggiosa
+in termini di payoff derivante dalla loro rimozione. Dai risultati ottenuti
+nel capitolo~\ref{chap:applicazione}, addestrando un apposito modello
+predittivo, è possibile affermare che i job zombie sono identificabili. Sono
+stati proposti due modelli (vedi figura~\ref{table:model_results}) che
+riescono ad identificare i job zombie su tutti i gruppi di utenti e con dati
+recenti. Nonostante i modelli non siano precisi come sperato, e pertanto non
 permettano la rimozione automatica dei job, questi consentono di identificare
-i job, che con buona probabilità, saranno zombie (1 su 2). Attraverso questo è
-possibile impostare un filtro o un avviso che potrebbe 
-
-% ensemble di modelli 
-ma quale modello scegliere tra i due modelli? entrambi, combinando le
-previsioni di diversi classificatori in un unico ``classificatore''
-
- combinare insieme le previsioni di singoli classificatori. Sorprendentemente
- unendo spesso si raggiungono prestazioni migliori, si possono compensare
- reciprocamente le rispettive debolezze, portando a delle prestazioni
- migliori.
-
-e creare un ensemble
-
-con una regola di voto
-
-Quindi il prossimo passo successivo per una potenziale ricerca è provare altri
-classificatori e integrarli nell'ensemble per ottenere delle prestazioni
-complessive migliori e raggiungere precisioni migliori.
-
-Un altro passo potrebbe essere quello di valutare
-
-% l'aumento del campionamento non ha portato benefisci
-% array di classifiers uno per gruppo
-Il numero di campionamenti non ha portato un incremento di precisione, questo
-però potrebbe essere semplicemente perché
-Inoltre, l'incremento di campionamenti non ha prodotto un aumento di
-precisione, ma questo come già detto potrebbe essere motivato dall'aver
-considerato più gruppi di utenti insieme,
-
-per poter stabilire e scegliere se preferire un approccio con massimo payoff o
-rinunciare a del payoff per incrementarne la precisione, si potrebbe invece
-che considerare tutte le code insieme, addestrare l'ensemble di classifier su
-ciascuna coda e valutare
-
-% i risultati droppano dopo un po'
-Inoltre, come osservato in precedenza se guardiamo come il modello addestrato
-funziona su
-
-% data drift
+i job, che con buona probabilità, saranno zombie (1 su 2). I segnali forniti
+dal modello possono essere utilizzati per impostare un filtro o un avviso,
+permettendo così di controllare manualmente i job sospetti o di stabilire una
+regola per la loro eliminazione.
 
 \begin{table}[!ht]
     \centering
-    \confusionmatrix%
-    {}{}%
-    {}{}
-    \caption{}
-    \label{}
+    \begin{tabular}{lcc}
+        \toprule
+        Metrica & Transformer & XGBoost \\ 
+        \midrule
+        Precisione (classe minoritaria) & 0.42 & 0.57 \\ 
+        Recall (classe minoritaria) & 0.55 & 0.42 \\ 
+        $F_1$ & 0.73 & 0.74 \\ 
+        \bottomrule
+    \end{tabular}
+    \caption{\small Risultati dei modelli Transformer e XGBoost nell'identificazione
+    dei job zombie sul set di test del dataset del periodo 13-31 marzo 2023}
+    \label{table:model_results}
 \end{table}
 
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=\linewidth]{periodical_retrain}
-    \caption{}
-    \label{}
-\end{figure}
-% se i dati cambiano anche i modelli devono cambiare
+Il lavoro può essere proseguito per sviluppi futuri, partendo dai notebook
+esistenti disponibili all'indirizzo
+\url{https://github.com/alessioarcara/JobFailurePrediction-CNAF}.
 
-\section{Limitazioni dello studio e proposte per ricerche future}
+Il passo successivo per una ricerca potenziale consiste nell'integrare,
+anziché scegliere uno dei due classificatori, entrambi in un ensemble.
+Combinando le previsioni di diversi classificatori e applicando una regola di
+voto, è possibile compensare sorprendentemente le rispettive debolezze,
+ottenendo prestazioni migliorate \cite{geron2019}. Si consiglia, dunque, di
+esplorare ulteriori modelli e di integrarli in un ensemble.
 
+Inoltre, l'incremento del numero di campionamenti da un'ora a 24 ore non ha
+portato a un corrispondente incremento nella precisione. Tuttavia, questo
+potrebbe essere dovuto al fatto di aver considerato più di un gruppo di
+utenti. Un'altra ricerca potenziale che potrebbe migliorare le prestazioni è,
+invece di considerare tutti i job di tutti i gruppi di utenti per addestrare
+un unico modello, addestrare un modello per ogni gruppo di utenti. In questo
+modo, si otterrebbe alla fine un array di modelli, che potrebbe mantenere le
+stesse prestazioni osservate con il gruppo di utenti ATLAS.
 
+Un altro aspetto importante è la qualità dei dati. Infatti, la qualità e la
+quantità dei dati sono più importanti del modello utilizzato
+\cite{halevy2009}. È utile arricchire le feature con dati provenienti da altre
+fonti. Considerando che il CNAF monitora non solo lo stato dei job, ma anche
+quello degli host fisici dove i job sono attualmente in esecuzione, con un
+campionamento ogni 3 minuti, un'ulteriore direzione di ricerca potrebbe essere
+quella di incrociare questi dati. In questo modo, si potrebbe ottenere
+informazioni anche sull'ambiente in cui i job sono in esecuzione.
 
-
-%Infine, possiamo vedere come il numero di campionamenti
-%L'aumento del numero di campionamenti non ha portato a una maggior precisione,
-%ma questo 
-
-
-%Most machine learning systems operate in batch mode. They analyze a set of
-%historical data and then develop a model that reflects the world as it was
-%when the model was formed. But the world is dynamic, and the complex
-%distributions that a model models are likely to be non-stationary and thus to
-%change over time, leading to deteriorating model performance.
-
-%Data trumps all. It's true that updating your learning algorithm or model
-%architecture will let you learn different types of patterns, but if your data
-%is bad, you will end up building functions that fit the wrong thing. The
-%quality and size of the data set matters much more than which shiny algorithm
-%you use.
-
-% scarsa qualità dei dati -> migliorare la qualità delle misurazioni
-
-% un'altra condizione permetterebbe
-
-%i job "zombie" saranno sicuramente quelli che durante la propria
-%esecuzione incrementano il `runtime` ma non la `cputime`. Giusto? È possibile
-%che job "incastrati" incrementano stime e utime? Non credo
-%
-%Se così fosse, sarebbe possibile estrarre una "fetta" di job zombie e
-%impostare un supervised learning in questo caso qualitativo, togliendo molto
-%rumore. Inoltre, si potrebbe anche impostare anche delle regole su questo
-%semplice assunto.
-
-% data drift: i dati cambiano nel tempo e il modello perde accuratezza
-%You can automate the ML production pipelines to retrain the models with new data, depending on your use case:
-%
-%On demand: Ad-hoc manual execution of the pipeline.
-%On a schedule: New, labelled data is systematically available for the ML system on a daily, weekly, or monthly basis. The retraining frequency also depends on how frequently the data patterns change, and how expensive it is to retrain your models.
-%On availability of new training data: New data isn't systematically available for the ML system and instead is available on an ad-hoc basis when new data is collected and made available in the source databases.
-%On model performance degradation: The model is retrained when there is noticeable performance degradation.
-%On significant changes in the data distributions (concept drift). It's hard to assess the complete performance of the online model, but you notice significant changes on the data distributions of the features that are used to perform the prediction. These changes suggest that your model has gone stale, and that needs to be retrained on fresh data.
+Sempre in merito ai dati, un'altra ricerca futura potrebbe concentrarsi sul
+miglioramento della preparazione dei dati. Questo potrebbe includere
+l'aggiunta di metodi alla classe \texttt{Preprocessor} per pulire le serie
+storiche, ad esempio rimuovendo gli outlier o applicando una media mobile per
+ridurre la variabilità. Inoltre, si potrebbero apportare miglioramenti anche
+nell'etichettatura dei dati. Ad esempio, si potrebbe considerare come job
+zombie non solo quelli che terminano a causa di un timeout di 7 giorni, ma
+anche quelli in cui il \texttt{cputime} rimane invariato per un lungo periodo.
+Ciò garantirebbe di identificare con maggiore sicurezza i job zombie, evitando
+di classificare erroneamente quei job che richiedono più tempo per completare
+i calcoli.

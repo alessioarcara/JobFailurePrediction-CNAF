@@ -3,7 +3,7 @@
 In questo capitolo vengono presentate le analisi preliminari effettuate per il
 caso di studio in questione. Queste analisi hanno permesso di selezionare un
 sottoinsieme di job e un task di Machine Learning associato che possa
-apportare benefici al CNAF.
+verosimilmente apportare benefici al CNAF.
 
 \section{Analisi esplorativa}
 
@@ -20,10 +20,11 @@ misurata nel tempo, e \textbf{multivariate}, dove più variabili sono misurate
 contemporaneamente.
 
 All'interno della tabella \texttt{hj}, che contiene i dati di monitoraggio dei
-job eseguiti da HTCondor, ogni riga può essere vista come un punto in una
-serie storica multivariata. In altre parole, ciascun job corrisponde a una
-serie storica multivariata distinta, dove le variabili rappresentano le
-diverse grandezze misurate durante il suo ciclo di vita, come illustrato nella
+job che sono in esecuzione al tempo in cui la grandezza è misurata da
+HTCondor, ogni tupla può essere considerata come un punto in una serie storica
+multivariata. In altre parole, a ciascun job corrisponde una serie storica
+multivariata distinta, dove le variabili rappresentano le diverse grandezze
+misurate durante il suo ciclo di vita, come illustrato nella
 figura~\ref{fig:job_time_series}. Sebbene queste serie condividano le stesse
 variabili, la durata di ciascun job, e di conseguenza la lunghezza delle
 relative serie storiche, cambia.
@@ -177,10 +178,10 @@ rimangono in esecuzione per quella durata diminuisce esponenzialmente.
 La figura~\ref{fig:njobs_perqueue} evidenzia come i gruppi associati agli
 esperimenti LHC sottomettano un numero significativamente maggiore di job
 rispetto ai gruppi non-LHC. Questo elevato numero di job, tuttavia, non si
-traduce in un tasso di fallimento proporzionalmente alto, come osservato in
-precedenza nella figura~\ref{fig:njobs_and_rt_perhour}. Questa differenza può
-essere attribuita ai meccanismi interni di controllo presenti nei gruppi LHC,
-i quali intervengono rimuovendo autonomamente i job problematici. Al
+traduce in un tasso di fallimento proporzionalmente più alto, come osservato
+in precedenza nella figura~\ref{fig:njobs_and_rt_perhour}. Questa differenza
+può essere attribuita ai meccanismi interni di controllo presenti nei gruppi
+LHC, i quali intervengono rimuovendo autonomamente i job problematici. Al
 contrario, alcune code non-LHC presentano un tasso di fallimento estremamente
 alto. Tuttavia, le ragioni specifiche di questi fallimenti non sono note,
 poiché HTCondor fornisce solo informazioni limitate e generiche sui motivi dei
@@ -207,7 +208,7 @@ eseguire altri job, detti \texttt{payload}. I job \texttt{pilot} non sono
 direttamente coinvolti nei calcoli, ma piuttosto servono a scandagliare le
 risorse disponibili alla ricerca di un host fisico.
 
-\begin{table}[!h]
+\begin{table}[!ht]
     \centering
     \caption{Frequenza dei nomi dei job}
     \begin{tabular}{lr}
@@ -429,8 +430,8 @@ In conclusione, l'obiettivo di questa tesi è verificare che i job zombie
 possano essere identificati attraverso l'applicazione di modelli di Machine
 Learning.
 
-Nel capitolo~\ref{chap:machine_learning}, esploreremo due diversi modi di
-modellare il problema con il Machine Learning, applicando tecniche specifiche
-per ciascuno. Successivamente, nel capitolo~\ref{chap:valutazioni}, valuteremo
-e confronteremo i risultati ottenuti attraverso i due approcci e le relative
+Nel capitolo~\ref{chap:teoria}, esploreremo due diversi approcci di modellare
+il problema con il Machine Learning, applicando tecniche specifiche per
+ciascuno. Successivamente, nel capitolo~\ref{chap:applicazione}, valuteremo e
+confronteremo i risultati ottenuti attraverso i due approcci e le relative
 tecniche utilizzate.

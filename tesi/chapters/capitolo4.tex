@@ -1,24 +1,23 @@
-\label{chap:valutazioni}
+\label{chap:applicazione}
 
-Ricordando quanto detto nella sezione~\ref{sec:job_zombie}, questa tesi vuole
-verificare se i job zombie possano essere identificati utilizzando modelli di
-Machine Learning.
+Ricordando quanto detto nella sezione~\ref{sec:job_zombie}, l'obiettivo di
+questa tesi è verificare se i job zombie possano essere identificati
+utilizzando modelli di Machine Learning.
 
 Come descritto nella sezione~\ref{sec:imbalanced_data}, un classificatore
 potrebbe avere un errore apparentemente basso semplicemente prevedendo
 l'etichetta più frequente. Infatti, considerando la proporzione di un job
 zombie ogni 10,000 job normali, un classificatore che etichetta tutti i job
-come normali raggiungerebbe
-un'accuratezza\footnote{$\text{accuratezza}=\frac{\text{Veri
-Positivi}+\text{Veri Negativi}}{\text{tutte le predizioni}}$} del 99.99\%.
+come normali raggiungerebbe un'accuratezza del 99.99\%, dove per accuratezza
+si intende il rapporto tra il numero di predizioni corrette e il numero totale
+di predizioni effettuate. Un simile modello, che assume tutti i job come
+normali, equivarrebbe a non avere un modello di Machine Learning. Pertanto,
+per valutare la fattibilità nell'identificazione dei job zombie, useremo come
+baseline questo classificatore, che chiameremo ``dummy''. Dovremo quindi
+provare che le prestazioni del nostro modello sono statisticamente migliori
+rispetto ad esso.
 
-Un simile modello, che assume tutti i job come normali, equivarrebbe a non
-avere un modello di Machine Learning. Pertanto, per valutare la fattibilità
-nell'identificazione dei job zombie, useremo come baseline questo
-classificatore, che chiameremo ``dummy''. Dovremo quindi provare che le
-prestazioni del nostro modello sono statisticamente migliori rispetto ad esso.
-
-Nella prossima sezione, introdurremo alcune metriche per misurare le vere
+In questo capitolo, introdurremo alcune metriche per misurare le vere
 prestazioni del modello e una procedura per evitare che queste possano
 portarci a una valutazione distorta dello stesso.
 
@@ -52,11 +51,12 @@ $$\begin{aligned}
     \text{precision} &= \frac{\text{precision}(A) + \text{precision}(B)}{2} & \quad \text{recall} &= \frac{\text{recall}(A) + \text{recall}(B)}{2}
 \end{aligned}$$
 
+Dove le etichette $A$ e $B$ indicano due classi distinte in un problema di
+classificazione binaria.
+
 È utile avere un'unica metrica che combini precision e recall per confrontare
-due classificatori. Questa metrica, denominata $F_\beta$, è la media
-armonica\footnote{La media armonica, rispetto alla media aritmetica, penalizza
-i valori bassi, risultando in un risultato più basso in tali casi.} tra
-precision e recall. La formula è la seguente:
+due classificatori. Questa metrica, denominata $F_\beta$, è la media armonica
+tra precision e recall. La formula è la seguente:
 
 $$F_\beta=\frac{(1+\beta^2)\cdot\text{precision}\cdot\text{recall}}{\beta^2\cdot\text{precision}+\text{recall}}$$
 
@@ -86,9 +86,9 @@ forniscono una valutazione più realistica delle prestazioni del classificatore
     \label{table:scores_dummy}
 \end{table}
 
-\paragraph{Nested-cross-validation.} Nell'apprendimento supervisionato,
-valutare le prestazioni di un modello sui dati utilizzati per l'addestramento
-può essere ingannevole, poiché il modello si adatta specificamente a questi
+\paragraph{Nested-cross-validation.} Nell'apprendimento supervisionato, può
+essere ingannevole valutare le prestazioni di un modello sui dati utilizzati
+per l'addestramento, poiché il modello si adatta specificamente a questi
 esempi. Il vero indicatore delle prestazioni di un modello è la sua capacità
 di generalizzare su nuovi dati, mai visti prima. È necessario pertanto
 valutare le prestazioni del modello su un set di dati separato, non utilizzato
@@ -536,9 +536,9 @@ passo sono più generalizzabili rispetto a quelli del primo passo.
 
 Prima di passare alle conclusioni, presenteremo un approccio che è stato
 sperimentato, ma che non ha prodotto i risultati attesi, rivelando tuttavia un
-limite del nostro caso di studio.
+limite nel nostro caso di studio.
 
-\paragraph{Novelty detection.} Come discusso nella
+\paragraph{Non stazionarietà.} Come discusso nella
 sezione~\ref{sec:novelty_detection}, in questa modellazione del problema, i
 job zombie sono considerati come delle ``novità'', cioè come qualcosa di nuovo
 e non simile a ciò che il modello ha visto in precedenza. 
@@ -575,3 +575,35 @@ questa modellazione, vi è l'ipotesi implicita che le caratteristiche dei job
 stazionario a causa dell'arrivo di nuovi esperimenti da parte dei gruppi di
 utenti, i quali mutano le caratteristiche dei job, ciò potrebbe portare il
 modello a modellare come novità qualcosa che, in realtà, non lo è.
+
+Su questa base, si sono volute valutare le prestazioni del modello XGBoost
+addestrato nel periodo dal 13 al 31 marzo, per osservare come esso si comporta
+sui dati del mese successivo. Nella
+tabella~\ref{table:confusion_matrix_xgboost_apr2023} si nota un crollo delle
+prestazioni del modello. Questo conferma che le caratteristiche dei job
+cambiano nel tempo e che la conoscenza del modello degrada, rendendola meno
+rappresentativa della realtà attuale. Tuttavia, questo non rappresenta un
+problema, in quanto, se i dati cambiano, anche i modelli possono cambiare.
+Questo si può ottenere riaddestrando periodicamente il modello, il che può
+essere automatizzato all'interno della pipeline. Integrando un componente che
+monitora le performance del modello e scatena un evento di riaddestramento
+quando le prestazioni scendono sotto una certa soglia arbitraria (come
+illustrato in figura~\ref{fig:periodical_retraining}), si possono mantenere le
+prestazioni del modello nel tempo.
+
+\begin{table}[!ht]
+    \centering
+    \confusionmatrix%
+    {253687}{295}%
+    {31}{9}
+    \caption{\small Matrice di confusione del modello XGBoost sul dataset del periodo
+    21-28 aprile 2023}
+    \label{table:confusion_matrix_xgboost_apr2023}
+\end{table}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\linewidth]{periodical_retraining}
+    \caption{Processo di riaddestramento periodico del modello}
+    \label{fig:periodical_retraining}
+\end{figure}

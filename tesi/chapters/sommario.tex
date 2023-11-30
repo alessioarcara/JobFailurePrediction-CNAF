@@ -1,4 +1,6 @@
-Il CNAF gestisce un centro di calcolo dotato di oltre 46000 core distribuiti
+Il CNAF gestisce un centro di calcolo utilizzato da gruppi di ricercatori di
+fisica delle particelle, astrofisica e altro.
+Questo centro è dotato di oltre 46000 core distribuiti
 su 960 host fisici. I job vengono accodati e schedulati dal sistema batch
 (HTCondor) attraverso l'uso di algoritmi di ``fairshare''.
 Durante l'esecuzione, vengono monitorate grandezze quali il consumo di memoria
@@ -6,19 +8,17 @@ e lo spazio su disco, che vengono campionate ogni tre minuti e raccolte in un
 database insieme ai dati di accounting relativi ai job terminati.
 Questi job possono variare notevolmente in termini di durata, da pochi minuti
 a più giorni.
-Questo studio esplora l'uso di tecniche di Machine Learning per prevedere il
-successo o il fallimento dei job, basandosi sull'evoluzione del loro stato nel
-tempo.
+Questo studio esplora l'uso di tecniche di Machine Learning e di Deep Learning
+per prevedere il successo o il fallimento dei job, basandosi sull'evoluzione
+del loro stato nel tempo.
 In particolare, ci si è concentrati sui cosiddetti ``job zombie'', ossia quei
 job che, pur terminando, non rilasciano l'host fisico, causando una perdita di
 risorse fino al loro timeout.
-Un approccio iniziale, che prendeva in considerazione solo la prima ora di
-vita del job, ha permesso di identificare con una precisione del 72\% la
-classe meno rappresentata (i job zombie).
-Per migliorare la precisione, si è preso in considerazione l'intero primo
-giorno, applicando tecniche di Deep Learning sia supervisionate (CNN,
-CNN+LSTM, LSTM e Transformer) che non supervisionate (autoencoder e
-variational autoencoder). 
-Nonostante l'incremento della complessità dei modelli, le reti neurali hanno
-mostrato una tendenza all'overfitting a causa dell'estremo sbilanciamento dei
-dati.
+Un approccio iniziale, che considerava solo la prima ora di vita del job e un
+solo gruppo di utenti, ha
+permesso di identificare la classe meno rappresentata (i job zombie) con
+una precisione del 72\%.
+Successivamente, al fine di generalizzare questo risultato, si è considerato i
+job di tutti i gruppi di utenti e l'intero primo giorno. Questo ha confermato
+la possibilità di identificare i job zombie, sebbene si sia registrato un calo
+di precisione da parte dei modelli.
