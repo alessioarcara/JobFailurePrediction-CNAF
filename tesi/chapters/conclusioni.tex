@@ -1,24 +1,23 @@
 \label{chap:conclusione}
 
-%Conviene aggiungere un paragrafo all'inizio in cui si ribadisce lo scopo della
-%tesi e l'ambito applicativo (identificare i job zombie il prima possibile in
-%una farm di calcolo)
-
-Dalle analisi effettuate nel capitolo~\ref{chap:analisi}, sui dati relativi
-allo stato dei job in esecuzione e ai dati di accounting, è stato possibile
-identificare un sottoinsieme di job che falliscono, denominati ``job zombie''.
-La loro prematura identificazione risulta essere particolarmente vantaggiosa
-in termini di payoff derivante dalla loro rimozione. Dai risultati ottenuti
+Questo studio ha esplorato il problema di prevedere il successo o il
+fallimento dei job in una farm di calcolo mediante l'uso di tecniche di
+Machine Learning e Deep Learning. Dalle analisi effettuate nel
+capitolo~\ref{chap:analisi}, è stato identificato un particolare sottoinsieme
+di job che falliscono, denominati zombie. Questi, benché smettano di
+effettuare calcoli, non rilasciano l'host fisico, occupando improduttivamente
+delle risorse fino al loro timeout. L'obiettivo della tesi è stato quello di
+individuare questi job il più presto possibile, poiché la loro prematura
+identificazione risulta essere particolarmente vantaggiosa in termini di
+risparmio di risorse derivante dalla loro rimozione. Dai risultati ottenuti
 nel capitolo~\ref{chap:applicazione}, addestrando un apposito modello
 predittivo, è possibile affermare che i job zombie sono identificabili. Sono
-stati proposti due modelli (vedi figura~\ref{table:model_results}) che
-riescono ad identificare i job zombie su tutti i gruppi di utenti e con dati
-recenti. Nonostante i modelli non siano precisi come sperato, e pertanto non
-permettano la rimozione automatica dei job, questi consentono di identificare
-i job, che con buona probabilità, saranno zombie (1 su 2). I segnali forniti
-dal modello possono essere utilizzati per impostare un filtro o un avviso,
-permettendo così di controllare manualmente i job sospetti o di stabilire una
-regola per la loro eliminazione.
+stati proposti e validati, su tutti i gruppi di utenti e con dati recenti
+(vedi figura~\ref{table:model_results}), due modelli capaci di identificare i
+job che, con buona probabilità, diventeranno zombie (1 su 2). Le predizioni
+fornite dal modello possono essere utilizzate per impostare un filtro o un
+avviso, permettendo così di controllare manualmente i job sospetti o di
+stabilire una regola per la loro eliminazione.
 
 \begin{table}[!ht]
     \centering

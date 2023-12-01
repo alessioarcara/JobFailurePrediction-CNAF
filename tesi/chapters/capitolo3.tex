@@ -1,18 +1,19 @@
-\label{chap:machine_learning}
+\label{chap:teoria}
 
-In questa tesi considereremo il Machine Learning come il processo che consente
-la creazione di modelli in grado di apprendere autonomamente dai dati. Un
-modello è costituito da un insieme di parametri e una struttura che elabora i
-dati di input per produrre un output. I parametri vengono appresi durante la
-fase di addestramento, in cui il modello esamina vari esempi e regola i propri
-parametri di conseguenza. Gli iperparametri, d'altra parte, sono valori
-definiti dall'utente prima dell'inizio dell'addestramento che influenzano la
-struttura del modello e il suo comportamento durante l'addestramento.
+In questo capitolo ci focalizzeremo sulla parte del Machine Learning che si
+occupa del processo di creazione di modelli in grado di apprendere
+autonomamente dai dati. Un modello è costituito da un insieme di parametri e
+una struttura di calcolo che tratta i dati di input per produrre un output. I
+parametri vengono appresi durante la fase di addestramento, in cui il modello
+esamina vari esempi e regola i propri parametri in modo da rendere minima una
+funzione costo. Gli iperparametri, d'altra parte, sono valori definiti
+dall'utente prima dell'inizio dell'addestramento che influenzano la struttura
+del modello e il suo comportamento durante l'addestramento.
 
 Prima di esplorare i modelli specifici, ci concentreremo sul processo di
 creazione dei modelli di Machine Learning, e vedremo come l'automatizzazione
-di questo processo, attraverso l'impiego di una \textbf{pipeline}, possa
-migliorarne l'efficienza e l'efficacia.
+di questo processo, attraverso l'impiego di una pipeline, possa migliorarne
+l'efficienza e l'efficacia.
 
 Il processo di creazione di un modello di Machine Learning si compone di vari
 passaggi: l'estrazione dei dati, la loro preparazione e l'addestramento del
@@ -34,27 +35,28 @@ figura~\ref{fig:ml_pipeline_dag}).
 L'uso di una pipeline nel Machine Learning ci permette di ottenere i seguenti
 vantaggi:
 \begin{itemize}
-    \item[\textit{Efficacia}] \textbf{Estensione della ricerca degli iperparametri ad altri
-        componenti}: Mentre l'individuazione dei parametri migliori per un
-        modello avviene in modo automatico durante l'addestramento, la ricerca
-        degli iperparametri migliori richiede sperimentazioni multiple,
-        testando diversi valori e valutando i risultati del modello secondo
-        metriche prestabilite. Dato che esternamente una pipeline funziona
-        esattamente come un modello, è possibile estendere la ricerca degli
-        iperparametri migliori a componenti non direttamente correlati al
-        modello stesso, come quelle legate all'estrazione e alla preparazione
-        dei dati. Poiché anche la ricerca degli iperparametri è
-        automatizzabile, è possibile testare automaticamente diverse tecniche
-        di preparazione dei dati, semplicemente integrando il componente alla
-        pipeline.
-    \item [\textit{Efficienza}]\textbf{Sperimentazione rapida}: L'organizzazione di tutti i
-        passaggi in una pipeline può accelerare notevolmente la
-        sperimentazione. Questo è particolarmente utile quando si prevede di
-        testare vari iperparametri o di utilizzare differenti sottoinsiemi di
-        dati. Infatti, incapsulando le operazioni delle diverse componenti in
-        un unico elemento che le esegue sequenzialmente, si evita di ripetere
-        le stesse operazioni più volte, risultando in un risparmio di tempo
-        significativo.
+    \item[\textit{Efficacia}] \textbf{Estensione della ricerca degli
+        iperparametri ad altri componenti}: Mentre l'individuazione dei
+        parametri ottimali per un modello avviene in modo automatico durante
+        l'addestramento, la ricerca degli iperparametri migliori richiede
+        sperimentazioni multiple, testando diversi valori e valutando i
+        risultati del modello secondo metriche prestabilite. Dato che
+        esternamente una pipeline funziona esattamente come un modello, è
+        possibile estendere la ricerca degli iperparametri migliori a
+        componenti non direttamente correlati al modello stesso, come quelle
+        legate all'estrazione e alla preparazione dei dati. Poiché anche la
+        ricerca degli iperparametri è automatizzabile, è possibile testare
+        automaticamente diverse tecniche di preparazione dei dati,
+        semplicemente integrando il componente alla pipeline, sebbene questo
+        possa comportare un aumento del tempo di addestramento.
+    \item [\textit{Efficienza}]\textbf{Sperimentazione rapida}:
+        L'organizzazione di tutti i passaggi in una pipeline può accelerare
+        notevolmente la sperimentazione. Questo è particolarmente utile quando
+        si prevede di testare vari iperparametri o di utilizzare differenti
+        sottoinsiemi di dati. Infatti, incapsulando le operazioni delle
+        diverse componenti in un unico elemento che le esegue sequenzialmente,
+        si evita di ripetere le stesse operazioni più volte, risultando in un
+        risparmio di tempo significativo.
 \end{itemize}
 
 Nelle sezioni seguenti, descriveremo come sono stati affrontati i vari
@@ -72,24 +74,9 @@ Ricordando che:
         serie storiche di misurazioni (come \texttt{runtime}, \texttt{ram},
         \texttt{swap}, \texttt{disk}, ecc.),
         durante la loro esecuzione.
-    \item La tabella \texttt{htjob} fornisce informazioni sull'esito dei job,
-        indicando se sono falliti o meno.
+    \item La tabella \texttt{htjob} fornisce informazioni sullo stato finale
+        dei job, tra cui l'esito, indicando se sono falliti o meno.
 \end{itemize}
-
-% job
-
-%jobid e idx sono creati dal Submit Node al "concepimento" del job (es.
-%'sn-01', 'ce03-htc', ...). I S.N. sono indipendenti tra loro per cui in linea
-%di principio possono esistere due job diversi con (jobid,idx) uguale (in tal
-%caso vengono da S.N. diversi)
-
-% fail
-
-%Ci sono due momenti diversi: il batch system puo' terminare LUI un job anche
-%se non ha alcun problema (per una serie di ragioni) e quella info e' in
-%jobstatus, Poi c'e' lo exitstatus dell'eseguibile vero e proprio: di questo
-%sappiamo che se e' 0 allora e' ok, se e' != 0 e' uscito con errore (quale sia
-%lo sa il suo owner).
 
 La query esegue le seguenti operazioni:
 \begin{itemize}
@@ -97,20 +84,20 @@ La query esegue le seguenti operazioni:
         periodo temporale specificato.
     \item Esegue un JOIN delle tabelle utilizzando l'identificativo univoco di
         ciascun job (\textit{jobid.idx\_submitnode}) e il timestamp. Questo
-        timestamp sfrutta l'indice presente nella tabella
-        \texttt{hj} per gestire in maniera efficiente le grandi dimensioni di
-        questa tabella\footnote{La logica dietro questo consiste
-            nel selezionare un job da \texttt{htjob} e successivamente
-            cercarlo in \texttt{hj} limitando la ricerca ai record che
-            rientrano nel periodo in cui \texttt{hj.ts} è compreso tra
-            \texttt{htjob.starttimeepoch} e \texttt{htjob.eventtimeepoch}.
-            Questo permette di restringere notevolmente la ricerca nella
-            tabella \texttt{hj} per ogni job selezionato da \texttt{htjob} ed
+        timestamp sfrutta l'indice presente nella tabella \texttt{hj} per
+        gestire in maniera efficiente le sue grandi dimensioni\footnote{La
+            logica dietro questo consiste nel selezionare un job da
+            \texttt{htjob} e successivamente cercarlo in \texttt{hj} limitando
+            la ricerca ai record che rientrano nel periodo in cui
+            \texttt{hj.ts} è compreso tra \texttt{htjob.starttimeepoch} e
+            \texttt{htjob.eventtimeepoch}. Questo permette di restringere
+            notevolmente la ricerca nella tabella \texttt{hj} per ogni job
+            selezionato da \texttt{htjob} ed
         evitare di scansionare l'intera tabella.}. Poiché la tabella \texttt{hj} contiene più record per
         ogni job, la query li raggruppa per job. In seguito, mediante l'uso
         dell'operatore \verb|ARRAY_AGG|, le serie storiche vengono trasformate
-        in liste di valori.
-    \item Filtra i job con un tempo di esecuzione superiore a un'ora
+        in array di valori.
+    \item Seleziona i job con un tempo di esecuzione superiore a un'ora
         (\verb|runtime > 3600|), in quanto i job più brevi sono considerati
         irrilevanti per lo scopo dello studio.
 \end{itemize}
@@ -124,9 +111,9 @@ e le colonne includono:
     \item \texttt{queue}: gruppo di appartenenza dell'utente che ha sottomesso
         il job.
     \item \texttt{fail}: un valore booleano che indica se il job è fallito.
-    \item \texttt{mint} e \texttt{maxt}: il tempo minimo e massimo di
-        esecuzione del job.
-    \item \texttt{t}, \texttt{ram}, \texttt{swap}, \texttt{disk}: liste di
+    \item \texttt{mint} e \texttt{maxt}: Timestamp UNIX del momento in cui il
+        job è stato eseguito e del momento in cui è terminato.
+    \item \texttt{t}, \texttt{ram}, \texttt{swap}, \texttt{disk}: array di
         valori che rappresentano le serie storiche di misurazioni.
 \end{itemize}
 
@@ -148,13 +135,13 @@ database SQL.
 \label{sec:preprocessing}
 
 La preparazione dei dati è essenziale nel Machine Learning. Prima di tutto, è
-necessario convertire i dati in numeri, dato che gli algoritmi di Machine
-Learning lavorano esclusivamente con dati in tale forma. Inoltre, la qualità e
-la quantità dei dati sono determinanti per l'efficacia del modello. Se i dati
-disponibili sono insufficienti o di bassa qualità, i risultati saranno
-scadenti a prescindere dalla complessità del modello utilizzato. Tipicamente,
-maggiore è la complessità di un modello, tanto più esso richiederà una grande
-quantità di dati di alta qualità.
+necessario convertire i dati disponibili in formato numerico, dato che gli
+algoritmi di Machine Learning lavorano esclusivamente con dati in tale forma.
+Inoltre, la qualità e la quantità dei dati sono determinanti per l'efficacia
+del modello. Se i dati disponibili sono insufficienti o di bassa qualità, i
+risultati saranno scadenti a prescindere dalla complessità del modello
+utilizzato. Tipicamente, maggiore è la complessità di un modello, tanto più
+esso richiederà una grande quantità di dati.
 
 Per realizzare ciò, è stata creata una classe denominata
 \texttt{Preprocessor}, che riceve in input un dataset e restituisce in output
@@ -197,7 +184,7 @@ dati.
 Nella sezione~\ref{sec:job_analysis}, abbiamo identificato alcuni problemi
 nelle misurazioni registrate da HTCondor relative allo stato dei job. Un
 problema è la presenza di valori ripetuti all'interno delle serie storiche.
-Queste serie sono attualmente rappresentate come liste di valori, che non
+Queste serie sono attualmente rappresentate come array di valori, che non
 corrispondono al formato numerico richiesto dai modelli di Machine Learning.
 Pertanto, è necessario non solo rimuovere le ripetizioni, ma anche convertire
 queste serie storiche in un formato di dati strutturato.
@@ -209,25 +196,25 @@ un'operazione di convoluzione\footnote{La convoluzione è una operazione
     viene fatto scorrere su tutta la sequenza, e in ogni posizione si calcola
     una somma pesata tra i valori della sequenza e quelli del filtro. Questo
     processo trasforma la sequenza originale in una nuova attraverso la
-formula: $$(S\ast K)(i)=\displaystyle\sum_{m=-d}^{d}S(m)\cdot K(i-m)$$ dove
-$S$ è la sequenza originale, $K$ è il filtro e $d$ è l'intero inferiore della
-metà della lunghezza del filtro.} con un passo (\textit{stride}) di 5 e un
-filtro di 5 elementi con valore $\frac{1}{5}$, possiamo effettuare una
-decimazione della sequenza originale. Ciò comporta di ottenere una nuova
-sequenza, la cui lunghezza è pari a un quinto della lunghezza della serie
-storica originale. In pratica, il filtro calcola la media di ogni gruppo di
-cinque valori consecutivi. Se questi cinque valori sono identici, il risultato
-sarà il valore stesso, che sostituisce la sequenza dei cinque valori,
-eliminando le ripetizioni nella nuova sequenza.
+formula: $$(S\ast K)(i)=\displaystyle\sum_{m=0}^{n}S(m)\cdot K(i-m)$$ dove
+$S$ è la sequenza originale, $K$ è il filtro e $n$ è la dimensione del
+filtro.} con un passo (\textit{stride}) di 5 e un filtro di 5 elementi con
+valore $\frac{1}{5}$, possiamo effettuare una decimazione della sequenza
+originale. Ciò comporta di ottenere una nuova sequenza, la cui lunghezza è
+pari a un quinto della lunghezza della serie storica originale. In pratica, il
+filtro calcola la media di ogni gruppo di cinque valori consecutivi. Se questi
+cinque valori sono identici, il risultato sarà il valore stesso, che
+sostituisce la sequenza dei cinque valori, eliminando le ripetizioni nella
+nuova sequenza.
 
 \paragraph{Trasformazione delle multiple serie storiche multivariate.} Sebbene
 durante il processo di estrazione dei dati le serie storiche multivariate
-siano state rappresentate come liste, il dataset rappresenta ancora le tre
+siano state rappresentate come array, il dataset rappresenta ancora le tre
 dimensioni delle multiple serie multivariate: job (righe), variabili (colonne)
-e time step (liste), come illustrato nella
+e time step (array), come illustrato nella
 figura~\ref{fig:multiple_multivariate_time-series}. Una possibile soluzione
-potrebbe essere quella di trasformare le liste in una singola statistica, come
-la media o il massimo, ma ciò cancellerebbe qualsiasi indicazione
+potrebbe essere quella di trasformare gli array in una singola statistica,
+come la media o il massimo, ma ciò cancellerebbe qualsiasi indicazione
 sull'evoluzione temporale di ciascun job. Il nostro obiettivo è quello di
 introdurre nuove feature che possano riflettere la tridimensionalità originale
 dei dati. Tuttavia, prima di procedere, è necessario assicurarsi che tutte le
@@ -254,14 +241,14 @@ Una volta ottenute serie storiche di uguale lunghezza, vengono applicate le
 seguenti trasformazioni, in base al modello utilizzato:
 
 \begin{itemize}
-    \item \textbf{Trasformazione in colonne}: Ogni elemento di ogni lista diventa una colonna
-        separata nel dataset. Ad esempio, con un sottocampionamento a 15
-        minuti per un giorno, avremo 96 time step, corrispondenti a 96 colonne
-        per ciascuna serie temporale.
-    \item \textbf{Trasformazione in righe}: 
-        Gli elementi nelle stesse posizioni nelle liste formano righe
-        distinte. Quindi, con un sottocampionamento a 15 minuti per un giorno,
-        otteniamo 96 righe per ogni job.
+    \item \textbf{Trasformazione in colonne}: Ogni elemento di ogni array
+        diventa una colonna (feature) separata nel dataset. Ad esempio, con un
+        sottocampionamento a 15 minuti per un giorno, avremo 96 time step,
+        corrispondenti a 96 colonne per ciascuna serie temporale.
+    \item \textbf{Trasformazione in righe}: Gli elementi nelle stesse
+        posizioni negli array formano righe distinte. Quindi, con un
+        sottocampionamento a 15 minuti per un giorno, otteniamo 96 righe per
+        ogni job.
 \end{itemize}
 
 \subsection{Creazione delle feature}
@@ -357,19 +344,17 @@ Durante l'addestramento, il modello tenta di prevedere le etichette per esempi
 che non ha mai visto prima. Le predizioni sono poi confrontate con le
 etichette per calcolare l'errore, che indica quanto le predizioni del modello
 si discostano dai valori reali. L'obiettivo è migliorare la precisione del
-modello minimizzando l'errore, tipicamente attraverso la discesa del
-gradiente.
+modello minimizzando l'errore della funzione costo, tipicamente attraverso la
+discesa del gradiente.
 
 Attualmente, il dataset non include etichette che identifichino quali job
 siano zombie, il che ci impedisce di impostare un apprendimento
 supervisionato. Per generare le etichette, calcoliamo il tempo di esecuzione
-di ogni job come \verb|int((maxt - mint) / 86400)| per ottenere il numero
-di giorni di esecuzione. Poi, con la colonna \texttt{job\_type}, etichettiamo
-come job zombie quelli che soddisfano la condizione:
-
-\begin{verbatim}
-    se giorni > (3 se job_type == `grid', altrimenti 7) e fail == 1 
-\end{verbatim}
+di ogni job come \verb|int((maxt - mint) / 86400)| per ottenere il numero di
+giorni di esecuzione. Poi, con la colonna \texttt{job\_type}, etichettiamo
+come job zombie quelli che vengono rimossi dal batch system dopo aver superato
+il massimo tempo di esecuzione, cioè 3 giorni per i job grid, e 7 per quelli
+locali.
 
 \subsection{Tecniche di bilanciamento dei dati}
 \label{sec:imbalanced_data}

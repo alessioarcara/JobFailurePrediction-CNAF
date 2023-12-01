@@ -23,11 +23,11 @@ portarci a una valutazione distorta dello stesso.
 
 \section{Valutare le prestazioni del modello}
 
-L'accuratezza nel valutare le prestazioni di un classificatore ha il problema
-del trattare tutte le previsioni allo stesso modo e nasconde le vere
-prestazioni del modello. Pertanto, è necessario individuare una metrica che
-misuri le vere prestazioni del modello permettendo di confrontare diversi
-modelli nonostante lo sbilanciamento dei dati.
+Nell'esempio precedente abbiamo osservato come, in un dataset in cui una
+classe è predominante rispetto alle altre, l'uso dell'accuratezza come metrica
+nasconde le prestazioni del modello. Pertanto, è necessario individuare una
+metrica che misuri le vere prestazioni del modello permettendo di confrontare
+diversi modelli nonostante lo sbilanciamento dei dati.
 
 Per valutare le prestazioni del modello, si può utilizzare la matrice di
 confusione, ovvero una tabella che riassume le predizioni fatte dal modello,
@@ -51,8 +51,8 @@ $$\begin{aligned}
     \text{precision} &= \frac{\text{precision}(A) + \text{precision}(B)}{2} & \quad \text{recall} &= \frac{\text{recall}(A) + \text{recall}(B)}{2}
 \end{aligned}$$
 
-Dove le etichette $A$ e $B$ indicano due classi distinte in un problema di
-classificazione binaria.
+Dove $A$ e $B$ rappresentano le etichette di due classi distinte in un
+problema di classificazione binaria.
 
 È utile avere un'unica metrica che combini precision e recall per confrontare
 due classificatori. Questa metrica, denominata $F_\beta$, è la media armonica
@@ -190,9 +190,9 @@ come segue:
 
 \begin{itemize}
     \item Si è ridotta la frequenza di campionamento da 3 a 15 minuti per
-        eliminare i valori ripetuti, portando così a liste che contengono 4
+        eliminare i valori ripetuti, portando così a array che contengono 4
         valori anziché 20.
-    \item I valori contenuti nelle liste sono stati trasformati in colonne.
+    \item I valori contenuti negli array sono stati trasformati in colonne.
         Questo passaggio elimina la cognizione temporale associata ai valori
         delle serie storiche.
     \item È stata introdotta una trasformazione polinomiale per le quattro
@@ -350,7 +350,7 @@ optato per l'uso di dati più recenti, specificamente quelli di marzo 2023, al
 fine di assicurarci che le nostre valutazioni effettuate riflettano le
 condizioni attuali del centro di calcolo.
 
-Invece di trasformare i valori delle liste in colonne, perdendo così la
+Invece di trasformare i valori degli array in colonne, perdendo così la
 cognizione temporale, si è optato per mantenere l'aspetto temporale delle
 serie storiche. A tale scopo, si è scelto di utilizzare reti neurali capaci di
 lavorare con tensori. In queste reti, l'input può essere un tensore 3D,
@@ -362,10 +362,10 @@ anche le informazioni temporali inerenti a ciascun job.
 Rispetto alla preparazione dei dati del primo approccio sono state apportate
 le seguenti modifiche:
 \begin{itemize}
-    \item Per gestire serie storiche di lunghezza variabile, le liste sono
-        state uniformate tramite zero-padding e troncamento, assicurando che
-        ogni lista abbia esattamente 96 elementi.
-    \item I valori nelle liste di 96 elementi sono stati prima convertiti in
+    \item Per gestire serie storiche di lunghezza variabile, gli array sono
+        stati uniformati tramite zero-padding e troncamento, assicurando che
+        ogni array abbia esattamente 96 elementi.
+    \item I valori negli array di 96 elementi sono stati prima convertiti in
         righe di una matrice. Successivamente, questa matrice è stata
         trasformata in un tensore 3D con dimensioni $(\text{job},\text{time
         step},\text{feature})$.

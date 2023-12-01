@@ -142,7 +142,7 @@ irrilevanti in termini di calcolo.
 
 \begin{table}[!ht]
     \caption{Percentuale di job in attesa rimossi senza aver effettuato alcun
-    calcolo su un host fisico}
+    calcolo su un host fisico nel mese di Marzo 2023}
     \centering
     \begin{tabular}{ccc}
         \toprule
@@ -161,7 +161,9 @@ alla previsione del fallimento di un job di breve durata.
 
 \subsection{Caratterizzazione dei gruppi}
 
-L'analisi dei gruppi, come mostrato nella
+Ricordando che gli utenti che sottomettono job al sistema sono raggruppati in
+base al loro coinvolgimento in specifici esperimenti scientifici, l'analisi
+relativa ai vari gruppi, come mostrato nella
 figura~\ref{fig:job_duration_perqueue}, conferma le osservazioni
 precedentemente fatte. La distribuzione della durata dei job per gruppo
 riflette l'andamento già notato nella figura~\ref{fig:job_duration_days}. In
@@ -207,6 +209,10 @@ job \texttt{pilot}, i quali sono progettati per insediarsi in un host fisico e
 eseguire altri job, detti \texttt{payload}. I job \texttt{pilot} non sono
 direttamente coinvolti nei calcoli, ma piuttosto servono a scandagliare le
 risorse disponibili alla ricerca di un host fisico.
+
+%i pilot mandano in esecuzione i payload secondo un modello di "late binding":
+%il payload e' individuato DOPO che il pilot e' entrato in esecuzione (anche
+%per questo l'analisi semantica di prima non porta lontano).
 
 \begin{table}[!ht]
     \centering
@@ -343,24 +349,24 @@ corrispondendo a una percentuale dell'appena dello 0,046\%. Questo
 sbilanciamento può comportare difficoltà nell'addestramento di classificatori
 robusti e porta anche alla necessità di un'estesa raccolta di dati nel tempo.
 
-Per stabilire se l'applicazione di tecniche di Machine Learning è fattibile
-nel rilevare i cosiddetti ``job zombie'', è essenziale verificare
-preliminarmente la presenza di cluster ben definiti all'interno del dataset.
-L'obiettivo sarebbe quello di distinguere con precisione questi job anomali
-dagli altri. 
+Per stabilire se l'applicazione di tecniche di Machine Learning permette di
+rilevare i cosiddetti ``job zombie'', è essenziale verificare preliminarmente
+la presenza di cluster ben definiti all'interno del dataset. Idealmente,
+vorremmo distinguere con precisione questi job anomali dagli altri e per
+questo scopo possiamo utilizzare l'algoritmo t-Distribuited Stochastic
+Neighbor Embedding (t-SNE).
 
-L'algoritmo t-Distribuited Stochastic Neighbor Embedding (t-SNE) consente di
-ridurre la dimensionalità dei dati preservando la vicinanza tra i punti simili
-e distanziando quelli dissimili \cite{vanderMaaten2008}. Passando da uno
-spazio ad alta dimensionalità a uno spazio bidimensionale o tridimensionale è
-possibile la visualizzazione dei dati attraverso uno scatterplot. Tuttavia,
-t-SNE può essere impraticabile con dataset di grandi dimensioni a causa della
-sua complessità computazionale dell'ordine di $\mathcal{O}(N^2)$
-\cite{Pezzotti2017}, dove $N$ rappresenta il numero delle istanze. Data la
-rarità dei job zombie, è necessario selezionare un ampio periodo di
-monitoraggio per raccogliere un campione sufficiente di tali anomalie. Di
-conseguenza, si accumula un gran numero di istanze, complicando l'uso di
-t-SNE.
+t-SNE consente di ridurre la dimensionalità dei dati preservando la vicinanza
+tra i punti simili e distanziando quelli dissimili \cite{vanderMaaten2008}.
+Passando da uno spazio ad alta dimensionalità a uno spazio bidimensionale o
+tridimensionale è possibile la visualizzazione dei dati attraverso uno
+scatterplot. Tuttavia, t-SNE può essere impraticabile con dataset di grandi
+dimensioni a causa della sua complessità computazionale dell'ordine di
+$\mathcal{O}(N^2)$ \cite{Pezzotti2017}, dove $N$ rappresenta il numero delle
+istanze. Data la rarità dei job zombie, è necessario selezionare un ampio
+periodo di monitoraggio per raccogliere un campione sufficiente di tali
+anomalie. Di conseguenza, si accumula un gran numero di istanze, complicando
+l'uso di t-SNE.
 
 Per ovviare a questo problema, si può ricorrere a un'\textbf{autoencoder}, un
 tipo specifico di rete neurale progettata per comprimere i dati in una
@@ -414,14 +420,14 @@ individuazione più complessa.
 
 \begin{figure}[!hb]
    \centering
-   \includegraphics[clip, trim=1.5cm 1cm 0cm 0.75cm, width=0.85\linewidth]{tsne_zombiejobs}
+   \includegraphics[clip, trim=1.5cm 1cm 0cm 0.75cm, width=0.75\linewidth]{tsne_zombiejobs}
    \caption{Visualizzazione job zombie del 2021 tramite t-SNE}
    \label{fig:tsne_zombiejobs}
 \end{figure}
 
 \begin{figure}[!hb]
    \centering
-   \includegraphics[clip, trim=1.5cm 1cm 0cm 0cm, width=0.85\linewidth]{tsne_sep2021}
+   \includegraphics[clip, trim=1.5cm 1cm 0cm 0cm, width=0.75\linewidth]{tsne_sep2021}
    \caption{Visualizzazione job ATLAS di settembre 2021 tramite t-SNE}
    \label{fig:tsne_sep2021}
 \end{figure}

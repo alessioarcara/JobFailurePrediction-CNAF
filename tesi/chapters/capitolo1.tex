@@ -1,10 +1,10 @@
-Questo elaborato in questo lavoro  descrive il lavoro di tirocinio e tesi
-svolto presso il CNAF (Centro Nazionale delle Tecnologie Informatiche e
-Telematiche) dell'INFN (Istituto Nazionale di Fisica Nucleare), uno dei più
-importanti centri di calcolo in Italia. Questo centro processa e gestisce
-decine di petabyte di dati. L'obiettivo è stato quello di analizzare questi
-dati per identificare un problema che potesse essere risolto tramite l'uso di
-tecniche di Machine Learning e Deep Learning.
+Questo elaborato descrive il lavoro di tirocinio e tesi svolto presso il CNAF
+(Centro Nazionale delle Tecnologie Informatiche e Telematiche) dell'INFN
+(Istituto Nazionale di Fisica Nucleare), uno dei più importanti centri di
+calcolo in Italia. Questo centro processa e gestisce decine di petabyte di
+dati. L'obiettivo è stato quello di analizzare questi dati per identificare un
+problema che potesse essere risolto tramite l'uso di tecniche di Machine
+Learning e Deep Learning.
 
 In questo capitolo forniremo una panoramica del centro di calcolo, guardando
 da dove provengono i dati e come vengono raccolti. Verrà infine presentato il
@@ -40,13 +40,11 @@ esperimenti non-LHC di astrofisica delle particelle e fisica dei neutrini
 \end{figure}
 
 Il CNAF offre più di 46000 core distribuiti su 960 host fisici per un totale
-di circa $630$ kHS06\footnote{Benchmark per misurare le prestazioni della CPU,
-sviluppata dal gruppo di lavoro HEPiX. È utilizzata per confrontare le risorse
-di calcolo in ambito scientifico.} di potenza di calcolo \cite{hepix2022}.
-L'allocazione di queste risorse segue il paradigma del \textbf{High-Throughput
-Computing} (HTC), dove a differenza dell'High-Performance Computing, che mira
-a ridurre il wall-clock time dei programmi, HTC mira a massimizzare il
-throughput, intenso come il numero di job completati per unità di tempo.
+di circa $630$ kHS06 di potenza di calcolo \cite{hepix2022}. L'allocazione di
+queste risorse segue il paradigma del \textbf{High-Throughput Computing}
+(HTC), dove a differenza dell'High-Performance Computing, che mira a ridurre
+il wall-clock time dei programmi, HTC mira a massimizzare il throughput,
+intenso come il numero di job completati per unità di tempo.
 
 In questo sistema, gli utenti sono raggruppati in circa 50 gruppi distinti,
 ciascuno dei quali corrisponde a un esperimento scientifico specifico. A ogni
@@ -61,6 +59,18 @@ dove. Per farlo, utilizza algoritmi di ``fairshare'', che sono pensati per
 assicurare una distribuzione equa delle risorse computazionali disponibili,
 impedendo che un singolo utente o un intero gruppo possa monopolizzare tutte
 le risorse disponibili.
+
+%Una volta sottomesso, il job non viene eseguito immediatamente, ma viene messo
+%in una coda gestita da un batch system (HTCondor). Quest'ultimo è responsabile
+%della schedulazione dei job in coda, decidendo quale job eseguire, quando e
+%dove. Per farlo, utilizza algoritmi di ``fairshare'', che sono pensati per
+%assicurare una distribuzione equa delle risorse computazionali disponibili. Il
+%fairshare previene due fenomeni indesiderati: in primo luogo, la starvation,
+%ossia situazioni in cui i job a bassa priorità non vengono mai eseguiti perché
+%continuativamente ``scavalcati'' da job più prioritari; in secondo luogo,
+%l'underusage, cioè il rischio di avere CPU inutilizzate in momenti in cui
+%alcuni gruppi non stanno utilizzando le risorse, cosa che si verificherebbe
+%con un partizionamento statico delle risorse di calcolo.
 
 Se un gruppo non utilizza la quota di risorse assegnata, queste vengono
 redistribuite tra i gruppi attivi in proporzione alla loro quota. Questo
@@ -247,23 +257,22 @@ più suscettibile agli errori \cite{Cappello2014}.
 
 Come evidenziato nella figura~\ref{fig:daily_job_submissions_and_failures}, si
 osserva che in un centro di calcolo come quello del CNAF, nel mese di Marzo
-2023, sono stati sottomessi giornalmente in media 156329 job con un tasso di
-fallimento che supera il 40\%. 
+2023, sono stati sottomessi giornalmente in media circa 150000 job con un
+tasso di fallimento che supera il 40\%. 
 La frequenza con cui i job falliscono rappresenta una problematica
 significativa per i centri di calcolo: questa non solo causa uno spreco delle
 risorse del sistema, ma incide anche negativamente sull'efficienza generale e
-allunga i tempi d'attesa per i job in attesa di essere eseguiti.
+allunga i tempi d'attesa per i job in coda.
 
-Questa tesi si concentra sui sui fallimenti dei job piuttosto che sui
-fallimenti a livello di sistema, nonostante la disponibilità di dati degli
-host fisici del CNAF. Utilizzando tecniche di Machine Learning per
-identificare pattern nei dati storici, potrebbe essere possibile prevedere la
-riuscita o il fallimento di un job basandosi sul comportamento di job simili.
-Questo permetterebbe l'adozione di strategie proattive volte a prevenire i
-fallimenti prima che accadano, mitigando così i problemi sopracitati. In
-aggiunta, la capacità di informare l'utente circa il tasso di successo o
-fallimento di un job che sta per essere sottomesso potrebbe fornire una
-risorsa informativa utile.
+Questa tesi si concentra sui fallimenti dei job piuttosto che sui fallimenti a
+livello di sistema, nonostante la disponibilità di dati degli host fisici del
+CNAF. Utilizzando tecniche di Machine Learning per identificare pattern nei
+dati storici, potrebbe essere possibile prevedere la riuscita o il fallimento
+di un job basandosi sul comportamento di job simili. Questo permetterebbe
+l'adozione di strategie proattive volte a prevenire i fallimenti prima che
+accadano, mitigando così i problemi sopracitati. In aggiunta, la capacità di
+informare l'utente circa il tasso di successo o fallimento di un job che sta
+per essere sottomesso potrebbe fornire una risorsa informativa utile.
 
 \mbox{}
 
