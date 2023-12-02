@@ -88,11 +88,11 @@ forniscono una valutazione più realistica delle prestazioni del classificatore
 
 \paragraph{Nested-cross-validation.} Nell'apprendimento supervisionato, può
 essere ingannevole valutare le prestazioni di un modello sui dati utilizzati
-per l'addestramento, poiché il modello si adatta specificamente a questi
+per l'addestramento, poiché il modello si adatta specificatamente a questi
 esempi. Il vero indicatore delle prestazioni di un modello è la sua capacità
-di generalizzare su nuovi dati, mai visti prima. È necessario pertanto
-valutare le prestazioni del modello su un set di dati separato, non utilizzato
-durante l'addestramento.
+di generalizzare su nuovi dati, non visti durante l'addestramento. È
+necessario pertanto valutare le prestazioni del modello su un set di dati
+separato, non utilizzato durante l'addestramento.
 
 In modo analogo, se tentiamo di migliorare le prestazioni di un modello
 ottimizzando i suoi iperparametri basandoci su questo nuovo set di dati,
@@ -102,11 +102,11 @@ solo adattando per massimizzare le prestazioni su tali dati. Di conseguenza, i
 risultati ottenuti su questo nuovo set potrebbero nuovamente risultare
 fuorvianti.
 
-Per evitare ciò, si utilizza il metodo di holdout che prevede la divisione dei
-dati in in tre insiemi separati: uno per addestrare il modello (training set),
-un secondo per ottimizzare gli iperparametri (validation set) e un terzo per
-valutare le prestazioni del modello (test set). Questo ci garantisce che le
-prestazioni del modello valutate sul test set non siano influenzate da un
+Per evitare ciò, si utilizza il metodo di holdout, che prevede la divisione
+dei dati in in tre insiemi separati: uno per addestrare il modello (training
+set) un secondo per ottimizzare gli iperparametri (validation set) e un terzo
+per valutare le prestazioni del modello (test set). Questo ci garantisce che
+le prestazioni del modello valutate sul test set non siano influenzate da un
 eccessivo adattamento ai dati.
 
 Tuttavia, dato che tutti i dati provengono da una distribuzione sconosciuta,
@@ -152,10 +152,10 @@ diventare impraticabile.
 
 Come menzionato nella sezione~\ref{sec:job_zombie}, rimuovere i job zombie può
 garantire il massimo payoff, a patto però che questi vengano identificati e
-rimossi subito dopo la loro esecuzione nel sistema. Se, per esempio, un job
-zombie viene individuato solo quando è vicino al suo timeout, avrà già
-occupato risorse per un lungo periodo. Di conseguenza, il payoff ottenuto alla
-sua rimozione è notevolmente ridotto.
+rimossi poco dopo il loro inizio nel sistema. Se, per esempio, un job zombie
+viene individuato solo quando è vicino al suo timeout, avrà già occupato
+risorse per un lungo periodo. Di conseguenza, il payoff ottenuto alla sua
+rimozione è notevolmente ridotto.
 
 D'altra parte, se da un lato desideriamo rimuovere dei job zombie il prima
 possibile, dall'altro non vogliamo eliminare erroneamente quei job che stanno
@@ -346,18 +346,19 @@ Il passo successivo è stato estendere l'applicazione del modello di Machine
 Learning a tutti i gruppi di utenti, non solo ATLAS. Si è inoltre deciso di
 considerare le prime 24 ore per ottenere un maggior numero di campionamenti
 sullo stato dei job prima di effettuare una predizione. In aggiunta, si è
-optato per l'uso di dati più recenti, specificamente quelli di marzo 2023, al
-fine di assicurarci che le nostre valutazioni effettuate riflettano le
+optato per l'uso di dati più recenti, specificatamente quelli di marzo 2023,
+al fine di assicurarci che le nostre valutazioni effettuate riflettano le
 condizioni attuali del centro di calcolo.
 
 Invece di trasformare i valori degli array in colonne, perdendo così la
 cognizione temporale, si è optato per mantenere l'aspetto temporale delle
 serie storiche. A tale scopo, si è scelto di utilizzare reti neurali capaci di
 lavorare con tensori. In queste reti, l'input può essere un tensore 3D,
-strutturato come $(\text{samples},\text{time steps},\text{features})$, che si
-allinea perfettamente alle dimensioni delle nostre multiple serie storiche
-multivariate. Questo approccio consente alle reti di catturare e apprendere
-anche le informazioni temporali inerenti a ciascun job.
+strutturato in tuple del tipo $(\text{samples},\text{time
+steps},\text{features})$, che si allinea perfettamente alle dimensioni delle
+nostre multiple serie storiche multivariate. Questo approccio consente alle
+reti di catturare e apprendere anche le informazioni temporali inerenti a
+ciascun job.
 
 Rispetto alla preparazione dei dati del primo approccio sono state apportate
 le seguenti modifiche:

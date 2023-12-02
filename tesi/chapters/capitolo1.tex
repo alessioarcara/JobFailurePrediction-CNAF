@@ -39,12 +39,14 @@ esperimenti non-LHC di astrofisica delle particelle e fisica dei neutrini
     \label{fig:WLCG_tier_hierarchy}
 \end{figure}
 
-Il CNAF offre più di 46000 core distribuiti su 960 host fisici per un totale
-di circa $630$ kHS06 di potenza di calcolo \cite{hepix2022}. L'allocazione di
-queste risorse segue il paradigma del \textbf{High-Throughput Computing}
-(HTC), dove a differenza dell'High-Performance Computing, che mira a ridurre
-il wall-clock time dei programmi, HTC mira a massimizzare il throughput,
-intenso come il numero di job completati per unità di tempo.
+Il CNAF dispone di più di 46000 core distribuiti su 960 host fisici per un
+totale di circa $630$ kHS06\footnote{Benchmark utilizzato per confrontare le
+risorse di calcolo in ambito scientifico.} di potenza di calcolo
+\cite{hepix2022}. L'allocazione di queste risorse segue il paradigma del
+\textbf{High-Throughput Computing} (HTC), dove a differenza
+dell'High-Performance Computing, che mira a ridurre il wall-clock time dei
+programmi, HTC mira a massimizzare il throughput, intenso come il numero di
+job completati per unità di tempo.
 
 In questo sistema, gli utenti sono raggruppati in circa 50 gruppi distinti,
 ciascuno dei quali corrisponde a un esperimento scientifico specifico. A ogni
@@ -199,10 +201,9 @@ per i dati del primo periodo e \texttt{htmnew} per quelli del secondo.
 
 La tabella~\ref{table:database_comparison} mostra il numero totale di righe e
 lo spazio occupato su disco da ciascuna tabella nei database. Dato che la
-dimensione del dataset supera la capacità della memoria RAM a disposizione,
-risulta impossibile analizzare l'intero dataset. Pertanto, diventa necessario
-selezionare un sottoinsieme di dati da tali database per effettuare le analisi
-successive.
+dimensione del dataset supererebbe la capacità della memoria RAM a
+disposizione, è necessario selezionare un sottoinsieme di dati da tali
+database per effettuare le analisi successive.
 
 Le tabelle \ref{table:schema_hj} e \ref{table:schema_htjob} offrono una
 panoramica sulle colonne presenti, distinguendo tra variabili categoriche e
@@ -221,21 +222,13 @@ suddividono in:
 
 \section{Motivazione}
 
-Nel 1965, Gordon Moore, co-fondatore di Intel, pronosticò che il numero di
-transistor sarebbe raddoppiato ogni 18 mesi \cite{Moore1965}. Tuttavia, il
-trend descritto da Moore arriverà a un termine quando la litografia, il
-processo usato per stampare i circuiti sui wafer di silicio, raggiungerà la
-scala atomica. Infatti, a scale atomiche i transistor incontrano fenomeni
-quantistici che ne disturbano il funzionamento, e le attuali tecniche di
-produzione diventano proibitive in termine di costi \cite{Shalf2015,
-Theis2017}.
-
 I sistemi HTC e HPC sono divenuti strumenti fondamentali per il progresso
 della ricerca scientifica. Nonostante ciò, vi sono ancora molteplici problemi
 importanti in vari settori che non possono essere risolti con le capacità
 computazionali attuali \cite{Villa2014}. Per proseguire l'evoluzione
-tecnologica nell'era post-legge di Moore è quindi necessario esplorare nuove
-direzioni. Una di queste riguarda l'incremento del numero di core.
+tecnologica nell'era post-legge di Moore \cite{Shalf2015, Theis2017} è quindi
+necessario esplorare nuove direzioni. Una di queste riguarda l'incremento del
+numero di core.
 
 In questa tesi, un \textit{guasto} è definito come un comportamento anomalo a
 livello software o hardware, che può causare stati illeciti (\textit{errori})

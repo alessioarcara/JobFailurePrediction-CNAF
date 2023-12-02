@@ -1,22 +1,22 @@
-Il CNAF gestisce uno dei più importanti centri di calcolo in Italia,
-utilizzato da gruppi di ricercatori di fisica delle particelle, astrofisica e
-altri campi.
+Il CNAF (Centro Nazionale delle Tecnologie Informatiche e Telematiche)
+dell'INFN (Istituto Nazionale di Fisica Nucleare) gestisce una delle più
+importanti farm di calcolo in Italia, utilizzato da gruppi di ricercatori di
+fisica delle particelle, astrofisica e altri campi.
 Questo centro è dotato di oltre 46000 core distribuiti su 960 host fisici. I
 job vengono accodati e schedulati dal sistema batch (HTCondor) attraverso
 l'uso di algoritmi di ``fairshare''.
-Durante l'esecuzione, vengono monitorate alcune grandezze che vengono
+Durante l'esecuzione vengono monitorate alcune grandezze, che vengono
 campionate ogni tre minuti e raccolte in un database insieme ai dati di
 accounting relativi ai job terminati.
-Questo studio esplora l'uso di tecniche di Machine Learning e di Deep Learning
+Questo studio esplora l'uso di tecniche di Machine Learning e Deep Learning
 per prevedere il successo o il fallimento dei job, basandosi sull'evoluzione
 del loro stato nel tempo.
-In particolare, è stato identificato un particolare sottoinsieme di job che
-falliscono, denominati zombie. Questi, pur smettendo di effettuare calcoli,
-non rilasciano l'host fisico, occupando improduttivamente delle risorse fino
-al loro timeout.
+In particolare, è stato identificato un sottoinsieme di job che falliscono,
+denominati zombie. Questi, pur smettendo di effettuare calcoli, non rilasciano
+l'host fisico, occupando improduttivamente delle risorse fino al loro timeout.
 L'obiettivo della tesi è stato quello di individuare questi job il più presto
-possibile, poiché la loro prematura identificazione risulta essere
-particolarmente vantaggiosa in termini di risparmio di risorse derivante dalla
+possibile, poiché identificarli nelle loro fasi iniziali risulta essere
+particolarmente vantaggioso in termini di risparmio di risorse derivante dalla
 loro rimozione.
 Sono stati proposti e validati due modelli capaci di identificare i job che,
 con buona probabilità, diventeranno zombie (1 su 2). Le predizioni fornite dal

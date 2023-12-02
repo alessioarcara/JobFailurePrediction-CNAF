@@ -3,7 +3,7 @@
 In questo capitolo vengono presentate le analisi preliminari effettuate per il
 caso di studio in questione. Queste analisi hanno permesso di selezionare un
 sottoinsieme di job e un task di Machine Learning associato che possa
-verosimilmente apportare benefici al CNAF.
+verosimilmente ridurre lo spreco delle risorse al CNAF.
 
 \section{Analisi esplorativa}
 
@@ -207,12 +207,8 @@ La tabella~\ref{table:job_names} mostra i risultati dell'analisi semantica
 effettuata sui nomi dei job. Questa ha permesso di identificare i cosiddetti
 job \texttt{pilot}, i quali sono progettati per insediarsi in un host fisico e
 eseguire altri job, detti \texttt{payload}. I job \texttt{pilot} non sono
-direttamente coinvolti nei calcoli, ma piuttosto servono a scandagliare le
+direttamente coinvolti nei calcoli, ma servono piuttosto a scandagliare le
 risorse disponibili alla ricerca di un host fisico.
-
-%i pilot mandano in esecuzione i payload secondo un modello di "late binding":
-%il payload e' individuato DOPO che il pilot e' entrato in esecuzione (anche
-%per questo l'analisi semantica di prima non porta lontano).
 
 \begin{table}[!ht]
     \centering
@@ -282,7 +278,7 @@ comporta la loro rimozione dal sistema. In HTCondor, questo limite è
 attualmente fissato a 3 giorni per i job di tipo \texttt{grid} e a 7 giorni
 per i job di tipo \texttt{local}.
 I job \texttt{local}, sottomessi all'interno della stessa ``farm'' di calcolo
-tramite il nodo ``sn-0x'' da utenti che fanno parte dell'organizzazione,
+tramite i nodi ``sn-0x'' da utenti che fanno parte dell'organizzazione,
 beneficiano di maggiore libertà. Al contrario, i job \texttt{grid} vengono
 sottomessi tramite nodi, identificati come ``ce0x-htc'', accessibili agli
 utenti esterni all'organizzazione.
@@ -420,7 +416,7 @@ individuazione più complessa.
 
 \begin{figure}[!hb]
    \centering
-   \includegraphics[clip, trim=1.5cm 1cm 0cm 0.75cm, width=0.75\linewidth]{tsne_zombiejobs}
+   \includegraphics[clip, trim=1.5cm 1cm 0cm 0.75cm, width=0.70\linewidth]{tsne_zombiejobs}
    \caption{Visualizzazione job zombie del 2021 tramite t-SNE}
    \label{fig:tsne_zombiejobs}
 \end{figure}

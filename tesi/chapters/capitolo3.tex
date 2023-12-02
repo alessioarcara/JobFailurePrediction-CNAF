@@ -6,9 +6,11 @@ autonomamente dai dati. Un modello è costituito da un insieme di parametri e
 una struttura di calcolo che tratta i dati di input per produrre un output. I
 parametri vengono appresi durante la fase di addestramento, in cui il modello
 esamina vari esempi e regola i propri parametri in modo da rendere minima una
-funzione costo. Gli iperparametri, d'altra parte, sono valori definiti
-dall'utente prima dell'inizio dell'addestramento che influenzano la struttura
-del modello e il suo comportamento durante l'addestramento.
+funzione di perdita\footnote{La funzione di perdita misura la discrepanza tra
+i valori predetti dal modello e i valori reali dei dati.}. Gli iperparametri,
+d'altra parte, sono valori definiti dall'utente prima dell'inizio
+dell'addestramento che influenzano la struttura del modello e il suo
+comportamento durante l'addestramento.
 
 Prima di esplorare i modelli specifici, ci concentreremo sul processo di
 creazione dei modelli di Machine Learning, e vedremo come l'automatizzazione
@@ -87,16 +89,16 @@ La query esegue le seguenti operazioni:
         timestamp sfrutta l'indice presente nella tabella \texttt{hj} per
         gestire in maniera efficiente le sue grandi dimensioni\footnote{La
             logica dietro questo consiste nel selezionare un job da
-            \texttt{htjob} e successivamente cercarlo in \texttt{hj} limitando
-            la ricerca ai record che rientrano nel periodo in cui
+            \texttt{htjob} e successivamente cercarlo in \texttt{hj},
+            limitando la ricerca ai record che rientrano nel periodo in cui
             \texttt{hj.ts} è compreso tra \texttt{htjob.starttimeepoch} e
             \texttt{htjob.eventtimeepoch}. Questo permette di restringere
             notevolmente la ricerca nella tabella \texttt{hj} per ogni job
-            selezionato da \texttt{htjob} ed
-        evitare di scansionare l'intera tabella.}. Poiché la tabella \texttt{hj} contiene più record per
-        ogni job, la query li raggruppa per job. In seguito, mediante l'uso
-        dell'operatore \verb|ARRAY_AGG|, le serie storiche vengono trasformate
-        in array di valori.
+        selezionato da \texttt{htjob} ed evitare di scansionare l'intera
+    tabella.}. Poiché la tabella \texttt{hj} contiene più record per ogni job,
+    la query li raggruppa per job. In seguito, mediante l'uso dell'operatore
+    \verb|ARRAY_AGG|, le serie storiche vengono trasformate in array di
+    valori.
     \item Seleziona i job con un tempo di esecuzione superiore a un'ora
         (\verb|runtime > 3600|), in quanto i job più brevi sono considerati
         irrilevanti per lo scopo dello studio.
@@ -344,8 +346,8 @@ Durante l'addestramento, il modello tenta di prevedere le etichette per esempi
 che non ha mai visto prima. Le predizioni sono poi confrontate con le
 etichette per calcolare l'errore, che indica quanto le predizioni del modello
 si discostano dai valori reali. L'obiettivo è migliorare la precisione del
-modello minimizzando l'errore della funzione costo, tipicamente attraverso la
-discesa del gradiente.
+modello minimizzando l'errore della funzione di perdita associata, tipicamente
+attraverso la discesa del gradiente.
 
 Attualmente, il dataset non include etichette che identifichino quali job
 siano zombie, il che ci impedisce di impostare un apprendimento
@@ -385,29 +387,31 @@ precisione \cite{he2013}.
 Un'alternativa è il sovracampionamento dei job zombie. Il metodo più semplice
 consiste nell'aggiungere duplicati di esempi già presenti nel dataset;
 tuttavia, ciò non fornisce nuove informazioni utili al modello. Un approccio
-più efficace è la generazioni di nuovi esempi artificiali, che sono varianti
-dei job zombie \cite{brownlee2021}. 
+più efficace è la generazione di nuovi esempi artificiali attraverso tecniche
+di data augmentation, che creano varianti dei job zombie, offrendo così una
+gamma più ampia di esempi da cui il modello può apprendere
+\cite{brownlee2021}. Va tuttavia considerato che il sovracampionamento aumenta
+il rischio di overfitting, cioè la possibilità che il modello si adatti
+eccessivamente ai dati di addestramento, perdendo così la capacità di
+generalizzare su dati nuovi \cite{fernandez2018}.
 
-Pertanto, si è scelto di usare una variante dell'autoencoder, nota come
-\textbf{variational autoencoder} \cite{kingma2022}, per generare varianti di
-job zombie a partire dai job zombie dell'intero 2021. Gli autoencoder
-tradizionali apprendono funzioni per mappare esempi in punti nello spazio
-latente e viceversa, per mappare le loro rappresentazioni compresse dallo
-spazio latente allo spazio originale. Tuttavia, se si prende una variante di
-un esempio nello spazio latente, il decoder $g(h)$ genererà un output privo di
-senso, in quanto non è in grado di gestire regioni dello spazio mai esplorate.
-Il variational autoencoder risolve questo problema facendo sì che l'encoder
-anziché restituire una rappresentazione compressa $h$, fornisca una media
-$\mu$ e una deviazione standard $\sigma$. Intuitivamente, la rappresentazione
-compressa viene campionata da una distribuzione gaussiana caratterizzata dalla
-media $\mu$ e dalla deviazione standard $\sigma$. In questo modo, il decoder
-impara a mappare non solo un singolo punto nello spazio latente, ma anche
-tutti i punti nelle sue vicinanze (vedi figura~\ref{fig:vae_comparison})
+Per questo scopo, si è scelto di usare una variante dell'autoencoder, nota
+come \textbf{variational autoencoder} \cite{kingma2022}, per generare varianti
+di job zombie a partire dai job zombie dell'intero 2021. Gli autoencoder
+tradizionali, come discusso nella sezione~\ref{sec:job_zombie}, apprendono due
+funzioni: un encoder, che mappa gli esempi in punti nello spazio latente, e un
+decoder, che mappa le rappresentazioni compresse dallo spazio latente allo
+spazio originale. Tuttavia, se si prende una variante di un esempio nello
+spazio latente, il decoder $g(h)$ genererà un output privo di senso, in quanto
+non è in grado di gestire regioni dello spazio mai esplorate. Il variational
+autoencoder risolve questo problema facendo sì che l'encoder anziché
+restituire una rappresentazione compressa $h$, fornisca una media $\mu$ e una
+deviazione standard $\sigma$. Intuitivamente, la rappresentazione compressa
+viene campionata da una distribuzione gaussiana caratterizzata dalla media
+$\mu$ e dalla deviazione standard $\sigma$. In questo modo, il decoder impara
+a mappare non solo un singolo punto nello spazio latente, ma anche tutti i
+punti nelle sue vicinanze (vedi figura~\ref{fig:vae_comparison})
 \cite{shafkat2018}.
-
-Tuttavia, il sovracampionamento aumenta il rischio di overfitting, cioè la
-possibilità che il modello si adatti eccessivamente ai dati di addestramento,
-perdendo così la capacità di generalizzare su dati nuovi \cite{fernandez2018}.
 
 \begin{figure}
     \centering
@@ -421,9 +425,8 @@ perdendo così la capacità di generalizzare su dati nuovi \cite{fernandez2018}.
 
 Possiamo distinguere gli errori commessi dal modello in falsi positivi e falsi
 negativi in base a due criteri: un errore è falso positivo quando il modello
-identifica erroneamente un job come zombie nonostante non lo sia; è invece un
-falso negativo quando il modello etichetta come normale un job che in realtà è
-zombie.
+identifica erroneamente un job come zombie; è invece un falso negativo quando
+il modello classifica come normale un job che in realtà è zombie.
 
 Assegnando un valore diverso, che definiamo ``costo'', ai falsi positivi e ai
 falsi negativi, e minimizzando il costo totale\footnote{$\text{Costo totale} =
@@ -432,7 +435,7 @@ FN + C_{FP} \cdot FP$} derivante dalle predizioni
 errate, il modello imparerà durante l'addestramento ad attribuire diversa
 importanza ai vari tipi di errori.
 
-\section{Selezioni dei modelli}
+\section{Selezione dei modelli}
 \label{sec:novelty_detection}
 
 Nel Machine Learning, il problema di identificare i job zombie può essere
@@ -491,8 +494,8 @@ distinzioni \cite{breiman1997, friedman2001}.
 In pratica, il processo inizia con un modello che fa previsioni costanti (per
 esempio, predice sempre 0) e, ad ogni iterazione $k$, viene aggiunto un nuovo
 modello $\hat{y}_i^{(k)}=f_k(x_i)$ al precedente fino al raggiungimento del
-numero massimo di alberi definito da un iperparametro. La struttura di questo
-processo può essere descritto dalle seguenti equazioni:
+numero massimo di alberi, definito da un iperparametro. La struttura di questo
+processo può essere descritta dalle seguenti equazioni:
 
 \begin{center}
     \begin{math}
@@ -513,12 +516,10 @@ l'addestramento.}:
 
 $$\text{obj}^{(t)}=\displaystyle\sum_{i=1}^{n}\ell(y_i,\hat{y}_i^{(t)})+\displaystyle\sum_{k=1}^{t}\Omega(f_k)$$
 
-che è la somma delle funzioni di perdita\footnote{La funzione di perdita
-misura la discrepanza tra i valori predetti dal modello e i valori reali dei
-dati.} e dei termini di regolarizzazione per i $t$ alberi. Il termine di
-regolarizzazione, introdotto da XGBoost come ottimizzazione al Gradient
-Boosting insieme ad altre ottimizzazioni, contribuisce a ridurre il rischio di
-overfitting \cite{chen2016}. 
+che è la somma delle funzioni di perdita e dei termini di regolarizzazione per
+i $t$ alberi. Il termine di regolarizzazione, introdotto da XGBoost come
+miglioramento al Gradient Boosting insieme ad altre ottimizzazioni,
+contribuisce a ridurre il rischio di overfitting \cite{chen2016}. 
 
 Una volta che il modello è addestrato, le predizioni vengono effettuate
 calcolando le predizione di ogni albero e sommando insieme i risultati di
@@ -531,9 +532,9 @@ tutti gli alberi per ottenere la previsione finale.
     \label{fig:xgboost}
 \end{figure}
 
-Nonostante il teorema ``no free lunch'' affermi che non esista un modello che
+Nonostante il teorema ``no free lunch'' affermi che non esiste un modello che
 a priori sia superiore ad altri e che la scelta del modello possa essere
-determinata solo attraverso test comparativi, XGBoost si tratta di un'ottima
+determinata solo attraverso test comparativi, XGBoost risulta essere un'ottima
 prima scelta nella trattazione di problemi reali, grazie alla sua efficacia
 nel trattare dati strutturati \cite{shwartz2021, chen2016}.
 
@@ -543,9 +544,9 @@ nel trattare dati strutturati \cite{shwartz2021, chen2016}.
 Come discusso nel paragrafo~\ref{par:features}, la creazione di un modello che
 apprenda efficacemente dai dati richiede un'attenta selezione di feature
 rilevanti, un processo che non è semplice. Un'alternativa è l'uso di reti
-neurale profonde per la classificazione. Le reti neurali convoluzionali (CNN),
+neurali profonde per la classificazione. Le reti neurali convoluzionali (CNN),
 ad esempio, offrono il vantaggio di estrarre automaticamente le feature più
-rilevanti durante l'addestramento. Altre tipi di reti, come le reti neurali
+rilevanti durante l'addestramento. Altri tipi di reti, come le reti neurali
 ricorrenti (RNN) e i Transformer, sono in grado di utilizzare l'intera storia
 di una serie temporale e catturare le dipendenze temporali per fare delle
 previsioni.
@@ -553,8 +554,8 @@ previsioni.
 Una rete neurale è composta da unità chiamate neuroni, organizzati in strati:
 uno strato di input, che riceve i dati iniziali; uno o più strati nascosti che
 elaborano i dati; e infine uno strato di output, che produce il risultato
-finale. I neuroni di ogni strato sono connessi a quelli degli strati adiacenti
-tramite connessioni pesate (vedi figura~\ref{fig:neural_network}).
+finale. I neuroni di ogni strato sono collegati a quelli degli strati
+adiacenti tramite connessioni pesate (vedi figura~\ref{fig:neural_network}).
 
 \begin{figure}[!ht]
     \centering
@@ -571,7 +572,7 @@ tramite connessioni pesate (vedi figura~\ref{fig:neural_network}).
 \end{figure}
 
 In ogni strato, ciascun neurone riceve input da altri neuroni o dall'esterno,
-elabora questi input per produrre un output, che viene restituito ad altri
+elabora questi input per produrre un output, che viene passato ad altri
 neuroni o all'esterno. Come mostrato nella figura~\ref{fig:neuron}, il neurone
 calcola l'output come la somma pesata dei suoi input, a cui si aggiunge un
 bias e successivamente applica una funzione di attivazione, indicata con
@@ -644,7 +645,7 @@ detector) scorre attraverso l'input, con i pesi del filtro che vengono appresi
 durante l'addestramento. Ciò significa che, se i neuroni in uno strato
 convoluzionale condividono lo stesso insieme di pesi, ciò equivale ad
 applicare lo stesso filtro su tutti gli input. Gli output dei neuroni che
-condividono gli stessi pesi forma una ``feature map''. Il filtro utilizzato
+condividono gli stessi pesi formano una ``feature map''. Il filtro utilizzato
 nella convoluzione corrisponde all'insieme dei pesi condivisi dai neuroni
 all'interno di una feature map. Uno strato convoluzionale è composto da
 molteplici feature map, ciascuna con un proprio insieme di pesi, in modo che
@@ -672,7 +673,7 @@ potrebbero essere importanti per prevedere eventi futuri.
 Come illustrato dalla figura~\ref{fig:rnn}, Una RNN può essere rappresentata
 come un neurone che riceve un input, genera un output e poi riutilizza questo
 output come input per il passo successivo. Le RNN lavorano con sequenze di
-input (per esempio, $(x_{(0)}, x_{(1)},\ldots)$), dove ciascun elemento
+input, come per esempio $(x_{(0)}, x_{(1)},\ldots)$, dove ciascun elemento
 corrisponde a un time step. Ad ogni time step $t$, il neurone riceve l'input
 $x_{(t)}$ e l'output del time step precedente $y_{(t-1)}$ (se è il primo
 input, riceve 0). Ogni neurone delle RNN ha due vettori di pesi: $W_x$ per gli
@@ -689,24 +690,24 @@ $y_{(t)}=\sigma_h(W_x\cdot x_{(t)}+W_y\cdot y_{(t-1)}+b)$ \cite{geron2019}.
 
 Elaborata l'intera sequenza di input, lo stato della rete viene resettato.
 
-Tuttavia, le RNN presentano un problema significativo: la loro capacità di
-trattenere informazioni negli stati è limitata principalmente al time step
-successivo. Ciò implica che l'influenza di un valore specifico nella sequenza
-tende a svanire rapidamente, rendendo difficile catturare dipendenze a lungo
-termine nelle serie temporali. Per ovviare a questo problema, sono stati
-sviluppate varianti di RNN, come le Long Short-Term Memory (LSTM)
-\cite{hochreiter1997} o altri tipi di reti neurali, quali i Transformer
-\cite{vaswani2023}.
+Le RNN presentano un problema significativo: la loro capacità di trattenere
+informazioni negli stati è limitata principalmente al time step successivo.
+Ciò implica che l'influenza di un valore specifico nella sequenza tende a
+svanire rapidamente, rendendo difficile catturare dipendenze a lungo termine
+nelle serie temporali. Per ovviare a questo problema, sono stati sviluppate
+varianti di RNN, come le Long Short-Term Memory (LSTM) \cite{hochreiter1997} o
+altri tipi di reti neurali, quali i Transformer \cite{vaswani2023}.
 
-Il Transformer, diversamente delle RNN, processa l'intera sequenza in un unico
-passaggio, apprendendo le relazioni tra i vari elementi della sequenza
+I Transformer, diversamente delle RNN, processano l'intera sequenza in un
+unico passaggio, apprendendo le relazioni tra i vari elementi della sequenza
 attraverso i meccanismi del multi-head attention e il positional encoding. A
-differenza delle RNN, che elaborano la sequenza un passo alla volta, il
-Transformer non conosce l'ordine dei valori all'interno di essa. Di
+differenza delle RNN, che elaborano la sequenza un passo alla volta, i
+Transformer non conoscono l'ordine dei valori all'interno di essa. Di
 conseguenza, è necessario incorporare tale ordine attraverso il positional
-encoding. Il meccanismo di self attention, d'altra parte, estrae le relazioni
-tra i valori nella sequenza, indipendentemente dalla loro distanza nella
-sequenza, dando importanza ai valori più importanti nella sequenza.
+encoding. Il meccanismo di self attention, d'altra parte, pesa l'importanza di
+ciascun valore all'interno di una sequenza rispetto a tutti gli altri,
+indipendentemente dalla loro distanza nella sequenza stessa, permettendo così
+al modello di concentrarsi su specifici valori.
 
 \subsection{Autoencoder (Novelty detection)}
 \label{sec:autoencoder}
@@ -716,12 +717,12 @@ l'errore di ricostruzione di un input dopo averlo compresso in uno spazio
 latente. Durante l'addestramento con un dataset ``pulito'', l'encoder impara a
 comprimere gli esempi nello spazio latente, mentre il decoder impara a
 ricostruirli nella loro forma originale. Come visto nel
-paragrafo~\ref{par:vae}, quando si fornisce al autoencoder esempi non visti in
-fase di addestramento, se questi vengono compressi in qualcosa di simile a ciò
-che ha già compresso nello spazio latente, allora riesce a ricostruire l'input
-con buona fedeltà. In caso contrario, non riuscirà a costruire correttamente
-l'input e l'errore di ricostruzione, definito come $\epsilon=\lVert
-x-g(f(x))\rVert$, sarà alto \cite{borghesi2019}.
+paragrafo~\ref{par:vae}, quando si fornisce all'autoencoder esempi non visti
+in fase di addestramento, se questi vengono compressi in qualcosa di simile a
+ciò che ha già compresso nello spazio latente, allora riesce a ricostruire
+l'input con buona fedeltà. In caso contrario, non riuscirà a costruire
+correttamente l'input e l'errore di ricostruzione, definito come
+$\epsilon=\lVert x-g(f(x))\rVert$, sarà eccessivo \cite{borghesi2019}.
 
 Per stabilire se un esempio è una novità, viene considerato l'errore di
 ricostruzione insieme alle etichette. Utilizzando un secondo dataset che
