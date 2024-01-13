@@ -1,14 +1,10 @@
 #!/bin/bash
 PORT=8888
-DATA=/home/alessioarcara/ambiente-alessio/tirocinio/data
-NOTEBOOKS=/home/alessioarcara/ambiente-alessio/tirocinio/notebooks
-SDP_NOTEBOOKS=/home/alessioarcara/ambiente-sdp/notebooks
+NOTEBOOKS=/home/alessioarcara/CNAF/anomaly-detection_failure-prediction-CNAF-INFN/tirocinio/notebooks
 
 docker run -d \
    -p ${PORT}:8888 \
-   -v "${DATA}":/home/jovyan/data \
    -v "${NOTEBOOKS}":/home/jovyan/notebooks \
-   -v "${SDP_NOTEBOOKS}":/home/jovyan/sdp_notebooks \
    --gpus 'all' \
    --user "$(id -u)" --group-add users \
 jupyter/tensorflow-notebook

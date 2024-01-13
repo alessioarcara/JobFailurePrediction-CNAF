@@ -16,7 +16,7 @@ LABELS = ["short", "medium", "long"]
 # import nltk
 # STOPWORDS = nltk.corpus.stopwords.words('english')
 
-def load_data(path, start_date, end_date, min_runtime, conn_string="postgresql://accguy:accguy@192.168.1.17/htmnew"):
+def load_data(path, start_date, end_date, min_runtime, conn_string="postgresql://postgres:postgres@192.168.178.80:5434/htmnew"):
     if os.path.exists(path):
         print("CACHE")
         df = pd.read_parquet(path)
